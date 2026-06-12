@@ -8,8 +8,50 @@ const fitMediaStyle = {
   height: 'calc(100% - 1.5rem)',
   objectFit: 'contain',
 } as const;
+const highlightedAuthorNames = ['Yixiang Fang', 'Yuyang Xia', 'Chenhao Ma', 'Qiuyang Mang', 'Qingshuo Guo', 'Jingbang Chen'];
+const highlightedAuthorPattern = new RegExp(`(${highlightedAuthorNames.join('|')})`, 'gi');
+
+function renderPublicationAuthors(authors: string) {
+  return authors.split(highlightedAuthorPattern).map((part, index) => {
+    if (highlightedAuthorNames.some((name) => name.toLowerCase() === part.toLowerCase())) {
+      return (
+        <span key={`${part}-${index}`} className="font-black text-orange">
+          {part}
+        </span>
+      );
+    }
+
+    return part;
+  });
+}
+
+function renderPersonBio(person: Person) {
+  if (person.name !== '陈靖邦教授' || !person.bio.includes('Universal Cup')) {
+    return person.bio;
+  }
+
+  const [before, after] = person.bio.split('Universal Cup');
+
+  return (
+    <>
+      {before}
+      <a
+        href="https://ucup.ac/"
+        target="_blank"
+        rel="noreferrer"
+        className="font-semibold text-purple/80 underline decoration-purple/25 underline-offset-2 transition hover:text-purple hover:decoration-orange/50"
+      >
+        Universal Cup
+      </a>
+      {after}
+    </>
+  );
+}
 
 export function PersonCard({ person }: { person: Person }) {
+  const subtitle =
+    person.role === '指导教师' ? person.affiliation : [person.role, person.affiliation].filter(Boolean).join(' / ');
+
   return (
     <article className="lift flex h-full flex-col overflow-hidden rounded border border-purple/10 bg-white shadow-sm">
       {person.image && (
@@ -19,11 +61,9 @@ export function PersonCard({ person }: { person: Person }) {
       )}
       <div className="flex flex-1 flex-col p-5">
         <h3 className="text-2xl font-black text-purple">{person.name}</h3>
-        <p className="mt-2 text-sm font-semibold text-slatecopy">
-          {[person.role, person.affiliation].filter(Boolean).join(' / ')}
-        </p>
+        {subtitle && <p className="mt-2 text-sm font-semibold text-slatecopy">{subtitle}</p>}
         {person.period && <p className="mt-1 text-sm text-slatecopy">任期：{person.period}</p>}
-        <p className="mt-4 text-sm leading-7 text-slatecopy">{person.bio}</p>
+        <p className="mt-4 text-sm leading-7 text-slatecopy">{renderPersonBio(person)}</p>
       </div>
     </article>
   );
@@ -58,7 +98,7 @@ export function PublicationCard({ publication }: { publication: Publication }) {
         <h3 className="text-xl font-black leading-7 text-purple">{publication.title}</h3>
         <span className="shrink-0 rounded bg-purple px-3 py-1 text-sm font-bold text-white">{publication.venue}</span>
       </div>
-      <p className="mt-3 text-sm font-semibold text-ink">{publication.authors}</p>
+      <p className="mt-3 text-sm font-semibold text-ink">{renderPublicationAuthors(publication.authors)}</p>
       <p className="mt-3 text-sm leading-7 text-slatecopy">{publication.description}</p>
     </article>
   );
@@ -70,17 +110,20 @@ export function EventCard({ event }: { event: EventItem }) {
 
   useEffect(() => {
     setActiveImage(0);
+  }, [event.title, images.length]);
 
+  useEffect(() => {
     if (images.length <= 1) {
       return;
     }
 
-    const intervalId = window.setInterval(() => {
-      setActiveImage((value) => (value + 1) % images.length);
+    const nextImage = (activeImage + 1) % images.length;
+    const timeoutId = window.setTimeout(() => {
+      setActiveImage(nextImage);
     }, 5200);
 
-    return () => window.clearInterval(intervalId);
-  }, [event.title, images.length]);
+    return () => window.clearTimeout(timeoutId);
+  }, [activeImage, images.length]);
 
   const image = images[activeImage % images.length];
 
@@ -97,12 +140,20 @@ export function EventCard({ event }: { event: EventItem }) {
         {images.length > 1 && (
           <div className="absolute bottom-3 left-0 right-0 flex justify-center gap-1.5">
             {images.map((item, index) => (
-              <span
+              <button
                 key={item}
-                className={`h-1.5 rounded-full transition-all ${
-                  index === activeImage ? 'w-7 bg-orange' : 'w-1.5 bg-white/80'
-                }`}
-              />
+                type="button"
+                aria-label={`切换到第 ${index + 1} 张活动照片`}
+                aria-current={index === activeImage ? 'true' : undefined}
+                onClick={() => setActiveImage(index)}
+                className="grid h-5 place-items-center rounded-full px-1 transition focus:outline-none focus-visible:ring-2 focus-visible:ring-orange/70"
+              >
+                <span
+                  className={`h-1.5 rounded-full transition-all ${
+                    index === activeImage ? 'w-7 bg-orange' : 'w-1.5 bg-white/80'
+                  }`}
+                />
+              </button>
             ))}
           </div>
         )}

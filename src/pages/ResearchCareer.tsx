@@ -8,8 +8,8 @@ export function ResearchCareer() {
     <main className="slide-bg ppt-track">
       <section className="wide-shell section-y">
         <SectionHeading
-          eyebrow="Research & Career"
-          title="科研活动与企业实习"
+          eyebrow="Development"
+          title="发展与深造"
         />
 
         <div className="mt-8 grid gap-5 lg:grid-cols-[1.2fr_0.8fr]">

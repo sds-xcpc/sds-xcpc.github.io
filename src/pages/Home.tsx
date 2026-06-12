@@ -31,8 +31,9 @@ const fitMediaStyle = {
 
 const entranceDelay = (delay: number) => ({ '--enter-delay': `${delay}ms` }) as CSSProperties;
 const heroImagePositions: Record<string, string> = {
+  'images/home/gba-2026-group.jpg': 'center 40%',
   'images/home/gba-2026-advisors.jpg': 'center 28%',
-  'images/home/icpc-2026-arena.jpg': 'center 64%',
+  'images/home/icpc-2026-arena.jpg': 'center 70%',
 };
 
 type AnimatedCounterProps = {
@@ -107,12 +108,13 @@ export function Home() {
       return;
     }
 
-    const intervalId = window.setInterval(() => {
-      setHeroImageIndex((value) => (value + 1) % heroImages.length);
+    const nextImageIndex = (heroImageIndex + 1) % heroImages.length;
+    const timeoutId = window.setTimeout(() => {
+      setHeroImageIndex(nextImageIndex);
     }, 9000);
 
-    return () => window.clearInterval(intervalId);
-  }, [heroImages.length]);
+    return () => window.clearTimeout(timeoutId);
+  }, [heroImageIndex, heroImages.length]);
 
   useEffect(() => {
     if (!introOpen) {
@@ -159,12 +161,20 @@ export function Home() {
             <div className="absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-[#fbf9ff]/82 to-transparent" />
             <div className="absolute bottom-4 left-0 right-0 flex justify-center gap-2">
               {heroImages.map((image, index) => (
-                <span
+                <button
                   key={image}
-                  className={`h-1.5 rounded-full transition-all ${
-                    index === heroImageIndex ? 'w-8 bg-orange' : 'w-2 bg-white/75'
-                  }`}
-                />
+                  type="button"
+                  aria-label={`切换到第 ${index + 1} 张首页照片`}
+                  aria-current={index === heroImageIndex ? 'true' : undefined}
+                  onClick={() => setHeroImageIndex(index)}
+                  className="grid h-6 place-items-center rounded-full px-1.5 transition focus:outline-none focus-visible:ring-2 focus-visible:ring-orange/70"
+                >
+                  <span
+                    className={`h-1.5 rounded-full transition-all ${
+                      index === heroImageIndex ? 'w-8 bg-orange' : 'w-2 bg-white/75'
+                    }`}
+                  />
+                </button>
               ))}
             </div>
           </div>

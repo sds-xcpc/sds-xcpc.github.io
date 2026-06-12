@@ -6,7 +6,7 @@ import { site } from '../data/site';
 const navItems = [
   { to: '/', label: '首页' },
   { to: '/contests', label: '竞赛与训练' },
-  { to: '/research-career', label: '科研与实习' },
+  { to: '/research-career', label: '发展与深造' },
   { to: '/achievements', label: '荣誉墙' },
   { to: '/people', label: '赛队成员' },
   { to: '/events', label: '活动风采' },

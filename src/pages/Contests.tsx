@@ -66,19 +66,6 @@ export function Contests() {
           </div>
         </div>
 
-        <div className="mt-10 grid gap-5 lg:grid-cols-3">
-          {[
-            ['暑期集训', '新生入学。'],
-            ['组织队员集训，参加编程大赛', '大一期间锤炼技能，初入赛场；大二期间深化技能，收获奖牌。'],
-            ['推荐企业实习，参与科研活动，提供升学指导', '大三期间、大四期间发表论文，企业实战。'],
-          ].map(([title, body]) => (
-            <article key={title} className="rounded border border-purple/10 bg-white p-6 shadow-sm">
-              <h2 className="text-2xl font-black text-purple">{title}</h2>
-              <p className="mt-3 text-sm leading-7 text-slatecopy">{body}</p>
-            </article>
-          ))}
-        </div>
-
         <div className="mt-10 flex flex-wrap gap-3">
           <CtaLink to="/join">了解加入方式</CtaLink>
         </div>
