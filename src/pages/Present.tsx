@@ -29,10 +29,23 @@ type Slide = {
   content: ReactNode;
 };
 
+const containedImages = new Set(['images/events/president-xu-1-upright.jpg', 'images/events/president-xu-2-upright.jpg']);
 const highlightedAuthorNames = ['Yixiang Fang', 'Yuyang Xia', 'Chenhao Ma', 'Qiuyang Mang', 'Qingshuo Guo', 'Jingbang Chen'];
 const highlightedAuthorPattern = new RegExp(`(${highlightedAuthorNames.join('|')})`, 'gi');
+const slideWidth = 1600;
+const slideHeight = 900;
 
 const asset = (path: string) => `${import.meta.env.BASE_URL}${path}`;
+
+function getPresentationScale() {
+  if (typeof window === 'undefined') {
+    return 1;
+  }
+
+  const availableWidth = Math.max(window.innerWidth - 32, 320);
+  const availableHeight = Math.max(window.innerHeight - 96, 240);
+  return Math.min(availableWidth / slideWidth, availableHeight / slideHeight);
+}
 
 function chunks<T>(items: T[], size: number) {
   const result: T[][] = [];
@@ -80,72 +93,87 @@ function bioWithUniversalCupLink(person: Person) {
 }
 
 function Card({ children, className = '' }: { children: ReactNode; className?: string }) {
-  return <article className={`rounded border border-purple/10 bg-white/92 p-5 shadow-sm ${className}`}>{children}</article>;
+  return <article className={`rounded border border-purple/10 bg-white/92 p-6 shadow-sm ${className}`}>{children}</article>;
 }
 
-function ImageBox({ src, alt, className = '', objectPosition = 'center center' }: { src: string; alt: string; className?: string; objectPosition?: string }) {
+function ImageBox({
+  src,
+  alt,
+  className = '',
+  fit = 'cover',
+  objectPosition = 'center center',
+}: {
+  src: string;
+  alt: string;
+  className?: string;
+  fit?: 'cover' | 'contain';
+  objectPosition?: string;
+}) {
   return (
     <div className={`overflow-hidden rounded border border-purple/10 bg-lavender2 shadow-sm ${className}`}>
-      <img src={asset(src)} alt={alt} className="h-full w-full object-cover" style={{ objectPosition }} />
+      <img
+        src={asset(src)}
+        alt={alt}
+        className={`h-full w-full ${fit === 'contain' ? 'object-contain p-2' : 'object-cover'}`}
+        style={{ objectPosition }}
+      />
     </div>
   );
 }
 
-function PersonPortrait({ person }: { person: Person }) {
+function TeacherGrid({ people }: { people: Person[] }) {
   return (
-    <div className="grid h-full min-h-0 grid-cols-[0.82fr_1.18fr] gap-6">
-      <ImageBox src={person.image ?? 'images/cover-pattern.png'} alt={person.name} className="h-full" />
-      <div className="flex min-h-0 flex-col justify-center">
-        <p className="font-bold text-orange">{person.affiliation}</p>
-        <h2 className="mt-2 text-4xl font-black leading-tight text-purple">{person.name}</h2>
-        <div className="mt-4 flex flex-wrap gap-2">
-          {person.highlights.map((highlight) => (
-            <span key={highlight} className="rounded bg-lavender2 px-3 py-1.5 text-sm font-bold text-purple">
-              {highlight}
-            </span>
-          ))}
-        </div>
-        {person.period && <p className="mt-4 text-sm font-bold text-orange">任期：{person.period}</p>}
-        <p className="mt-5 text-base leading-8 text-slatecopy">{bioWithUniversalCupLink(person)}</p>
-      </div>
-    </div>
-  );
-}
-
-function PersonGrid({ people }: { people: Person[] }) {
-  return (
-    <div className="grid h-full min-h-0 gap-4 md:grid-cols-3">
+    <div className="grid h-full min-h-0 grid-cols-3 gap-4">
       {people.map((person) => (
         <Card key={person.name} className="flex min-h-0 flex-col">
-          <ImageBox src={person.image ?? 'images/cover-pattern.png'} alt={person.name} className="h-40 shrink-0" />
-          <h3 className="mt-4 text-2xl font-black text-purple">{person.name}</h3>
-          <p className="mt-1 text-sm font-bold text-orange">{person.period}</p>
-          <p className="mt-2 text-sm font-semibold text-slatecopy">{person.affiliation}</p>
-          <p className="mt-3 text-sm leading-6 text-slatecopy">{person.bio}</p>
+          <ImageBox src={person.image ?? 'images/cover-pattern.png'} alt={person.name} className="h-56 shrink-0" fit="contain" />
+          <p className="mt-4 text-sm font-bold text-orange">{person.affiliation}</p>
+          <h3 className="mt-1 text-3xl font-black text-purple">{person.name}</h3>
+          <p className="mt-4 text-sm leading-7 text-slatecopy">{bioWithUniversalCupLink(person)}</p>
         </Card>
       ))}
     </div>
   );
 }
 
-function CompetitionSlide({ competition }: { competition: (typeof competitions)[number] }) {
+function CaptainGrid({ people }: { people: Person[] }) {
   return (
-    <div className="grid h-full min-h-0 grid-cols-[0.9fr_1.1fr] gap-7">
-      <Card className="grid place-items-center">
-        <img src={asset(competition.image)} alt={competition.name} className="max-h-64 max-w-full object-contain" />
-      </Card>
-      <div className="flex min-h-0 flex-col justify-center">
-        <p className="font-mono text-sm font-black text-orange">{competition.englishName}</p>
-        <h2 className="mt-2 text-4xl font-black leading-tight text-purple">{competition.name}</h2>
-        <p className="mt-5 text-base leading-8 text-slatecopy">{competition.summary}</p>
-        <div className="mt-5 grid gap-3">
-          {competition.system.map((item) => (
-            <div key={item} className="rounded bg-lavender2 px-4 py-3 text-base font-black text-purple">
-              {item}
-            </div>
-          ))}
-        </div>
-      </div>
+    <div className="grid h-full min-h-0 grid-cols-3 grid-rows-2 gap-3">
+      {people.map((person) => (
+        <Card key={person.name} className="grid min-h-0 grid-cols-[0.43fr_0.57fr] gap-4 p-4">
+          <ImageBox src={person.image ?? 'images/cover-pattern.png'} alt={person.name} className="h-full min-h-0" fit="contain" />
+          <div className="min-h-0">
+            <h3 className="text-2xl font-black text-purple">{person.name}</h3>
+            <p className="mt-1 text-sm font-bold text-orange">{person.period}</p>
+            <p className="mt-1 text-sm font-semibold text-slatecopy">{person.affiliation}</p>
+            <p className="mt-3 text-sm leading-6 text-slatecopy">{person.bio}</p>
+          </div>
+        </Card>
+      ))}
+    </div>
+  );
+}
+
+function CompetitionsSlide() {
+  return (
+    <div className="grid h-full min-h-0 grid-cols-2 gap-5">
+      {competitions.map((competition) => (
+        <Card key={competition.name} className="flex min-h-0 flex-col">
+          <div className="grid h-52 shrink-0 place-items-center rounded bg-white">
+            <img src={asset(competition.image)} alt={competition.name} className="max-h-44 max-w-[90%] object-contain" />
+          </div>
+          <p className="mt-5 text-center font-mono text-sm font-black text-orange">{competition.englishName}</p>
+          <h2 className="mt-2 text-center text-3xl font-black leading-tight text-purple">{competition.name}</h2>
+          <p className="mt-4 text-base leading-8 text-slatecopy">{competition.summary}</p>
+          <div className="mt-4 grid gap-2">
+            {competition.system.map((item) => (
+              <div key={item} className="rounded bg-lavender2 px-4 py-2 text-base font-black text-purple">
+                {item}
+              </div>
+            ))}
+          </div>
+        </Card>
+      ))}
     </div>
   );
 }
@@ -153,13 +181,13 @@ function CompetitionSlide({ competition }: { competition: (typeof competitions)[
 function TeamCard({ team }: { team: FeaturedTeam }) {
   return (
     <Card className="flex min-h-0 flex-col">
-      <ImageBox src={team.image} alt={team.name} className="h-44 shrink-0" />
-      <h3 className="mt-4 text-2xl font-black text-purple">{team.name}</h3>
-      {team.englishName && <p className="mt-1 font-mono text-sm text-slatecopy">{team.englishName}</p>}
-      <p className="mt-3 text-sm font-bold text-ink">成员：{team.members.join('、')}</p>
-      <div className="mt-3 grid gap-2">
+      <ImageBox src={team.image} alt={team.name} className="h-72 shrink-0" fit="contain" />
+      <h3 className="mt-5 text-3xl font-black text-purple">{team.name}</h3>
+      {team.englishName && <p className="mt-1 font-mono text-base text-slatecopy">{team.englishName}</p>}
+      <p className="mt-4 text-base font-bold text-ink">成员：{team.members.join('、')}</p>
+      <div className="mt-4 grid gap-2">
         {team.honors.map((honor) => (
-          <span key={honor} className="rounded bg-orange/10 px-3 py-2 text-sm font-bold text-purple">
+          <span key={honor} className="rounded bg-orange/10 px-3 py-2 text-base font-bold text-purple">
             {honor}
           </span>
         ))}
@@ -183,14 +211,20 @@ function PublicationSlide({ publication }: { publication: Publication }) {
 
 function EventSlide({ event }: { event: EventItem }) {
   const images = event.images.length > 0 ? event.images : event.image ? [event.image] : [];
+  const firstImage = images[0] ?? 'images/campus-hero.jpg';
 
   return (
     <div className="grid h-full min-h-0 grid-cols-[1.08fr_0.92fr] gap-6">
       <div className="grid min-h-0 grid-rows-[1fr_auto] gap-3">
-        <ImageBox src={images[0] ?? 'images/campus-hero.jpg'} alt={event.title} className="min-h-0" />
+        <ImageBox
+          src={firstImage}
+          alt={event.title}
+          className="min-h-0"
+          fit={containedImages.has(firstImage) ? 'contain' : 'cover'}
+        />
         <div className="grid h-24 grid-cols-5 gap-2">
           {images.slice(1, 6).map((image) => (
-            <ImageBox key={image} src={image} alt={event.title} />
+            <ImageBox key={image} src={image} alt={event.title} fit={containedImages.has(image) ? 'contain' : 'cover'} />
           ))}
         </div>
       </div>
@@ -273,11 +307,11 @@ export function Present() {
         </div>
       ),
     },
-    ...teachers.map((teacher) => ({
+    {
       section: '指导教师',
-      title: teacher.name,
-      content: <PersonPortrait person={teacher} />,
-    })),
+      title: '指导教师',
+      content: <TeacherGrid people={teachers} />,
+    },
     {
       section: '竞赛与训练',
       title: '赛事基本规则',
@@ -296,11 +330,11 @@ export function Present() {
         </div>
       ),
     },
-    ...competitions.map((competition) => ({
+    {
       section: '竞赛与训练',
-      title: competition.name,
-      content: <CompetitionSlide competition={competition} />,
-    })),
+      title: 'ICPC / CCPC 赛事简介',
+      content: <CompetitionsSlide />,
+    },
     {
       section: '竞赛与训练',
       title: '为什么参加竞赛',
@@ -383,11 +417,11 @@ export function Present() {
         </div>
       ),
     })),
-    ...chunks(captains, 3).map((group, index) => ({
+    {
       section: '赛队成员',
-      title: index === 0 ? '历任队长' : '历任队长（续）',
-      content: <PersonGrid people={group} />,
-    })),
+      title: '历任队长',
+      content: <CaptainGrid people={captains} />,
+    },
     {
       section: '发展与深造',
       title: '科研活动',
@@ -492,6 +526,7 @@ export function Present() {
   ];
 
   const [index, setIndex] = useState(0);
+  const [scale, setScale] = useState(getPresentationScale);
   const total = slides.length;
   const slide = slides[Math.min(index, total - 1)];
   const progress = ((Math.min(index, total - 1) + 1) / total) * 100;
@@ -503,6 +538,14 @@ export function Present() {
   useEffect(() => {
     setIndex((value) => Math.min(value, total - 1));
   }, [total]);
+
+  useEffect(() => {
+    const updateScale = () => setScale(getPresentationScale());
+
+    updateScale();
+    window.addEventListener('resize', updateScale);
+    return () => window.removeEventListener('resize', updateScale);
+  }, []);
 
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
@@ -532,8 +575,18 @@ export function Present() {
 
   return (
     <main className="min-h-screen overflow-hidden bg-[#130d2c] text-white">
-      <section className="grid min-h-screen place-items-center px-4 py-4">
-        <div className="relative aspect-video w-full max-w-[min(96vw,170vh)] overflow-hidden rounded border border-white/15 bg-[#f4efff] text-ink shadow-2xl shadow-black/40">
+      <section className="grid min-h-screen place-items-center px-4 pb-20 pt-4">
+        <div
+          className="relative"
+          style={{
+            width: `${slideWidth * scale}px`,
+            height: `${slideHeight * scale}px`,
+          }}
+        >
+        <div
+          className="absolute left-0 top-0 h-[900px] w-[1600px] origin-top-left overflow-hidden rounded border border-white/15 bg-[#f4efff] text-ink shadow-2xl shadow-black/40"
+          style={{ transform: `scale(${scale})` }}
+        >
           <div className="absolute inset-0 ppt-track opacity-100" />
           <div className="absolute inset-x-0 top-0 h-2 bg-gradient-to-r from-orange via-purple to-cyan" />
           <div className="relative z-10 flex h-full min-h-0 flex-col p-9">
@@ -553,6 +606,7 @@ export function Present() {
               <div className="h-full rounded-full bg-orange" style={{ width: `${progress}%` }} />
             </div>
           </div>
+        </div>
         </div>
       </section>
 

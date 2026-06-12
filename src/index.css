@@ -88,11 +88,17 @@
   }
 
   @keyframes counter-sheen {
-    from {
+    0% {
       left: -62%;
+      opacity: 0;
     }
-    to {
+    18%,
+    72% {
+      opacity: 1;
+    }
+    100% {
       left: 122%;
+      opacity: 0;
     }
   }
 
@@ -203,7 +209,6 @@
     animation: counter-pop-in 780ms cubic-bezier(0.17, 1, 0.27, 1) both;
     animation-delay: var(--enter-delay, 0ms);
     transform-origin: center bottom;
-    will-change: opacity, transform;
   }
 
   .home-counter-card::after {
@@ -216,6 +221,7 @@
     background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.48), transparent);
     animation: counter-sheen 980ms ease-out both;
     animation-delay: calc(var(--enter-delay, 0ms) + 380ms);
+    opacity: 0;
     pointer-events: none;
   }
 

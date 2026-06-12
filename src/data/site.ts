@@ -517,8 +517,8 @@ export const events: EventItem[] = [
     date: '持续进行',
     location: '校园内外',
     images: [
-      'images/events/president-xu-1.jpg',
-      'images/events/president-xu-2.jpg',
+      'images/events/president-xu-1-upright.jpg',
+      'images/events/president-xu-2-upright.jpg',
       'images/events/hopcroft-seminar.jpg',
       'images/events/bopu-talk.jpg',
       'images/events/bopu-dialogue.jpg',

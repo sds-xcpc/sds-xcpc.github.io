@@ -8,6 +8,7 @@ const fitMediaStyle = {
   height: 'calc(100% - 1.5rem)',
   objectFit: 'contain',
 } as const;
+const containedEventImages = new Set(['images/events/president-xu-1-upright.jpg', 'images/events/president-xu-2-upright.jpg']);
 const highlightedAuthorNames = ['Yixiang Fang', 'Yuyang Xia', 'Chenhao Ma', 'Qiuyang Mang', 'Qingshuo Guo', 'Jingbang Chen'];
 const highlightedAuthorPattern = new RegExp(`(${highlightedAuthorNames.join('|')})`, 'gi');
 
@@ -72,7 +73,7 @@ export function PersonCard({ person }: { person: Person }) {
 export function TeamCard({ team }: { team: FeaturedTeam }) {
   return (
     <article className="lift overflow-hidden rounded border border-purple/10 bg-white shadow-sm">
-      <div className="relative h-60 bg-lavender2">
+      <div className="relative h-72 bg-lavender2 xl:h-80">
         <img src={`${import.meta.env.BASE_URL}${team.image}`} alt={`${team.name} 队伍照片`} style={fitMediaStyle} />
       </div>
       <div className="p-5">
@@ -126,6 +127,7 @@ export function EventCard({ event }: { event: EventItem }) {
   }, [activeImage, images.length]);
 
   const image = images[activeImage % images.length];
+  const containImage = image ? containedEventImages.has(image) : false;
 
   return (
     <article className="lift overflow-hidden rounded border border-purple/10 bg-white shadow-sm">
@@ -134,7 +136,9 @@ export function EventCard({ event }: { event: EventItem }) {
           <img
             src={`${import.meta.env.BASE_URL}${image}`}
             alt={event.title}
-            className="absolute inset-0 h-full w-full object-cover transition-opacity duration-700"
+            className={`absolute inset-0 h-full w-full transition-opacity duration-700 ${
+              containImage ? 'object-contain p-3' : 'object-cover'
+            }`}
           />
         )}
         {images.length > 1 && (
