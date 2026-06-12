@@ -176,15 +176,15 @@ export const honorCounters: HonorCounter[] = [
 export const headlineHonors: HonorItem[] = [
   {
     title: '2025 年 CCPC 女生专场冠军',
-    detail: '队伍 WTYTO 获 2025年中国大学生程序设计竞赛女生专场冠军。',
+    detail: 'WTYTO队获2025年中国大学生程序设计竞赛女生专场冠军。',
   },
   {
     title: '2026 年广东省赛冠军',
-    detail: '队伍 Mynoghra 获得2026年广东大学生程序设计竞赛冠军。',
+    detail: 'Mynoghra队获得2026年广东大学生程序设计竞赛冠军。',
   },
   {
     title: '承办2026 年 ICPC 全国邀请赛（深圳）',
-    detail: '举办2026年ICPC全国邀请赛（深圳）。',
+    detail: '这是我校历史上首次承办ICPC系列赛事，标志着我校在计算机学科竞赛组织能力及学术影响力方面再上新台阶。',
   },
 ];
 
