@@ -178,6 +178,37 @@ function CompetitionsSlide() {
   );
 }
 
+function StairRoadmapSlide() {
+  const stepHeights = [360, 410, 460, 510, 560];
+
+  return (
+    <div className="relative h-full min-h-0 overflow-hidden rounded border border-purple/10 bg-white/72 p-7 shadow-sm">
+      <div className="absolute bottom-10 left-8 right-8 h-1 rounded-full bg-gradient-to-r from-orange via-purple to-cyan" />
+      <div className="grid h-full min-h-0 grid-cols-5 items-end gap-3">
+        {roadmap.map((stage, index) => (
+          <article
+            key={stage.stage}
+            className="relative flex flex-col justify-between rounded-t border border-purple/10 bg-white p-5 shadow-sm"
+            style={{ height: stepHeights[index] }}
+          >
+            <div>
+              <span className="inline-flex h-12 min-w-12 items-center justify-center rounded-full bg-purple px-3 font-mono text-lg font-black text-white shadow-lg shadow-purple/20">
+                {String(index + 1).padStart(2, '0')}
+              </span>
+              <p className="mt-4 text-base font-black text-orange">{stage.stage}</p>
+              <h3 className="mt-2 text-2xl font-black leading-tight text-purple">{stage.title}</h3>
+            </div>
+            <div>
+              <p className="text-base leading-8 text-slatecopy">{stage.body}</p>
+              <p className="mt-4 font-mono text-sm font-black text-cyan">{stage.tag}</p>
+            </div>
+          </article>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 function TeamCard({ team }: { team: FeaturedTeam }) {
   return (
     <Card className="flex min-h-0 flex-col">
@@ -211,20 +242,41 @@ function PublicationSlide({ publication }: { publication: Publication }) {
 
 function EventSlide({ event }: { event: EventItem }) {
   const images = event.images.length > 0 ? event.images : event.image ? [event.image] : [];
-  const firstImage = images[0] ?? 'images/campus-hero.jpg';
+  const [activeImageIndex, setActiveImageIndex] = useState(0);
+
+  useEffect(() => {
+    setActiveImageIndex(0);
+  }, [event.title, images.length]);
+
+  const activeImage = images[activeImageIndex % Math.max(images.length, 1)] ?? 'images/campus-hero.jpg';
 
   return (
     <div className="grid h-full min-h-0 grid-cols-[1.08fr_0.92fr] gap-6">
       <div className="grid min-h-0 grid-rows-[1fr_auto] gap-3">
         <ImageBox
-          src={firstImage}
+          src={activeImage}
           alt={event.title}
           className="min-h-0"
-          fit={containedImages.has(firstImage) ? 'contain' : 'cover'}
+          fit={containedImages.has(activeImage) ? 'contain' : 'cover'}
         />
-        <div className="grid h-24 grid-cols-5 gap-2">
-          {images.slice(1, 6).map((image) => (
-            <ImageBox key={image} src={image} alt={event.title} fit={containedImages.has(image) ? 'contain' : 'cover'} />
+        <div className="grid h-28 grid-cols-7 auto-rows-fr gap-2">
+          {images.map((image, index) => (
+            <button
+              key={image}
+              type="button"
+              aria-label={`切换到第 ${index + 1} 张活动照片`}
+              aria-current={index === activeImageIndex ? 'true' : undefined}
+              onClick={() => setActiveImageIndex(index)}
+              className={`overflow-hidden rounded border bg-lavender2 transition focus:outline-none focus-visible:ring-2 focus-visible:ring-orange/70 ${
+                index === activeImageIndex ? 'border-orange shadow-sm shadow-orange/20' : 'border-purple/10 opacity-78 hover:opacity-100'
+              }`}
+            >
+              <img
+                src={asset(image)}
+                alt={`${event.title} ${index + 1}`}
+                className={`h-full w-full ${containedImages.has(image) ? 'object-contain p-1' : 'object-cover'}`}
+              />
+            </button>
           ))}
         </div>
       </div>
@@ -234,11 +286,11 @@ function EventSlide({ event }: { event: EventItem }) {
           <span className="bg-lavender px-3 py-1 text-sm font-bold text-purple">{event.date}</span>
         </div>
         <h2 className="mt-4 text-3xl font-black leading-tight text-purple">{event.title}</h2>
-        <p className="mt-2 text-base font-bold text-orange">{event.location}</p>
-        <p className="mt-4 text-sm leading-7 text-slatecopy">{event.body}</p>
+        <p className="mt-2 text-lg font-bold text-orange">{event.location}</p>
+        <p className="mt-4 text-base leading-8 text-slatecopy">{event.body}</p>
         <div className="mt-4 grid gap-1.5">
           {event.metrics.map((metric) => (
-            <p key={metric} className="border-l-2 border-orange pl-3 text-xs font-semibold leading-5 text-purple">
+            <p key={metric} className="border-l-2 border-orange pl-3 text-sm font-semibold leading-6 text-purple">
               {metric}
             </p>
           ))}
@@ -352,19 +404,7 @@ export function Present() {
     {
       section: '竞赛与训练',
       title: '训练路径',
-      content: (
-        <div className="grid h-full min-h-0 grid-cols-5 gap-3">
-          {roadmap.map((stage, index) => (
-            <Card key={stage.stage} className="relative">
-              <span className="inline-flex h-10 min-w-10 items-center justify-center rounded-full bg-orange px-3 text-base font-black text-white">{index + 1}</span>
-              <p className="mt-4 text-sm font-black text-orange">{stage.stage}</p>
-              <h3 className="mt-2 text-2xl font-black leading-tight text-purple">{stage.title}</h3>
-              <p className="mt-4 text-base leading-8 text-slatecopy">{stage.body}</p>
-              <p className="mt-5 font-mono text-sm font-black text-cyan">{stage.tag}</p>
-            </Card>
-          ))}
-        </div>
-      ),
+      content: <StairRoadmapSlide />,
     },
     {
       section: '荣誉墙',
@@ -372,40 +412,50 @@ export function Present() {
       content: (
         <div className="grid h-full min-h-0 grid-cols-[0.9fr_1.1fr] gap-6">
           <div className="grid grid-cols-2 gap-4">
-            {stats.map((stat) => (
-              <Card key={stat.label}>
-                <p className="font-mono text-4xl font-black text-orange">{stat.value}</p>
-                <h3 className="mt-2 text-xl font-black text-purple">{stat.label}</h3>
-                <p className="mt-3 text-sm leading-6 text-slatecopy">{stat.caption}</p>
-              </Card>
-            ))}
+            {stats.map((stat) => {
+              const longValue = stat.value.includes('/');
+
+              return (
+                <Card key={stat.label} className="flex flex-col justify-center">
+                  <p className={`font-mono font-black text-orange ${longValue ? 'whitespace-nowrap text-[2.65rem] tracking-tight' : 'text-6xl'}`}>
+                    {stat.value}
+                  </p>
+                  <h3 className="mt-3 text-2xl font-black text-purple">{stat.label}</h3>
+                  <p className="mt-4 text-base leading-7 text-slatecopy">{stat.caption}</p>
+                </Card>
+              );
+            })}
           </div>
           <div className="grid gap-4">
             {headlineHonors.map((honor) => (
-              <Card key={honor.title}>
-                <h3 className="text-2xl font-black text-purple">{honor.title}</h3>
-                <p className="mt-3 text-base leading-8 text-slatecopy">{honor.detail}</p>
+              <Card key={honor.title} className="flex flex-col justify-center">
+                <h3 className="text-3xl font-black text-purple">{honor.title}</h3>
+                <p className="mt-4 text-xl leading-9 text-slatecopy">{honor.detail}</p>
               </Card>
             ))}
           </div>
         </div>
       ),
     },
-    {
+    ...chunks(timeline, 9).map((items, groupIndex) => ({
       section: '荣誉墙',
-      title: '团队发展时间线',
+      title: groupIndex === 0 ? '团队发展时间线' : '团队发展时间线（续）',
       content: (
-        <div className="grid h-full min-h-0 grid-cols-4 gap-3">
-          {timeline.map((item, index) => (
-            <Card key={`${item.date}-${item.title}`} className={item.featured ? 'ring-2 ring-orange/30' : ''}>
-              <p className="font-mono text-xs font-black text-orange">{String(index + 1).padStart(2, '0')} / {item.date}</p>
-              <h3 className="mt-2 text-lg font-black leading-6 text-purple">{item.title}</h3>
-              <p className="mt-2 text-sm leading-6 text-slatecopy">{item.detail}</p>
-            </Card>
-          ))}
+        <div className="grid h-full min-h-0 grid-cols-3 auto-rows-fr gap-4">
+          {items.map((item, itemIndex) => {
+            const index = groupIndex * 7 + itemIndex;
+
+            return (
+              <Card key={`${item.date}-${item.title}`} className={item.featured ? 'ring-2 ring-orange/30' : ''}>
+                <p className="font-mono text-base font-black text-orange">{String(index + 1).padStart(2, '0')} / {item.date}</p>
+                <h3 className="mt-3 text-2xl font-black leading-8 text-purple">{item.title}</h3>
+                <p className="mt-3 text-base leading-7 text-slatecopy">{item.detail}</p>
+              </Card>
+            );
+          })}
         </div>
       ),
-    },
+    })),
     ...chunks(featuredTeams, 2).map((teams, index) => ({
       section: '荣誉墙',
       title: index === 0 ? '优秀队伍' : '优秀队伍（续）',
@@ -446,8 +496,12 @@ export function Present() {
           </div>
           <div className="grid grid-cols-2 gap-4">
             {companies.map((company) => (
-              <Card key={company.name} className="grid place-items-center">
-                <img src={asset(company.logo)} alt={company.name} className="max-h-24 max-w-[88%] object-contain" />
+              <Card key={company.name} className="grid min-h-36 place-items-center p-4">
+                <img
+                  src={asset(company.logo)}
+                  alt={company.name}
+                  className={`${company.name === '华为云' ? 'max-h-40 max-w-[98%]' : 'max-h-36 max-w-[96%]'} object-contain`}
+                />
               </Card>
             ))}
           </div>
@@ -462,9 +516,9 @@ export function Present() {
           {alumni.slice(0, 6).map((item) => (
             <Card key={item.name}>
               <h3 className="text-2xl font-black text-purple">{item.name}</h3>
-              <p className="mt-2 text-sm font-bold text-orange">{item.contest}</p>
-              <p className="mt-3 text-sm leading-6 text-slatecopy">{item.research}</p>
-              <p className="mt-3 rounded bg-lavender2 px-3 py-2 text-sm font-bold leading-6 text-purple">{item.destination}</p>
+              <p className="mt-2 text-base font-bold text-orange">{item.contest}</p>
+              <p className="mt-3 text-base leading-7 text-slatecopy">{item.research}</p>
+              <p className="mt-4 rounded bg-lavender2 px-3 py-2 text-base font-bold leading-7 text-purple">{item.destination}</p>
             </Card>
           ))}
         </div>
@@ -477,49 +531,42 @@ export function Present() {
     })),
     {
       section: '加入我们',
-      title: '欢迎加入香港中文大学（深圳）程序设计竞赛队',
+      title: '欢迎加入香港中文大学（深圳）程序设计竞赛队！',
       content: (
-        <div className="grid h-full min-h-0 grid-cols-[0.95fr_1.05fr] gap-6">
+        <div className="grid h-full min-h-0 grid-cols-[0.72fr_0.78fr_1fr] gap-5">
           <div className="grid gap-4">
             {[
               ['开放加入', '竞赛队向全校同学开放加入的机会。'],
               ['本年度队员', '本年度，代表大学参赛的队员来自多个学院，横跨四个年级。'],
-              ['欢迎加入', '欢迎加入香港中文大学（深圳）程序设计竞赛队！'],
             ].map(([title, body]) => (
-              <Card key={title}>
-                <h2 className="text-2xl font-black text-purple">{title}</h2>
-                <p className="mt-3 text-base leading-8 text-slatecopy">{body}</p>
+              <Card key={title} className="flex flex-col justify-center">
+                <h2 className="text-3xl font-black text-purple">{title}</h2>
+                <p className="mt-4 text-xl leading-9 text-slatecopy">{body}</p>
               </Card>
             ))}
           </div>
           <Card className="flex flex-col justify-center">
             <h2 className="text-3xl font-black text-purple">联系方式</h2>
-            <div className="mt-5 grid gap-4 text-lg leading-9 text-slatecopy">
+            <div className="mt-6 grid gap-4 text-xl leading-10 text-slatecopy">
               <p>招生咨询邮箱：{site.email}</p>
               <p>学院招生交流 QQ 群：{site.qqGroup}</p>
               <p>{site.address}</p>
               <p>学院官网：{site.website}</p>
             </div>
           </Card>
-        </div>
-      ),
-    },
-    {
-      section: '加入我们',
-      title: '联系二维码',
-      content: (
-        <div className="grid h-full min-h-0 grid-cols-4 gap-5">
-          {[
-            ['学院微信公众号', 'images/contact/wechat-public-qr.png'],
-            ['学院刊物', 'images/contact/booklet-qr.png'],
-            ['学院官网', 'images/contact/site-qr.png'],
-            ['学院招生交流 QQ 群', 'images/contact/qq-group-qr.png'],
-          ].map(([label, image]) => (
-            <Card key={label} className="grid place-items-center text-center">
-              <img src={asset(image)} alt={label} className="h-48 w-48 object-contain" />
-              <p className="mt-5 text-xl font-black text-purple">{label}</p>
-            </Card>
-          ))}
+          <div className="grid grid-cols-2 gap-4">
+            {[
+              ['学院微信公众号', 'images/contact/wechat-public-qr.png'],
+              ['学院刊物', 'images/contact/booklet-qr.png'],
+              ['学院官网', 'images/contact/site-qr.png'],
+              ['学院招生交流 QQ 群', 'images/contact/qq-group-qr.png'],
+            ].map(([label, image]) => (
+              <Card key={label} className="grid place-items-center p-4 text-center">
+                <img src={asset(image)} alt={label} className="h-40 w-40 object-contain" />
+                <p className="mt-4 text-lg font-black text-purple">{label}</p>
+              </Card>
+            ))}
+          </div>
         </div>
       ),
     },
@@ -530,6 +577,7 @@ export function Present() {
   const total = slides.length;
   const slide = slides[Math.min(index, total - 1)];
   const progress = ((Math.min(index, total - 1) + 1) / total) * 100;
+  const titleIsLong = slide.title.length > 18;
 
   const go = (delta: number) => {
     setIndex((value) => Math.min(total - 1, Math.max(0, value + delta)));
@@ -599,7 +647,13 @@ export function Present() {
               <p className="font-mono text-sm font-black text-purple">{String(index + 1).padStart(2, '0')} / {total}</p>
             </div>
 
-            <h1 className="mt-5 shrink-0 text-4xl font-black leading-tight text-purple">{slide.title}</h1>
+            <h1
+              className={`mt-5 shrink-0 whitespace-nowrap font-black leading-tight text-purple ${
+                titleIsLong ? 'text-[2rem]' : 'text-4xl'
+              }`}
+            >
+              {slide.title}
+            </h1>
             <div className="mt-5 min-h-0 flex-1">{slide.content}</div>
 
             <div className="mt-5 h-1.5 shrink-0 rounded-full bg-purple/10">

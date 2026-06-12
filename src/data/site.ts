@@ -264,18 +264,19 @@ export const roadmap: RoadmapStage[] = [
 ];
 
 export const timeline: TimelineItem[] = [
-  { date: '2020.09', title: '团队成立', detail: '团队成立。', featured: true },
-  { date: '2020.11', title: '第一次参赛', detail: '第一次参加程序设计竞赛。' },
-  { date: '2020.12', title: 'ICPC 济南站首获银牌', detail: 'ICPC济南站首获银牌。' },
-  { date: '2021.10', title: '首次参加 CCPC 女生赛', detail: '首次参加CCPC女生赛。' },
-  { date: '2021.11', title: 'CCPC 桂林站首获金牌', detail: 'CCPC桂林站首获金牌。', featured: true },
-  { date: '2021.11', title: 'ICPC 桂林站首获奖杯', detail: 'ICPC桂林站首获奖杯。' },
-  { date: '2021.12', title: '锁定 World Final 名额', detail: '锁定World Final名额。', featured: true },
-  { date: '2022.07', title: 'ICPC 亚洲区决赛金牌', detail: 'ICPC亚洲区决赛金牌。' },
-  { date: '2023.10', title: 'CCPC 女生赛首获金牌', detail: 'CCPC女生赛首获金牌。' },
-  { date: '2023.11', title: '第二次锁定 World Final 名额', detail: '第二次锁定World Final名额。', featured: true },
-  { date: '2024.11', title: 'CCPC 郑州站首获奖杯', detail: 'CCPC郑州站首获奖杯。' },
-  { date: '2026.04', title: '承办 ICPC 全国邀请赛（深圳）', detail: '举办2026年ICPC全国邀请赛（深圳）。', featured: true },
+  { date: '2020.09', title: '团队成立', detail: '竞赛队正式启动，开始组织校内训练与参赛。', featured: true },
+  { date: '2020.11', title: '第一次参赛', detail: '新队伍走上正式赛场，积累首批比赛经验。' },
+  { date: '2020.12', title: 'ICPC 济南站首获银牌', detail: '在区域赛中取得队史首枚 ICPC 银牌。' },
+  { date: '2021.10', title: '首次参加 CCPC 女生赛', detail: '首次派队参加中国大学生程序设计竞赛女生专场。' },
+  { date: '2021.11', title: 'CCPC 桂林站首获金牌', detail: '取得队史首枚区域赛金牌。', featured: true },
+  { date: '2021.11', title: 'CCPC 桂林站首获奖杯', detail: '首次在区域赛中捧回奖杯。' },
+  { date: '2021.12', title: '锁定 World Final 名额', detail: '队伍首次获得 ICPC World Final 出线资格。', featured: true },
+  { date: '2022.07', title: 'ICPC 亚洲区决赛金牌', detail: '在 ICPC 亚洲区决赛中获得金牌。' },
+  { date: '2023.10', title: 'CCPC 女生赛首获金牌', detail: '女生队伍在 CCPC 女生专场取得首枚金牌。' },
+  { date: '2023.11', title: '第二次锁定 World Final 名额', detail: '队伍再次获得 ICPC World Final 出线资格。', featured: true },
+  { date: '2024.11', title: 'CCPC 郑州站首获奖杯', detail: '在 CCPC 郑州站取得奖杯。' },
+  { date: '2026.04', title: '承办 ICPC 全国邀请赛（深圳）', detail: '学校首次承办 ICPC 系列赛事，组织能力迈上新台阶。', featured: true },
+  { date: '2026.05', title: '首获省赛冠军', detail: '取得队史首次广东省赛冠军。', featured: true },
 ];
 
 export const teachers: Person[] = [

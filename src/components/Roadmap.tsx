@@ -23,8 +23,8 @@ export function GrowthRoadmap() {
 
 export function Timeline({ compact = false }: { compact?: boolean }) {
   const items = compact ? timeline.filter((item) => item.featured).slice(0, 6) : timeline;
-  const cardWidth = compact ? 'w-72' : 'w-80';
-  const itemHeight = compact ? 'h-72' : 'h-[22rem]';
+  const cardWidth = compact ? 'w-80' : 'w-96';
+  const itemHeight = compact ? 'h-80' : 'h-[24rem]';
   const trackPadding = compact ? 'py-8' : 'py-10';
   const cardUpperOffset = compact ? '-translate-y-4' : '-translate-y-6';
   const cardLowerOffset = compact ? 'translate-y-4' : 'translate-y-6';
@@ -38,7 +38,7 @@ export function Timeline({ compact = false }: { compact?: boolean }) {
           aria-hidden={copy > 0}
           className={`relative flex ${itemHeight} shrink-0 ${cardWidth} ${upper ? 'items-start' : 'items-end'}`}
         >
-          <div className="absolute left-1/2 top-1/2 z-10 grid h-11 w-11 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full border-4 border-white bg-purple text-sm font-black text-white shadow-lg shadow-purple/20">
+          <div className="absolute left-1/2 top-1/2 z-10 grid h-12 w-12 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full border-4 border-white bg-purple text-sm font-black text-white shadow-lg shadow-purple/20">
             {String(index + 1).padStart(2, '0')}
           </div>
           <div
@@ -47,13 +47,13 @@ export function Timeline({ compact = false }: { compact?: boolean }) {
             }`}
           />
           <div
-            className={`w-full rounded border border-purple/10 bg-white p-4 shadow-sm ${
+            className={`w-full rounded border border-purple/10 bg-white p-5 shadow-sm ${
               item.featured ? 'ring-2 ring-orange/25' : ''
             } ${upper ? cardUpperOffset : cardLowerOffset}`}
           >
-            <p className="font-mono text-sm font-black text-orange">{item.date}</p>
-            <h3 className="mt-2 text-lg font-black leading-6 text-purple">{item.title}</h3>
-            <p className="mt-2 text-sm leading-6 text-slatecopy">{item.detail}</p>
+            <p className="font-mono text-base font-black text-orange">{item.date}</p>
+            <h3 className="mt-2 text-xl font-black leading-7 text-purple">{item.title}</h3>
+            <p className="mt-3 text-base leading-7 text-slatecopy">{item.detail}</p>
           </div>
         </article>
       );

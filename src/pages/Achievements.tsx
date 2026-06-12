@@ -13,13 +13,19 @@ export function Achievements() {
           title="成果与完整获奖名单"
         />
         <div className="mt-8 grid gap-4 md:grid-cols-4">
-          {stats.map((stat) => (
-            <article key={stat.label} className="rounded border border-purple/10 bg-white p-5 shadow-sm">
-              <p className="font-mono text-3xl font-black text-orange">{stat.value}</p>
-              <h3 className="mt-2 text-xl font-black text-purple">{stat.label}</h3>
-              <p className="mt-3 text-sm leading-6 text-slatecopy">{stat.caption}</p>
-            </article>
-          ))}
+          {stats.map((stat) => {
+            const longValue = stat.value.includes('/');
+
+            return (
+              <article key={stat.label} className="rounded border border-purple/10 bg-white p-5 shadow-sm">
+                <p className={`font-mono font-black text-orange ${longValue ? 'whitespace-nowrap text-[2rem]' : 'text-3xl'}`}>
+                  {stat.value}
+                </p>
+                <h3 className="mt-2 text-xl font-black text-purple">{stat.label}</h3>
+                <p className="mt-3 text-sm leading-6 text-slatecopy">{stat.caption}</p>
+              </article>
+            );
+          })}
         </div>
 
         <div className="mt-10">

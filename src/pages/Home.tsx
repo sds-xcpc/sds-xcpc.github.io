@@ -233,21 +233,29 @@ export function Home() {
 
           <div className="home-float-card grid gap-4 lg:col-span-4" style={entranceDelay(480)}>
             <div className="grid gap-4 lg:grid-cols-4">
-              {honorCounters.map((counter, index) => (
-                <article
-                  key={counter.label}
-                  className={`home-counter-card rounded border p-4 shadow-sm ${counterTone[counter.tone]}`}
-                  style={entranceDelay(620 + index * 120)}
-                >
-                  <p className="font-mono text-5xl font-black leading-none sm:text-6xl">
-                    <AnimatedCounter value={counter.value} delay={760 + index * 120} />
-                  </p>
-                  <h2 className="mt-3 text-lg font-black">{counter.label}</h2>
-                  <p className={`mt-2 text-xs leading-5 ${counter.tone === 'purple' ? 'text-white/78' : 'text-slatecopy'}`}>
-                    {counter.caption}
-                  </p>
-                </article>
-              ))}
+              {honorCounters.map((counter, index) => {
+                const longValue = counter.value.includes('/');
+
+                return (
+                  <article
+                    key={counter.label}
+                    className={`home-counter-card rounded border p-4 shadow-sm ${counterTone[counter.tone]}`}
+                    style={entranceDelay(620 + index * 120)}
+                  >
+                    <p
+                      className={`font-mono font-black leading-none ${
+                        longValue ? 'whitespace-nowrap text-[clamp(2.2rem,5vw,4rem)]' : 'text-5xl sm:text-6xl'
+                      }`}
+                    >
+                      <AnimatedCounter value={counter.value} delay={760 + index * 120} />
+                    </p>
+                    <h2 className="mt-3 text-lg font-black">{counter.label}</h2>
+                    <p className={`mt-2 text-xs leading-5 ${counter.tone === 'purple' ? 'text-white/78' : 'text-slatecopy'}`}>
+                      {counter.caption}
+                    </p>
+                  </article>
+                );
+              })}
             </div>
 
             <div className="home-float-card rounded border border-purple/10 bg-lavender2/90 p-4" style={entranceDelay(1080)}>

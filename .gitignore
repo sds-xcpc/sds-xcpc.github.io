@@ -7,3 +7,4 @@ work
 .codex-vite.err.log
 .codex-vite.job.log
 .codex-vite.pid
+vite-*.log

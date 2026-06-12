@@ -21,13 +21,17 @@ export function ResearchCareer() {
           <aside className="rounded border border-purple/10 bg-white p-6 shadow-sm">
             <Building2 className="text-orange" size={30} />
             <h2 className="mt-4 text-3xl font-black text-purple">企业实习合作</h2>
-            <p className="mt-4 text-sm leading-7 text-slatecopy">
+            <p className="mt-4 text-base leading-8 text-slatecopy">
               与多家知名企业建立了友好合作关系，绝大多数竞赛队员成功获得顶尖企业实习机会。
             </p>
             <div className="mt-5 grid grid-cols-2 gap-3">
               {companies.map((company) => (
-                <div key={company.name} className="grid min-h-28 place-items-center rounded border border-purple/10 bg-lavender2 p-4">
-                  <img src={`${import.meta.env.BASE_URL}${company.logo}`} alt={company.name} className="max-h-20 max-w-[86%] object-contain" />
+                <div key={company.name} className="grid min-h-36 place-items-center rounded border border-purple/10 bg-lavender2 p-3">
+                  <img
+                    src={`${import.meta.env.BASE_URL}${company.logo}`}
+                    alt={company.name}
+                    className={`${company.name === '华为云' ? 'max-h-32 max-w-[98%]' : 'max-h-28 max-w-[94%]'} object-contain`}
+                  />
                 </div>
               ))}
             </div>
@@ -41,9 +45,9 @@ export function ResearchCareer() {
               <article key={item.name} className="rounded border border-purple/10 bg-white p-5 shadow-sm">
                 <GraduationCap className="text-orange" size={26} />
                 <h3 className="mt-3 text-2xl font-black text-purple">{item.name}</h3>
-                <p className="mt-2 text-sm font-bold text-ink">{item.contest}</p>
-                <p className="mt-3 text-sm leading-7 text-slatecopy">{item.research}</p>
-                <p className="mt-4 rounded bg-lavender2 px-3 py-2 text-sm font-bold text-purple">{item.destination}</p>
+                <p className="mt-2 text-base font-bold text-ink">{item.contest}</p>
+                <p className="mt-3 text-base leading-8 text-slatecopy">{item.research}</p>
+                <p className="mt-4 rounded bg-lavender2 px-3 py-2 text-base font-bold text-purple">{item.destination}</p>
               </article>
             ))}
           </div>

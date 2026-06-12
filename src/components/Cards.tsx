@@ -142,7 +142,7 @@ export function EventCard({ event }: { event: EventItem }) {
           />
         )}
         {images.length > 1 && (
-          <div className="absolute bottom-3 left-0 right-0 flex justify-center gap-1.5">
+          <div className="absolute bottom-3 left-0 right-0 flex justify-center gap-2">
             {images.map((item, index) => (
               <button
                 key={item}
@@ -150,13 +150,11 @@ export function EventCard({ event }: { event: EventItem }) {
                 aria-label={`切换到第 ${index + 1} 张活动照片`}
                 aria-current={index === activeImage ? 'true' : undefined}
                 onClick={() => setActiveImage(index)}
-                className="grid h-5 place-items-center rounded-full px-1 transition focus:outline-none focus-visible:ring-2 focus-visible:ring-orange/70"
+                className={`grid h-7 min-w-7 place-items-center rounded-full px-2 text-[11px] font-black shadow-sm transition focus:outline-none focus-visible:ring-2 focus-visible:ring-orange/70 ${
+                  index === activeImage ? 'bg-orange text-white' : 'bg-white/85 text-purple hover:bg-white'
+                }`}
               >
-                <span
-                  className={`h-1.5 rounded-full transition-all ${
-                    index === activeImage ? 'w-7 bg-orange' : 'w-1.5 bg-white/80'
-                  }`}
-                />
+                {String(index + 1).padStart(2, '0')}
               </button>
             ))}
           </div>
@@ -169,10 +167,10 @@ export function EventCard({ event }: { event: EventItem }) {
         </div>
         <h3 className="mt-3 text-2xl font-black text-purple">{event.title}</h3>
         <p className="mt-1 text-sm font-semibold text-slatecopy">{event.location}</p>
-        <p className="mt-3 text-sm leading-7 text-slatecopy">{event.body}</p>
+        <p className="mt-3 text-base leading-8 text-slatecopy">{event.body}</p>
         <div className="mt-4 grid gap-2 border-t border-purple/10 pt-4">
           {event.metrics.map((metric) => (
-            <div key={metric} className="border-l-2 border-orange/70 pl-3 text-sm font-semibold leading-6 text-purple">
+            <div key={metric} className="border-l-2 border-orange/70 pl-3 text-base font-semibold leading-7 text-purple">
               {metric}
             </div>
           ))}
