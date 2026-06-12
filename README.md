@@ -13,7 +13,7 @@ The development server prints a local URL such as `http://localhost:5173/`.
 For this Codex session, the preview is currently running at:
 
 ```text
-http://127.0.0.1:5174/
+http://127.0.0.1:5175/
 ```
 
 The site uses Vite, React, TypeScript, Tailwind, `react-router-dom`, and `lucide-react`, matching the same general npm workflow as `chenjb1997.github.io` and `sds-theory`.
@@ -38,7 +38,6 @@ Current pages:
 - Home
 - Present
 - Contests
-- Training
 - Achievements
 - People
 - Research & Career
@@ -55,16 +54,16 @@ Implemented site behavior:
 
 ## GitHub Pages
 
-This project builds with Vite and deploys the `dist` folder to the `gh-pages` branch through `.github/workflows/deploy.yml`.
+This project builds with Vite and deploys the `dist` folder with GitHub Pages Actions through `.github/workflows/pages.yml`.
 
-For a normal project repository named `xcpc-team`, the Vite base path is detected as `/xcpc-team/` in GitHub Actions. For a user or organization page repository, the base path is `/`.
+For a repository named `sds-xcpc.github.io`, the Vite base path is `/`.
 
 After pushing to GitHub:
 
 1. Open the repository settings.
 2. Go to Pages.
-3. Set the source to the `gh-pages` branch.
-4. Keep the folder as `/`.
+3. Set the source to GitHub Actions if it is not already selected.
+4. The workflow will publish the built `dist` artifact.
 
 ## Project Notes
 
