@@ -54,7 +54,7 @@ Implemented site behavior:
 
 ## GitHub Pages
 
-This project builds with Vite and deploys the `dist` folder with GitHub Pages Actions through `.github/workflows/pages.yml`.
+This project builds with Vite from `main`, then publishes the built `dist` files to the `gh-pages` branch through `.github/workflows/pages.yml`.
 
 For a repository named `sds-xcpc.github.io`, the Vite base path is `/`.
 
@@ -62,8 +62,9 @@ After pushing to GitHub:
 
 1. Open the repository settings.
 2. Go to Pages.
-3. Set the source to GitHub Actions if it is not already selected.
-4. The workflow will publish the built `dist` artifact.
+3. Set the source to `Deploy from a branch`.
+4. Set the branch to `gh-pages` and the folder to `/ (root)`.
+5. The workflow will keep `gh-pages` updated from `main`.
 
 ## Project Notes
 
