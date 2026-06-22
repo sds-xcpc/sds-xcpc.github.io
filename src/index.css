@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Liu+Jian+Mao+Cao&family=Zhi+Mang+Xing&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -117,6 +119,29 @@
     }
     to {
       transform: translateX(-50%);
+    }
+  }
+
+  @keyframes calligraphy-ink {
+    0% {
+      opacity: 0;
+      clip-path: inset(0 100% 0 0);
+      transform: translateX(-0.22em);
+    }
+    18% {
+      opacity: 1;
+      clip-path: inset(0 0 0 0);
+      transform: translateX(0);
+    }
+    82% {
+      opacity: 1;
+      clip-path: inset(0 0 0 0);
+      transform: translateX(0);
+    }
+    100% {
+      opacity: 0;
+      clip-path: inset(0 0 0 0);
+      transform: translateX(0.08em);
     }
   }
 
@@ -244,6 +269,22 @@
     animation-play-state: paused;
   }
 
+  .training-calligraphy {
+    position: relative;
+    display: inline-block;
+    padding: 0.08em 0.16em 0.12em;
+    font-family: "Zhi Mang Xing", "Liu Jian Mao Cao", "华文行楷", "STXingkai", "方正行楷简体", "FZXingKai-S04", "Xingkai SC", cursive;
+    font-size: clamp(2.2rem, 5.2vw, 4.6rem);
+    font-weight: 400;
+    line-height: 1.12;
+    letter-spacing: 0;
+    color: #3f1c78;
+    text-shadow:
+      0 8px 22px rgba(74, 37, 139, 0.1),
+      0 1px 0 rgba(255, 152, 0, 0.08);
+    animation: calligraphy-ink 5.8s cubic-bezier(0.16, 1, 0.3, 1) infinite both;
+  }
+
   @media (prefers-reduced-motion: reduce) {
     html {
       scroll-behavior: auto;
@@ -254,7 +295,8 @@
     .home-float-card,
     .home-counter-card,
     .code-ribbon,
-    .timeline-marquee-track {
+    .timeline-marquee-track,
+    .training-calligraphy {
       animation: none;
     }
 
