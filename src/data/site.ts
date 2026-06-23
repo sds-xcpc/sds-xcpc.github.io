@@ -113,11 +113,11 @@ export const hero = {
     '香港中文大学（深圳）程序设计竞赛队是代表香港中文大学（深圳）参加国际/国内大学生程序设计竞赛的组织。',
   image: 'images/hero-team.jpg',
   images: [
-    'images/hero-team.jpg',
-    'images/home/gba-2026-group.jpg',
-    'images/home/gba-2026-advisors.jpg',
-    'images/home/icpc-2026-arena.jpg',
     'images/home/icpc-2026-advisors.jpg',
+    'images/home/gba-2026-advisors.jpg',
+    'images/home/gba-2026-group.jpg',
+    'images/hero-team.jpg',
+    'images/home/icpc-2026-arena.jpg',
   ],
 };
 
@@ -134,33 +134,33 @@ export const teamMission = {
 
 export const teamIntro = [
   '香港中文大学（深圳）程序设计竞赛队（以下简称“竞赛队”）是代表香港中文大学（深圳）参加国际/国内大学生程序设计竞赛的组织，由数据科学学院方一向教授、马晨昊教授、陈靖邦教授任指导老师，本科生何润元、周莫非任学生队长，共29位学生队员。竞赛队向全校同学开放加入的机会。本年度，代表大学参赛的队员来自多个学院，横跨四个年级。',
-  '竞赛队所参加的大学生程序设计竞赛是培养高端人才的重要途径。国际大学生程序设计竞赛（International Collegiate Programming Contest）是全球最具影响力的大学生计算机竞赛，被誉为计算机软件领域的奥林匹克。竞赛队还积极参加中国大学生程序设计竞赛（China Collegiate Programming Contest）等知名赛事。自成立以来，竞赛队目前累计获得37枚金奖、34枚银奖、20枚铜奖。',
+  '竞赛队所参加的大学生程序设计竞赛是培养高端人才的重要途径。国际大学生程序设计竞赛（International Collegiate Programming Contest）是全球最具影响力的大学生计算机竞赛，被誉为计算机软件领域的奥林匹克。竞赛队还积极参加中国大学生程序设计竞赛（China Collegiate Programming Contest）等知名赛事。自成立以来，竞赛队目前累计获得38枚金奖、37枚银奖、20枚铜奖。',
   '参加国内外各类程序设计竞赛之余，竞赛队还成功举办了2023-2024年香港中文大学（深圳）程序设计竞赛、2025-2026年粤港澳大湾区国际编程大赛，吸引了全校、大湾区、乃至世界各地学生的参赛。于2026年4月11日，竞赛队成功举办了2026年国际大学生程序设计竞赛全国邀请赛（深圳），这是我校历史上首次承办ICPC系列赛事，标志着我校在计算机学科竞赛组织能力及学术影响力方面再上新台阶。此外，竞赛队还积极参与了大学本科生招生，协助附属学校信息学竞赛培训，举办各类编程相关的课程复习讲座，与大湾区其它高校、企业、中小学进行友好互动等。',
   '竞赛队始终秉持着全栈式培养理念，积极搭建发展平台，为全体队员在校四年期间提供全面成长的机会。在队员大一、大二阶段，竞赛队精心规划，助力队员踊跃参与国内外各类编程赛事，在实战中锤炼技能、积累经验；待队员步入大三大四，竞赛队充分发挥资源优势，将队员推荐至专业课题组以及知名企业，让他们在科研探索与实习实践中深化专业认知、提升综合能力，为未来的职业发展筑牢坚实根基。目前，已毕业的多名队员在加州大学伯克利分校、滑铁卢大学、南洋理工大学等世界顶尖学府攻读博士学位。',
 ];
 
 export const stats: Stat[] = [
   { value: '2020.09', label: '团队成立', caption: '香港中文大学（深圳）程序设计竞赛队成立于2020年9月。' },
-  { value: '37 / 34 / 20', label: '金 / 银 / 铜', caption: '截止2026年，累计获得37枚金奖、34枚银奖、20枚铜奖。' },
-  { value: '2', label: 'World Final 出线', caption: '获得第46届、48届ICPC World Final出线资格。' },
+  { value: '38 / 37 / 20', label: '金 / 银 / 铜', caption: '截止2026年，累计获得38枚金奖、37枚银奖、20枚铜奖。' },
+  { value: '3', label: 'World Final 出线', caption: '获得第46届、48届、50届ICPC World Final出线资格。' },
   { value: '29', label: '学生队员', caption: '共29位学生队员。本年度，代表大学参赛的队员来自多个学院，横跨四个年级。' },
 ];
 
 export const honorCounters: HonorCounter[] = [
   {
-    value: '2',
+    value: '3',
     label: 'ICPC World Final 出线',
-    caption: '获得第46届、48届ICPC World Final出线资格',
+    caption: '获得第46届、48届、50届ICPC World Final出线资格',
     tone: 'purple',
   },
   {
-    value: '37',
+    value: '38',
     label: '金奖',
     caption: '截止2026年，累计获得',
     tone: 'gold',
   },
   {
-    value: '34',
+    value: '37',
     label: '银奖',
     caption: '截止2026年，累计获得',
     tone: 'silver',
@@ -277,6 +277,7 @@ export const timeline: TimelineItem[] = [
   { date: '2024.11', title: 'CCPC 郑州站首获奖杯', detail: '在 CCPC 郑州站取得奖杯。' },
   { date: '2026.04', title: '承办 ICPC 全国邀请赛（深圳）', detail: '学校首次承办 ICPC 系列赛事，组织能力迈上新台阶。', featured: true },
   { date: '2026.05', title: '首获省赛冠军', detail: '取得队史首次广东省赛冠军。', featured: true },
+  { date: '2026.06', title: '第三次锁定 World Final 名额', detail: '队伍获得第50届 ICPC World Final 出线资格。', featured: true },
 ];
 
 export const teachers: Person[] = [
@@ -361,8 +362,8 @@ export const captains: Person[] = [
     affiliation: '数据科学学院，2025级学生',
     image: 'images/people-zhou-mofei.jpg',
     period: '2026.05 至今',
-    highlights: ['2025 ICPC 南京站金牌', '2025 ICPC 香港站金牌', '2025 ICPC 亚洲区决赛金牌', '2025 CCPC 济南站金牌', '2026 广东省赛冠军'],
-    bio: '曾获2025年ICPC南京站、香港站、亚洲区决赛金牌、CCPC济南站金牌、2026年广东省赛冠军。',
+    highlights: ['2025 ICPC 南京站金牌', '2025 ICPC 香港站金牌', '2025 ICPC 亚洲区决赛金牌', '2025 CCPC 济南站金牌', '2026 广东省赛冠军', 'ICPC World Final 参赛资格'],
+    bio: '曾获2025年ICPC南京站、香港站、亚洲区决赛金牌、CCPC济南站金牌、2026年广东省赛冠军，并获得ICPC World Final参赛资格。',
   },
 ];
 
@@ -393,7 +394,7 @@ export const featuredTeams: FeaturedTeam[] = [
     englishName: 'Mynoghra',
     image: 'images/teams/mynoghra.jpg',
     members: ['周莫非', '陈嘉年', '王泽诚'],
-    honors: ['广东省赛冠军', 'ICPC亚洲区决赛金牌', 'ICPC南京站金牌', 'ICPC香港站金牌', 'CCPC济南站金牌'],
+    honors: ['广东省赛冠军', 'ICPC亚洲区决赛金牌', 'ICPC南京站金牌', 'ICPC香港站金牌', 'CCPC济南站金牌', 'ICPC World Final参赛资格'],
   },
 ];
 
@@ -538,31 +539,38 @@ export const events: EventItem[] = [
 ];
 
 export const awardees: Awardee[] = [
-  { name: '周莫非', year: '2025', school: '数据科学学院', achievement: 'ICPC EC Final 金奖、CCPC 金奖、广东省赛冠军' },
-  { name: '陈嘉年', year: '2025', school: '数据科学学院', achievement: 'ICPC EC Final 金奖、CCPC 金奖、广东省赛冠军' },
-  { name: '涂宵箫', year: '2024', school: '数据科学学院', achievement: 'ICPC 金奖、CCPC 金奖、CCPC 女生赛冠军' },
-  { name: '杨久知', year: '2024', school: '经管学院', achievement: 'ICPC 金奖、CCPC 金奖、CCPC 女生赛冠军' },
-  { name: '王泽诚', year: '2024', school: '数据科学学院', achievement: 'ICPC EC Final 金奖、CCPC 金奖、广东省赛冠军' },
-  { name: '江璘鋆', year: '2024', school: '理工学院', achievement: 'ICPC 铜奖' },
-  { name: '张力文', year: '2024', school: '数据科学学院', achievement: 'ICPC 铜奖' },
+  { name: '周莫非', year: '2025', school: '数据科学学院', achievement: '进入 ICPC 世界总决赛、ICPC EC Final 金奖、CCPC 金奖、广东省赛冠军' },
+  { name: '陈嘉年', year: '2025', school: '数据科学学院', achievement: '进入 ICPC 世界总决赛、ICPC EC Final 金奖、CCPC 金奖、广东省赛冠军' },
+  { name: '苏祈骁', year: '2025', school: '人工智能学院', achievement: 'ICPC 银奖' },
+  { name: '欧奕阳', year: '2025', school: '数据科学学院', achievement: 'ICPC 银奖' },
+  { name: '余哲伟', year: '2025', school: '数据科学学院', achievement: 'CCPC 铜奖' },
+  { name: '许可捷', year: '2025', school: '数据科学学院', achievement: 'CCPC 铜奖' },
+  { name: '涂宵箫', year: '2024', school: '数据科学学院', achievement: 'ICPC 金奖、CCPC 女生赛冠军' },
+  { name: '杨久知', year: '2024', school: '经管学院', achievement: 'ICPC 金奖、CCPC 女生赛冠军' },
+  { name: '王泽诚', year: '2024', school: '数据科学学院', achievement: '进入 ICPC 世界总决赛、ICPC EC Final 金奖、CCPC 金奖、广东省赛冠军' },
+  { name: 'Adam Tejasukmana', year: '2024', school: '数据科学学院', achievement: 'ICPC 银奖' },
+  { name: '张力文', year: '2024', school: '数据科学学院', achievement: 'ICPC 银奖' },
+  { name: '周天', year: '2024', school: '数据科学学院', achievement: 'ICPC 银奖' },
+  { name: '孙超逸', year: '2024', school: '数据科学学院', achievement: 'ICPC 银奖' },
+  { name: '王中天', year: '2024', school: '数据科学学院', achievement: 'ICPC 银奖' },
   { name: '林宇凡', year: '2024', school: '数据科学学院', achievement: 'ICPC 铜奖' },
-  { name: '周天', year: '2024', school: '数据科学学院', achievement: 'ICPC 铜奖' },
   { name: '郭雨昂', year: '2024', school: '数据科学学院', achievement: 'ICPC 铜奖' },
-  { name: '孙超逸', year: '2024', school: '数据科学学院', achievement: 'ICPC 铜奖' },
   { name: '张恒', year: '2024', school: '数据科学学院', achievement: 'ICPC 铜奖' },
-  { name: '梁皓', year: '2024', school: '数据科学学院', achievement: 'ICPC 铜奖' },
-  { name: '何润元', year: '2023', school: '数据科学学院', achievement: '进入 ICPC 世界总决赛' },
-  { name: '孙悠然', year: '2023', school: '数据科学学院', achievement: 'ICPC EC Final 金奖、CCPC 季军、CCPC 女生赛冠军' },
-  { name: '张王美誉', year: '2023', school: '数据科学学院', achievement: 'ICPC 金奖、CCPC 银奖' },
+  { name: '梁皓', year: '2024', school: '数据科学学院', achievement: 'ICPC 铜奖、CCPC 铜奖' },
+  { name: '邓沣庭', year: '2024', school: '数据科学学院', achievement: 'CCPC 广东省赛铜奖' },
+  { name: '何润元', year: '2023', school: '数据科学学院', achievement: '进入 ICPC 世界总决赛、CCPC 金奖' },
+  { name: '孙悠然', year: '2023', school: '数据科学学院', achievement: 'ICPC EC Final 金奖、CCPC 女生赛冠军' },
+  { name: '张王美誉', year: '2023', school: '数据科学学院', achievement: 'ICPC 金奖、CCPC 女生赛金奖' },
   { name: '莫骄阳', year: '2023', school: '理工学院', achievement: 'ICPC 金奖、CCPC 银奖' },
   { name: '周信言', year: '2023', school: '数据科学学院', achievement: 'ICPC 金奖、CCPC 银奖' },
-  { name: 'Dang Huu Quyen', year: '2023', school: '数据科学学院', achievement: 'ICPC 金奖、CCPC 银奖' },
-  { name: '叶嘉泓', year: '2023', school: '数据科学学院', achievement: 'ICPC 铜奖' },
+  { name: 'Dang Huu Quyen', year: '2023', school: 'CUHK交流生', achievement: 'ICPC 金奖' },
+  { name: '江璘鋆', year: '2023', school: '理工学院', achievement: 'ICPC 铜奖' },
+  { name: '叶嘉泓', year: '2023', school: '数据科学学院', achievement: 'ICPC 银奖' },
   { name: '曾子荣', year: '2022', school: '数据科学学院', achievement: '进入 ICPC 世界总决赛' },
   { name: '陈翰飞', year: '2022', school: '数据科学学院', achievement: '进入 ICPC 世界总决赛' },
   { name: '周宸宇', year: '2022', school: '数据科学学院', achievement: 'ICPC 金奖' },
   { name: '刘戴乐', year: '2022', school: '数据科学学院', achievement: 'ICPC 铜奖、CCPC 铜奖' },
-  { name: '梁骆城', year: '2022', school: '数据科学学院', achievement: 'ICPC 铜奖、CCPC 铜奖' },
+  { name: '梁骆城', year: '2022', school: '数据科学学院', achievement: 'ICPC 铜奖、CCPC 广东省赛银奖' },
   { name: '邵辰航', year: '2022', school: '数据科学学院', achievement: 'ICPC 铜奖、CCPC 铜奖' },
   { name: '胡瑞李蓁', year: '2022', school: '数据科学学院', achievement: 'CCPC 银奖' },
   { name: '忙秋阳', year: '2021', school: '数据科学学院', achievement: '进入 ICPC 世界总决赛' },
@@ -680,16 +688,16 @@ export const presentationSlides = [
   {
     kicker: '06 / 战绩',
     title: '竞赛队成果',
-    takeaway: '截止2026年，累计获得37枚金奖、34枚银奖、20枚铜奖。',
+    takeaway: '截止2026年，累计获得38枚金奖、37枚银奖、20枚铜奖。',
     image: 'images/achievement-medals.jpg',
-    bullets: ['曾获得ICPC亚洲区域赛亚军、季军等奖项', '2025年获中国大学生程序设计竞赛女生专场冠军', '获得第46届、48届ICPC World Final出线资格'],
+    bullets: ['曾获得ICPC亚洲区域赛亚军、季军等奖项', '2025年获中国大学生程序设计竞赛女生专场冠军', '获得第46届、48届、50届ICPC World Final出线资格'],
   },
   {
     kicker: '07 / 队伍',
     title: '优秀队伍',
-    takeaway: '新手上路（Novices on the Road）；香港中文大学-深圳（待定）（CUHK-SZ:(TBD)）；WTYTO。',
+    takeaway: '新手上路（Novices on the Road）；香港中文大学-深圳（待定）（CUHK-SZ:(TBD)）；WTYTO；Mynoghra。',
     image: 'images/teams/wtyto.jpg',
-    bullets: ['ICPC亚洲区决赛金牌；ICPC沈阳站亚军；ICPC World Final参赛资格', 'ICPC港澳站季军；CCPC深圳站金牌；ICPC World Final参赛资格', 'CCPC女生专场冠军'],
+    bullets: ['ICPC亚洲区决赛金牌；ICPC沈阳站亚军；ICPC World Final参赛资格', 'ICPC港澳站季军；CCPC深圳站金牌；ICPC World Final参赛资格', 'CCPC女生专场冠军', 'Mynoghra：广东省赛冠军；ICPC亚洲区决赛金牌；ICPC World Final参赛资格'],
   },
   {
     kicker: '08 / 出路',

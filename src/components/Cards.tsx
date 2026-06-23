@@ -71,6 +71,8 @@ export function PersonCard({ person }: { person: Person }) {
 }
 
 export function TeamCard({ team }: { team: FeaturedTeam }) {
+  const compact = team.honors.length > 4;
+
   return (
     <article className="lift overflow-hidden rounded border border-purple/10 bg-white shadow-sm">
       <div className="relative h-72 bg-lavender2 xl:h-80">
@@ -80,7 +82,7 @@ export function TeamCard({ team }: { team: FeaturedTeam }) {
         <h3 className="text-2xl font-black text-purple">{team.name}</h3>
         {team.englishName && <p className="mt-1 font-mono text-sm text-slatecopy">{team.englishName}</p>}
         <p className="mt-4 text-sm font-semibold text-ink">成员：{team.members.join('、')}</p>
-        <div className="mt-4 grid gap-2">
+        <div className={`mt-4 grid gap-2 ${compact ? 'sm:grid-cols-2' : ''}`}>
           {team.honors.map((honor) => (
             <span key={honor} className="rounded bg-orange/10 px-3 py-2 text-sm font-semibold text-purple">
               {honor}

@@ -210,15 +210,17 @@ function StairRoadmapSlide() {
 }
 
 function TeamCard({ team }: { team: FeaturedTeam }) {
+  const compact = team.honors.length > 4;
+
   return (
     <Card className="flex min-h-0 flex-col">
       <ImageBox src={team.image} alt={team.name} className="h-72 shrink-0" fit="contain" />
-      <h3 className="mt-5 text-3xl font-black text-purple">{team.name}</h3>
+      <h3 className={`${compact ? 'mt-4 text-3xl' : 'mt-5 text-3xl'} font-black text-purple`}>{team.name}</h3>
       {team.englishName && <p className="mt-1 font-mono text-base text-slatecopy">{team.englishName}</p>}
-      <p className="mt-4 text-base font-bold text-ink">成员：{team.members.join('、')}</p>
-      <div className="mt-4 grid gap-2">
+      <p className={`${compact ? 'mt-3' : 'mt-4'} text-base font-bold text-ink`}>成员：{team.members.join('、')}</p>
+      <div className={`${compact ? 'mt-3 grid-cols-2 gap-2' : 'mt-4 gap-2'} grid`}>
         {team.honors.map((honor) => (
-          <span key={honor} className="rounded bg-orange/10 px-3 py-2 text-base font-bold text-purple">
+          <span key={honor} className={`rounded bg-orange/10 font-bold text-purple ${compact ? 'px-3 py-1.5 text-sm leading-6' : 'px-3 py-2 text-base'}`}>
             {honor}
           </span>
         ))}

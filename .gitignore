@@ -1,6 +1,7 @@
 node_modules
 dist
 work
+.tmp
 .DS_Store
 .env
 .codex-vite.out.log
