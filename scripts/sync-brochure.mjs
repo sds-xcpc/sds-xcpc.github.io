@@ -120,6 +120,10 @@ function formatCurrentCaptains(captains) {
     .join('\n');
 }
 
+function chineseParagraphs(lines) {
+  return lines.map((line) => `　　${cleanSpacing(line)}`);
+}
+
 function timelinePagePlan(items, title = '团队发展') {
   const cardIds = timelineCardIds;
   const unusedShapeIds = [22, 59, 13, 58, 6];
@@ -297,7 +301,7 @@ function addShiftedPageNumbers(parts, captainExtraPages, timelineExtraPages, tea
   }
 }
 
-function tocLines(captainExtraPages, timelineExtraPages, teamExtraPages, awardeeExtraPages) {
+function tocItems(captainExtraPages, timelineExtraPages, teamExtraPages, awardeeExtraPages) {
   const shifted = (page, afterCaptains = true, afterTimeline = false, afterTeams = false, afterAwardees = false) =>
     page +
     (afterCaptains ? captainExtraPages : 0) +
@@ -305,27 +309,143 @@ function tocLines(captainExtraPages, timelineExtraPages, teamExtraPages, awardee
     (afterTeams ? teamExtraPages : 0) +
     (afterAwardees ? awardeeExtraPages : 0);
   return [
-    `赛事简介   …………………………………………………………1`,
-    `为什么参加竞赛   …………………………………………………2`,
-    `竞赛队宗旨   ………………………………………………………3`,
-    `指导教师   …………………………………………………………4`,
-    `历任队长   …………………………………………………………5`,
-    `全栈式培养   ………………………………………………………${shifted(6)}`,
-    `团队发展   …………………………………………………………${shifted(7)}`,
-    `竞赛队成果   ………………………………………………………${shifted(8, true, true)}`,
-    `优秀队伍   …………………………………………………………${shifted(9, true, true)}`,
-    `企业实习   …………………………………………………………${shifted(10, true, true, true)}`,
-    `科研活动   …………………………………………………………${shifted(11, true, true, true)}`,
-    `活动风采   …………………………………………………………${shifted(13, true, true, true)}`,
-    `曾获ICPC/CCPC奖项队员   ………………………………………${shifted(18, true, true, true)}`,
-    `优秀队员去向   ……………………………………………………${shifted(21, true, true, true, true)}`,
+    ['赛事简介', 1],
+    ['为什么参加竞赛', 2],
+    ['竞赛队宗旨', 3],
+    ['指导教师', 4],
+    ['历任队长', 5],
+    ['全栈式培养', shifted(6)],
+    ['团队发展', shifted(7)],
+    ['竞赛队成果', shifted(8, true, true)],
+    ['优秀队伍', shifted(9, true, true)],
+    ['企业实习', shifted(10, true, true, true)],
+    ['科研活动', shifted(11, true, true, true)],
+    ['活动风采', shifted(13, true, true, true)],
+    ['ICPC/CCPC 获奖队员', shifted(18, true, true, true)],
+    ['优秀队员去向', shifted(21, true, true, true, true)],
   ];
+}
+
+function tocCardPlan(captainExtraPages, timelineExtraPages, teamExtraPages, awardeeExtraPages) {
+  const items = tocItems(captainExtraPages, timelineExtraPages, teamExtraPages, awardeeExtraPages);
+  const cardIds = items.map((_, index) => 529 + index);
+  const numberIds = items.map((_, index) => 560 + index);
+  const labelIds = items.map((_, index) => 580 + index);
+  const leftX = 940000;
+  const rightX = 4040000;
+  const startY = 2470000;
+  const cardW = 2920000;
+  const cardH = 610000;
+  const rowGap = 190000;
+  const itemBox = (index) => {
+    const col = index < 7 ? 0 : 1;
+    const row = index % 7;
+    return {
+      x: col ? rightX : leftX,
+      y: startY + row * (cardH + rowGap),
+    };
+  };
+
+  return {
+    shapeClones: [
+      ...numberIds.map((targetShapeId) => ({
+        sourceShapeId: 529,
+        targetShapeId,
+        name: `目录条目序号 ${targetShapeId}`,
+      })),
+      ...labelIds.map((targetShapeId) => ({
+        sourceShapeId: 529,
+        targetShapeId,
+        name: `目录条目标题 ${targetShapeId}`,
+      })),
+      ...cardIds.slice(1).map((targetShapeId) => ({
+        sourceShapeId: 529,
+        targetShapeId,
+        name: `目录条目背景 ${targetShapeId}`,
+      })),
+    ],
+    shapeText: [
+      ...cardIds.map((shapeId) => ({
+        shapeId,
+        fontSize: 100,
+        lines: [''],
+      })),
+      ...numberIds.map((shapeId, index) => ({
+        shapeId,
+        fontSize: 1200,
+        lines: [String(index + 1).padStart(2, '0')],
+        textStyle: {
+          align: 'ctr',
+          anchor: 'ctr',
+          bold: true,
+          color: 'F59A23',
+          fontFace: 'Microsoft YaHei',
+        },
+      })),
+      ...labelIds.map((shapeId, index) => {
+        const [label, page] = items[index];
+        return {
+          shapeId,
+          fontSize: 1060,
+          lines: [`${label}  /  P.${String(page).padStart(2, '0')}`],
+          textStyle: {
+            align: 'l',
+            anchor: 'ctr',
+            bold: true,
+            color: '4B2A88',
+            fontFace: 'Microsoft YaHei',
+          },
+        };
+      }),
+    ],
+    shapeGeometry: [
+      ...cardIds.map((shapeId, index) => {
+        const box = itemBox(index);
+        return {
+          shapeId,
+          x: box.x,
+          y: box.y,
+          cx: cardW,
+          cy: cardH,
+          resetTransform: true,
+        };
+      }),
+      ...numberIds.map((shapeId, index) => {
+        const box = itemBox(index);
+        return {
+          shapeId,
+          x: box.x + 150000,
+          y: box.y,
+          cx: 430000,
+          cy: cardH,
+          resetTransform: true,
+        };
+      }),
+      ...labelIds.map((shapeId, index) => {
+        const box = itemBox(index);
+        return {
+          shapeId,
+          x: box.x + 670000,
+          y: box.y,
+          cx: cardW - 790000,
+          cy: cardH,
+          resetTransform: true,
+        };
+      }),
+    ],
+    shapeStyle: cardIds.map((shapeId) => ({
+        shapeId,
+        fill: 'FFFFFF',
+        line: 'E1D7F5',
+        lineWidth: 9525,
+      })),
+  };
 }
 
 function makePlan(data) {
   const medals = medalParts(data.stats);
   const worldFinal = statByLabel(data.stats, 'World Final');
-  const introLines = [data.teamIntro[0].replace('（以下简称“竞赛队”）', ''), ...data.teamIntro.slice(1)];
+  const introLines = chineseParagraphs([data.teamIntro[0].replace('（以下简称“竞赛队”）', ''), ...data.teamIntro.slice(1)]);
   const recentCaptains = data.captains.slice(3).reverse();
   const formerCaptains = data.captains.slice(0, 3).reverse();
   const timelinePages = chunk(data.timeline, timelinePageSize);
@@ -341,20 +461,18 @@ function makePlan(data) {
       shapeText: [
         {
           shapeId: 515,
-          fontSize: 1180,
+          fontSize: 1220,
           lines: introLines,
+          textStyle: {
+            align: 'just',
+            lineSpacingPct: 125000,
+            spaceAfterPts: 8,
+          },
         },
       ],
+      shapeGeometry: [{ shapeId: 515, x: 540000, y: 2130000, cx: 6480000, cy: 8210000 }],
     },
-    'ppt/slides/slide3.xml': {
-      shapeText: [
-        {
-          shapeId: 529,
-          fontSize: 1420,
-          lines: tocLines(captainExtraPages, timelineExtraPages, teamExtraPages, awardeeExtraPages),
-        },
-      ],
-    },
+    'ppt/slides/slide3.xml': tocCardPlan(captainExtraPages, timelineExtraPages, teamExtraPages, awardeeExtraPages),
     'ppt/slides/slide8.xml': captainPagePlan(recentCaptains, '历任队长', 5),
     'ppt/slides/slide10.xml': timelinePagePlan(timelinePages[0] ?? []),
     'ppt/slides/slide11.xml': {

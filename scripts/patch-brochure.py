@@ -34,6 +34,15 @@ def first_or_default(pattern: str, text: str, default: str = "") -> str:
     return match.group(0) if match else default
 
 
+def set_p_pr_child(p_pr: str, tag: str, child_xml: str) -> str:
+    if not p_pr:
+        p_pr = "<a:pPr/>"
+    if p_pr.endswith("/>"):
+        return p_pr[:-2] + f">{child_xml}</a:pPr>"
+    p_pr = re.sub(rf"<a:{tag}\b[\s\S]*?</a:{tag}>", "", p_pr)
+    return p_pr.replace("</a:pPr>", f"{child_xml}</a:pPr>", 1)
+
+
 def styled_run_properties(r_pr: str, style: dict | None = None) -> str:
     style = style or {}
     if style.get("bold"):
@@ -63,11 +72,19 @@ def styled_paragraph_properties(p_pr: str, style: dict | None = None) -> str:
             p_pr = replace_xml_attr(p_pr, "<a:pPr", "algn", align)
         else:
             p_pr = f'<a:pPr algn="{align}"/>'
+    if style.get("lineSpacingPct"):
+        value = int(style["lineSpacingPct"])
+        p_pr = set_p_pr_child(p_pr, "lnSpc", f'<a:lnSpc><a:spcPct val="{value}"/></a:lnSpc>')
+    if style.get("spaceAfterPts") is not None:
+        value = int(float(style["spaceAfterPts"]) * 100)
+        p_pr = set_p_pr_child(p_pr, "spcAft", f'<a:spcAft><a:spcPts val="{value}"/></a:spcAft>')
     return p_pr
 
 
 def make_paragraph(line: str, p_pr: str, r_pr: str) -> str:
-    return f"<a:p>{p_pr}<a:r>{r_pr}<a:t>{esc(line)}</a:t></a:r></a:p>"
+    text = str(line)
+    preserve = ' xml:space="preserve"' if text and (text[0].isspace() or text[-1].isspace()) else ""
+    return f"<a:p>{p_pr}<a:r>{r_pr}<a:t{preserve}>{esc(text)}</a:t></a:r></a:p>"
 
 
 def make_paragraphs(lines: list[str], template: str, font_size: str | None = None, style: dict | None = None) -> str:
@@ -125,6 +142,30 @@ def set_shape_text(
     updated_body = rewrite_tx_body(body_match.group(0), lines, font_size, style)
     updated_shape = shape[: body_match.start()] + updated_body + shape[body_match.end() :]
     return xml[: match.start()] + updated_shape + xml[match.end() :], 1
+
+
+def clone_shape(xml: str, source_id: str, target_id: str, name: str | None = None) -> tuple[str, int]:
+    source_pattern = re.compile(
+        rf"(<p:sp\b(?:(?!</p:sp>).)*?<p:cNvPr\b[^>]*\bid=\"{re.escape(str(source_id))}\"[^>]*>[\s\S]*?</p:sp>)",
+        re.DOTALL,
+    )
+    source_match = source_pattern.search(xml)
+    if not source_match:
+        return xml, 0
+
+    if re.search(rf"<p:cNvPr\b[^>]*\bid=\"{re.escape(str(target_id))}\"", xml):
+        return xml, 0
+
+    cloned = source_match.group(1)
+
+    def replace_cnvpr(match: re.Match[str]) -> str:
+        fragment = replace_xml_attr(match.group(0), "<p:cNvPr", "id", str(target_id))
+        if name:
+            fragment = replace_xml_attr(fragment, "<p:cNvPr", "name", esc(name))
+        return fragment
+
+    cloned = re.sub(r"<p:cNvPr\b[^>]*/>", replace_cnvpr, cloned, count=1)
+    return xml[: source_match.end()] + cloned + xml[source_match.end() :], 1
 
 
 def set_all_run_sizes_in_shape(xml: str, shape_id: str, font_size: str) -> tuple[str, int]:
@@ -421,6 +462,10 @@ def apply_part_plan(xml: str, plan: dict) -> tuple[str, int]:
 
     if plan.get("replaceText"):
         xml, c = replace_text_nodes(xml, plan["replaceText"])
+        count += c
+
+    for item in plan.get("shapeClones", []):
+        xml, c = clone_shape(xml, str(item["sourceShapeId"]), str(item["targetShapeId"]), item.get("name"))
         count += c
 
     for item in plan.get("shapeText", []):
