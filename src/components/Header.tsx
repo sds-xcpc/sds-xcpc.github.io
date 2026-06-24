@@ -25,16 +25,16 @@ export function Header() {
       <div className="wide-shell flex min-h-20 items-center justify-between gap-5 py-3">
         <div className="flex min-w-0 items-center gap-5">
           <a
-            href={site.website}
+            href={site.universityWebsite}
             className="flex shrink-0 items-center"
-            aria-label="数据科学学院官网"
+            aria-label="香港中文大学（深圳）官网"
             target="_blank"
             rel="noreferrer"
           >
             <img
-              src={`${import.meta.env.BASE_URL}images/logos/cuhksz-sds-lockup.png`}
-              alt="香港中文大学（深圳）与数据科学学院"
-              className="h-8 w-auto max-w-[190px] shrink-0 object-contain sm:h-10 sm:max-w-[330px] lg:max-w-[390px]"
+              src={`${import.meta.env.BASE_URL}images/logos/cuhksz-logo.png`}
+              alt="香港中文大学（深圳）"
+              className="h-8 w-auto max-w-[190px] shrink-0 object-contain sm:h-10 sm:max-w-[320px] lg:max-w-[360px]"
             />
           </a>
 

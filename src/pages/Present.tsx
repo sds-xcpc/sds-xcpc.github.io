@@ -34,8 +34,30 @@ const highlightedAuthorNames = ['Yixiang Fang', 'Yuyang Xia', 'Chenhao Ma', 'Qiu
 const highlightedAuthorPattern = new RegExp(`(${highlightedAuthorNames.join('|')})`, 'gi');
 const slideWidth = 1600;
 const slideHeight = 900;
+const introParagraphClass = 'text-[1.5rem] leading-[1.82] text-slatecopy';
+const introHighlightTerms = [
+  '方一向教授、马晨昊教授、陈靖邦教授',
+  '三次晋级国际大学生程序设计竞赛（ICPC）全球总决赛',
+  '金奖38项、银奖37项和铜奖20项',
+  '中国大学生程序设计竞赛（CCPC）全国女生专场赛冠军',
+  '广东省大学生程序设计竞赛冠军',
+  '悉心指导、系统育人',
+  '坚守育人初心',
+  '高水平赛事平台',
+  '2026年ICPC全国邀请赛（深圳）',
+  '首次举办的ICPC系列赛事',
+  '全栈式培养理念',
+  '全面成长',
+  '科研探索与实习实践',
+  '职业发展',
+];
+const introHighlightPattern = new RegExp(`(${introHighlightTerms.map(escapeRegExp).join('|')})`, 'g');
 
 const asset = (path: string) => `${import.meta.env.BASE_URL}${path}`;
+
+function escapeRegExp(value: string) {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
 
 function getPresentationScale() {
   if (typeof window === 'undefined') {
@@ -62,6 +84,20 @@ function highlightedAuthors(authors: string) {
         <span key={`${part}-${index}`} className="font-black text-orange">
           {part}
         </span>
+      );
+    }
+
+    return part;
+  });
+}
+
+function highlightedIntroParagraph(paragraph: string) {
+  return paragraph.split(introHighlightPattern).map((part, index) => {
+    if (introHighlightTerms.includes(part)) {
+      return (
+        <strong key={`${part}-${index}`} className="font-black text-purple">
+          {part}
+        </strong>
       );
     }
 
@@ -310,7 +346,7 @@ export function Present() {
       content: (
         <div className="grid h-full min-h-0 grid-cols-[1fr_1.05fr] gap-7">
           <div className="flex min-h-0 flex-col justify-center">
-            <p className="orange-marker text-sm font-black uppercase text-purple">{site.englishName}</p>
+            <p className="orange-marker text-sm font-black text-purple">{site.englishName}</p>
             <h1 className="mt-4 text-5xl font-black leading-tight text-purple">
               <span className="block">香港中文大学（深圳）</span>
               <span className="block">程序设计竞赛队</span>
@@ -334,12 +370,24 @@ export function Present() {
       section: '首页简介',
       title: '竞赛队简介',
       content: (
-        <div className="grid h-full min-h-0 grid-cols-2 gap-5">
-          {teamIntro.map((paragraph, index) => (
-            <Card key={paragraph} className="flex flex-col justify-center">
-              <p className="font-mono text-sm font-black text-orange">{String(index + 1).padStart(2, '0')}</p>
-              <p className="mt-3 text-base leading-8 text-slatecopy">{paragraph}</p>
-            </Card>
+        <div className="flex h-full min-h-0 flex-col justify-center gap-10 px-10">
+          {teamIntro.slice(0, 2).map((paragraph) => (
+            <p key={paragraph} className={introParagraphClass}>
+              {highlightedIntroParagraph(paragraph)}
+            </p>
+          ))}
+        </div>
+      ),
+    },
+    {
+      section: '首页简介',
+      title: '竞赛队简介',
+      content: (
+        <div className="flex h-full min-h-0 flex-col justify-center gap-10 px-10">
+          {teamIntro.slice(2, 4).map((paragraph) => (
+            <p key={paragraph} className={introParagraphClass}>
+              {highlightedIntroParagraph(paragraph)}
+            </p>
           ))}
         </div>
       ),
@@ -423,7 +471,7 @@ export function Present() {
                     {stat.value}
                   </p>
                   <h3 className="mt-3 text-2xl font-black text-purple">{stat.label}</h3>
-                  <p className="mt-4 text-base leading-7 text-slatecopy">{stat.caption}</p>
+                  <p className="mt-4 text-lg leading-8 text-slatecopy">{stat.caption}</p>
                 </Card>
               );
             })}
@@ -451,7 +499,7 @@ export function Present() {
               <Card key={`${item.date}-${item.title}`} className={item.featured ? 'ring-2 ring-orange/30' : ''}>
                 <p className="font-mono text-base font-black text-orange">{String(index + 1).padStart(2, '0')} / {item.date}</p>
                 <h3 className="mt-3 text-2xl font-black leading-8 text-purple">{item.title}</h3>
-                <p className="mt-3 text-base leading-7 text-slatecopy">{item.detail}</p>
+                <p className="mt-3 text-lg leading-8 text-slatecopy">{item.detail}</p>
               </Card>
             );
           })}
@@ -519,8 +567,8 @@ export function Present() {
             <Card key={item.name}>
               <h3 className="text-2xl font-black text-purple">{item.name}</h3>
               <p className="mt-2 text-base font-bold text-orange">{item.contest}</p>
-              <p className="mt-3 text-base leading-7 text-slatecopy">{item.research}</p>
-              <p className="mt-4 rounded bg-lavender2 px-3 py-2 text-base font-bold leading-7 text-purple">{item.destination}</p>
+              <p className="mt-3 text-lg leading-8 text-slatecopy">{item.research}</p>
+              <p className="mt-4 rounded bg-lavender2 px-3 py-2 text-lg font-bold leading-8 text-purple">{item.destination}</p>
             </Card>
           ))}
         </div>
@@ -551,17 +599,17 @@ export function Present() {
             <h2 className="text-3xl font-black text-purple">联系方式</h2>
             <div className="mt-6 grid gap-4 text-xl leading-10 text-slatecopy">
               <p>招生咨询邮箱：{site.email}</p>
-              <p>学院招生交流 QQ 群：{site.qqGroup}</p>
+              <p>数据科学学院招生交流 QQ 群：{site.qqGroup}</p>
               <p>{site.address}</p>
-              <p>学院官网：{site.website}</p>
+              <p>数据科学学院官网：{site.website}</p>
             </div>
           </Card>
           <div className="grid grid-cols-2 gap-4">
             {[
-              ['学院微信公众号', 'images/contact/wechat-public-qr.png'],
-              ['学院刊物', 'images/contact/booklet-qr.png'],
-              ['学院官网', 'images/contact/site-qr.png'],
-              ['学院招生交流 QQ 群', 'images/contact/qq-group-qr.png'],
+              ['数据科学学院微信公众号', 'images/contact/wechat-public-qr.png'],
+              ['数据科学学院刊物', 'images/contact/booklet-qr.png'],
+              ['数据科学学院官网', 'images/contact/site-qr.png'],
+              ['数据科学学院招生交流 QQ 群', 'images/contact/qq-group-qr.png'],
             ].map(([label, image]) => (
               <Card key={label} className="grid place-items-center p-4 text-center">
                 <img src={asset(image)} alt={label} className="h-40 w-40 object-contain" />

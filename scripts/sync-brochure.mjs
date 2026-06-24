@@ -12,6 +12,7 @@ const root = fileURLToPath(new URL('..', import.meta.url));
 const dataPath = path.join(root, 'src', 'data', 'site.ts');
 const templatePath = path.join(root, 'resources', 'brochure-template.pptx');
 const outputPath = path.join(root, 'public', 'downloads', 'xcpc-team-brochure.pptx');
+const cuhkszLogoPath = path.join(root, 'public', 'images', 'logos', 'cuhksz-logo.png');
 const planPath = path.join(root, '.tmp', 'brochure-sync-plan.json');
 const teamWebsite = 'https://sds-xcpc.github.io/';
 const bundledPython = 'C:\\Users\\chenj\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\python.exe';
@@ -301,6 +302,46 @@ function addShiftedPageNumbers(parts, captainExtraPages, timelineExtraPages, tea
   }
 }
 
+function shiftedPageForSlide(slideNo, basePage, captainExtraPages, timelineExtraPages, teamExtraPages, awardeeExtraPages) {
+  return (
+    basePage +
+    (slideNo > 8 ? captainExtraPages : 0) +
+    (slideNo > 10 ? timelineExtraPages : 0) +
+    (slideNo > 12 ? teamExtraPages : 0) +
+    (slideNo > 25 ? awardeeExtraPages : 0)
+  );
+}
+
+function headerPageBySlide(captainExtraPages, timelineExtraPages, teamExtraPages, awardeeExtraPages) {
+  const pages = { 1: 1, 2: 2, 3: 3 };
+  for (const [slide, [, basePage]] of Object.entries(pageNumberShapes)) {
+    const slideNo = Number(slide);
+    pages[slideNo] = shiftedPageForSlide(
+      slideNo,
+      basePage,
+      captainExtraPages,
+      timelineExtraPages,
+      teamExtraPages,
+      awardeeExtraPages,
+    );
+  }
+
+  if (captainExtraPages) {
+    pages[98] = 6;
+  }
+  for (let index = 1; index <= timelineExtraPages; index += 1) {
+    pages[90 + index] = 7 + captainExtraPages + index;
+  }
+  for (let index = 1; index <= teamExtraPages; index += 1) {
+    pages[100 + index] = 9 + captainExtraPages + timelineExtraPages + index;
+  }
+  for (let index = 0; index < awardeeExtraPages; index += 1) {
+    pages[110 + index] = 21 + captainExtraPages + timelineExtraPages + teamExtraPages + index;
+  }
+  pages[28] = 23 + captainExtraPages + timelineExtraPages + teamExtraPages + awardeeExtraPages;
+  return pages;
+}
+
 function tocItems(captainExtraPages, timelineExtraPages, teamExtraPages, awardeeExtraPages) {
   const shifted = (page, afterCaptains = true, afterTimeline = false, afterTeams = false, afterAwardees = false) =>
     page +
@@ -445,7 +486,7 @@ function tocCardPlan(captainExtraPages, timelineExtraPages, teamExtraPages, awar
 function makePlan(data) {
   const medals = medalParts(data.stats);
   const worldFinal = statByLabel(data.stats, 'World Final');
-  const introLines = chineseParagraphs([data.teamIntro[0].replace('（以下简称“竞赛队”）', ''), ...data.teamIntro.slice(1)]);
+  const introLines = chineseParagraphs(data.teamIntro);
   const recentCaptains = data.captains.slice(3).reverse();
   const formerCaptains = data.captains.slice(0, 3).reverse();
   const timelinePages = chunk(data.timeline, timelinePageSize);
@@ -455,8 +496,57 @@ function makePlan(data) {
   const timelineExtraPages = Math.max(0, timelinePages.length - 1);
   const teamExtraPages = Math.max(0, teamPages.length - 1);
   const awardeeExtraPages = Math.max(0, awardeeChunks.length - 3);
+  const headerPages = headerPageBySlide(captainExtraPages, timelineExtraPages, teamExtraPages, awardeeExtraPages);
+  const headerLogo = {
+    y: 505000,
+    cx: 2780000,
+    cy: 399000,
+    clearCrop: true,
+    left: { x: 480000 },
+    right: { x: 4360000 },
+    pageBySlide: headerPages,
+  };
 
   const parts = {
+    'ppt/slides/slide1.xml': {
+      shapeText: [
+        {
+          shapeId: 230,
+          fontSize: 3400,
+          lines: ['Programming Contest Team'],
+          textStyle: { align: 'l', bold: true, color: 'FFFFFF' },
+        },
+        {
+          shapeId: 225,
+          fontSize: 4200,
+          lines: ['香港中文大学（深圳）'],
+          textStyle: { align: 'ctr', bold: true, color: 'FFFFFF' },
+        },
+        {
+          shapeId: 226,
+          fontSize: 5600,
+          lines: ['程序设计竞赛队'],
+          textStyle: { align: 'ctr', bold: true, color: 'FFFFFF' },
+        },
+      ],
+      pictureImages: [
+        {
+          picId: 7,
+          imagePath: cuhkszLogoPath,
+          mediaName: 'synced-cuhksz-logo.png',
+          clearCrop: true,
+        },
+      ],
+      pictureGeometry: [
+        { picId: 7, x: headerLogo.left.x, y: headerLogo.y, cx: headerLogo.cx, cy: headerLogo.cy },
+      ],
+      shapeGeometry: [
+        { shapeId: 230, x: 1810000, y: 4770000, cx: 5740000, cy: 760000 },
+        { shapeId: 225, x: 0, cx: 7559675 },
+        { shapeId: 226, x: 0, cx: 7559675 },
+      ],
+      groupGeometry: [{ groupId: 232, x: -10000000, y: -10000000, cx: 0, cy: 0 }],
+    },
     'ppt/slides/slide2.xml': {
       shapeText: [
         {
@@ -507,16 +597,52 @@ function makePlan(data) {
     },
     'ppt/slides/slide12.xml': teamPagePlan(teamPages[0] ?? []),
     'ppt/slides/slide28.xml': {
+      replaceText: [
+        { type: 'exact', from: '学院招生交流', to: '数据科学学院招生交流' },
+        { type: 'contains', from: '学院微信公众号', to: '数据科学学院微信公众号' },
+        { type: 'exact', from: '学院刊物', to: '数据科学学院刊物' },
+        { type: 'exact', from: '学院官网', to: '数据科学学院官网' },
+        { type: 'exact', from: '学院官网：', to: '数据科学学院官网：' },
+      ],
       shapeText: [
-        { shapeId: 492, fontSize: 1600, lines: [`QQ群号：${data.site.qqGroup}`] },
+        {
+          shapeId: 488,
+          fontSize: 1050,
+          lines: ['数据科学学院', '招生交流 QQ 群'],
+          textStyle: { align: 'ctr', lineSpacingPct: 100000 },
+        },
+        {
+          shapeId: 489,
+          fontSize: 1050,
+          lines: ['数据科学学院', '微信公众号'],
+          textStyle: { align: 'ctr', lineSpacingPct: 100000 },
+        },
+        {
+          shapeId: 490,
+          fontSize: 1050,
+          lines: ['数据科学学院', '刊物'],
+          textStyle: { align: 'ctr', lineSpacingPct: 100000 },
+        },
+        {
+          shapeId: 491,
+          fontSize: 1050,
+          lines: ['数据科学学院', '官网'],
+          textStyle: { align: 'ctr', lineSpacingPct: 100000 },
+        },
+        { shapeId: 492, fontSize: 1600, lines: [''] },
         { shapeId: 493, fontSize: 1300, lines: [''] },
         { shapeId: 494, fontSize: 1300, lines: [''] },
-        { shapeId: 495, fontSize: 1300, lines: [`学院官网：${data.site.website}`, `竞赛队官网：${teamWebsite}`] },
+        { shapeId: 495, fontSize: 1300, lines: [`数据科学学院官网：${data.site.website}`, `竞赛队官网：${teamWebsite}`] },
         { shapeId: 496, fontSize: 1600, lines: [`招生咨询邮箱 Email：${data.site.email}`] },
         { shapeId: 506, fontSize: 1300, lines: [''] },
         { shapeId: 3, fontSize: 1300, lines: [''] },
       ],
       shapeGeometry: [
+        { shapeId: 489, y: 6748017 },
+        { shapeId: 490, y: 6743599 },
+        { shapeId: 491, y: 6739119 },
+        { shapeId: 488, y: 6743599 },
+        { shapeId: 492, x: -10000000, y: -10000000, cx: 0, cy: 0 },
         { shapeId: 493, x: -10000000, y: -10000000, cx: 0, cy: 0 },
         { shapeId: 494, x: -10000000, y: -10000000, cx: 0, cy: 0 },
         { shapeId: 495, x: 2250000, y: 8820000, cx: 4450000, cy: 610000 },
@@ -624,6 +750,47 @@ function makePlan(data) {
       ],
     },
     clones,
+    mediaReplacements: [
+      {
+        mediaPart: 'ppt/media/image2.png',
+        mode: 'transparent',
+      },
+      {
+        mediaPart: 'ppt/media/image11.png',
+        mode: 'clearRegions',
+        regions: [
+          { x: 360, y: 24, w: 762, h: 142, sampleX: 320, sampleY: 76 },
+        ],
+      },
+      {
+        mediaPart: 'ppt/media/image12.png',
+        mode: 'transparent',
+      },
+      {
+        mediaPart: 'ppt/media/image13.png',
+        mode: 'transparent',
+      },
+      {
+        mediaPart: 'ppt/media/image14.png',
+        mode: 'direct',
+        imagePath: cuhkszLogoPath,
+      },
+      {
+        mediaPart: 'ppt/media/image91.png',
+        mode: 'direct',
+        imagePath: cuhkszLogoPath,
+      },
+    ],
+    globalPictureGeometry: [
+      {
+        mediaPart: 'ppt/media/image14.png',
+        ...headerLogo,
+      },
+      {
+        mediaPart: 'ppt/media/image91.png',
+        ...headerLogo,
+      },
+    ],
     parts,
   };
 }

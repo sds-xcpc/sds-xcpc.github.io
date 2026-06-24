@@ -402,8 +402,8 @@ CTA：
 ```
 
 联系方式：
-- 学院招生交流 QQ 群：293037862；
-- 学院官网：http://sds.cuhk.edu.cn；
+- 数据科学学院招生交流 QQ 群：293037862；
+- 数据科学学院官网：http://sds.cuhk.edu.cn；
 - 地址：中国广东省深圳市龙岗区龙翔大道 2001 号道远楼；
 - 招生咨询邮箱：admissions@cuhk.edu.cn；
 - 学生队长微信：孙悠然 Mackerel_Pike_04，何润元 Momoway2004。

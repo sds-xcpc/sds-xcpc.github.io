@@ -307,6 +307,110 @@ def ensure_image_content_type(files: dict[str, bytes], suffix: str) -> None:
         files["[Content_Types].xml"] = content_types.encode("utf-8")
 
 
+def logo_bytes_on_original_canvas(
+    original: bytes,
+    source: Path,
+    max_width_fraction: float = 0.78,
+    max_height_fraction: float = 0.8,
+    align: str = "center",
+) -> bytes:
+    try:
+        from PIL import Image
+    except ImportError:
+        return source.read_bytes()
+
+    with Image.open(io.BytesIO(original)) as base_image, Image.open(source) as logo_image:
+        width, height = base_image.size
+        logo = logo_image.convert("RGBA")
+        max_width = max(1, int(width * max_width_fraction))
+        max_height = max(1, int(height * max_height_fraction))
+        logo.thumbnail((max_width, max_height), Image.Resampling.LANCZOS)
+
+        canvas = Image.new("RGBA", (width, height), (255, 255, 255, 0))
+        if align == "left":
+            x = 0
+        elif align == "right":
+            x = width - logo.width
+        else:
+            x = (width - logo.width) // 2
+        y = (height - logo.height) // 2
+        canvas.alpha_composite(logo, (x, y))
+
+        output = io.BytesIO()
+        canvas.save(output, format="PNG")
+        return output.getvalue()
+
+
+def transparent_png_like(original: bytes) -> bytes:
+    try:
+        from PIL import Image
+    except ImportError:
+        return b""
+
+    with Image.open(io.BytesIO(original)) as base_image:
+        canvas = Image.new("RGBA", base_image.size, (255, 255, 255, 0))
+        output = io.BytesIO()
+        canvas.save(output, format="PNG")
+        return output.getvalue()
+
+
+def clear_regions_png(original: bytes, regions: list[dict]) -> bytes:
+    try:
+        from PIL import Image, ImageDraw
+    except ImportError:
+        return original
+
+    with Image.open(io.BytesIO(original)) as image:
+        canvas = image.convert("RGBA")
+        draw = ImageDraw.Draw(canvas)
+        for region in regions:
+            x = int(region["x"])
+            y = int(region["y"])
+            w = int(region["w"])
+            h = int(region["h"])
+            sample_x = max(0, min(canvas.width - 1, int(region.get("sampleX", x))))
+            sample_y = max(0, min(canvas.height - 1, int(region.get("sampleY", y))))
+            fill = tuple(canvas.getpixel((sample_x, sample_y)))
+            if region.get("fill"):
+                raw = str(region["fill"]).lstrip("#")
+                fill = tuple(int(raw[i : i + 2], 16) for i in (0, 2, 4)) + (255,)
+            draw.rectangle((x, y, x + w, y + h), fill=fill)
+
+        output = io.BytesIO()
+        canvas.save(output, format="PNG")
+        return output.getvalue()
+
+
+def apply_media_replacements(files: dict[str, bytes], replacements: list[dict]) -> int:
+    count = 0
+    for item in replacements:
+        media_part = item["mediaPart"]
+        if media_part not in files:
+            continue
+        if item.get("mode") == "transparent":
+            files[media_part] = transparent_png_like(files[media_part])
+        elif item.get("mode") == "clearRegions":
+            files[media_part] = clear_regions_png(files[media_part], item.get("regions", []))
+        elif item.get("mode") == "direct":
+            source = Path(item["imagePath"])
+            if not source.exists():
+                continue
+            files[media_part] = source.read_bytes()
+        else:
+            source = Path(item["imagePath"])
+            if not source.exists():
+                continue
+            files[media_part] = logo_bytes_on_original_canvas(
+                files[media_part],
+                source,
+                float(item.get("maxWidthFraction", 0.78)),
+                float(item.get("maxHeightFraction", 0.8)),
+                item.get("align", "center"),
+            )
+        count += 1
+    return count
+
+
 def replace_picture_image(
     files: dict[str, bytes],
     slide_part: str,
@@ -353,7 +457,16 @@ def replace_picture_image(
     if not match:
         return xml, 0
 
-    block = re.sub(r'r:embed="[^"]+"', f'r:embed="{rid}"', match.group(1), count=1)
+    block = match.group(1)
+    if re.search(r"<a:blip\b[^>]*\br:embed=", block):
+        block = re.sub(r'r:embed="[^"]+"', f'r:embed="{rid}"', block, count=1)
+    else:
+        block = re.sub(
+            r"<p:blipFill>[\s\S]*?</p:blipFill>",
+            f'<p:blipFill><a:blip r:embed="{rid}" cstate="print"/><a:stretch><a:fillRect/></a:stretch></p:blipFill>',
+            block,
+            count=1,
+        )
     if clear_crop:
         block = re.sub(r"<a:srcRect\b[^>]*/>", "", block)
     return xml[: match.start()] + block + xml[match.end() :], 1
@@ -505,6 +618,73 @@ def apply_part_plan(xml: str, plan: dict) -> tuple[str, int]:
     return xml, count
 
 
+def media_targets_for_slide(files: dict[str, bytes], slide_part: str) -> dict[str, str]:
+    rels_part = slide_part.replace("ppt/slides/", "ppt/slides/_rels/") + ".rels"
+    if rels_part not in files:
+        return {}
+
+    rels_xml = files[rels_part].decode("utf-8")
+    targets: dict[str, str] = {}
+    for match in re.finditer(r'<Relationship\b[^>]*Id="([^"]+)"[^>]*Target="\.\./media/([^"]+)"', rels_xml):
+        targets[match.group(1)] = f"ppt/media/{match.group(2)}"
+    return targets
+
+
+def picture_media_part(pic_xml: str, targets: dict[str, str]) -> str | None:
+    match = re.search(r'r:embed="([^"]+)"', pic_xml)
+    if not match:
+        return None
+    return targets.get(match.group(1))
+
+
+def apply_global_picture_geometry(files: dict[str, bytes], rules: list[dict]) -> int:
+    if not rules:
+        return 0
+
+    count = 0
+    slide_parts = sorted(
+        [name for name in files if re.match(r"ppt/slides/slide\d+\.xml$", name)],
+        key=lambda item: int(re.search(r"slide(\d+)\.xml$", item).group(1)),
+    )
+
+    for slide_part in slide_parts:
+        xml = files[slide_part].decode("utf-8")
+        slide_no = int(re.search(r"slide(\d+)\.xml$", slide_part).group(1))
+        targets = media_targets_for_slide(files, slide_part)
+        for rule in rules:
+            media_part = rule["mediaPart"]
+            geometry = dict(rule)
+            page_by_slide = rule.get("pageBySlide") or {}
+            page_no = page_by_slide.get(str(slide_no)) or page_by_slide.get(slide_no)
+            if page_no is not None:
+                side = "left" if int(page_no) % 2 else "right"
+                geometry.update(rule.get(side, {}))
+
+            def update_pic(match: re.Match[str]) -> str:
+                nonlocal count
+                pic_xml = match.group(1)
+                if picture_media_part(pic_xml, targets) != media_part:
+                    return pic_xml
+
+                count += 1
+
+                def update_off(off_match: re.Match[str]) -> str:
+                    return f'<a:off x="{geometry.get("x", off_match.group(1))}" y="{geometry.get("y", off_match.group(2))}"'
+
+                def update_ext(ext_match: re.Match[str]) -> str:
+                    return f'<a:ext cx="{geometry.get("cx", ext_match.group(1))}" cy="{geometry.get("cy", ext_match.group(2))}"'
+
+                updated = re.sub(r'<a:off x="([^"]+)" y="([^"]+)"', update_off, pic_xml, count=1)
+                updated = re.sub(r'<a:ext cx="([^"]+)" cy="([^"]+)"', update_ext, updated, count=1)
+                if geometry.get("clearCrop"):
+                    updated = re.sub(r"<a:srcRect\b[^>]*/>", "", updated)
+                return updated
+
+            xml = re.sub(r"(<p:pic\b[\s\S]*?</p:pic>)", update_pic, xml)
+        files[slide_part] = xml.encode("utf-8")
+    return count
+
+
 def rel_target_for_slide(slide_no: int) -> str:
     return f"slides/slide{slide_no}.xml"
 
@@ -599,6 +779,9 @@ def main() -> None:
             ordered_names.append(target_rels)
         if clone.get("part"):
             parts[target_part] = clone["part"]
+
+    total += apply_media_replacements(files, plan.get("mediaReplacements", []))
+    total += apply_global_picture_geometry(files, plan.get("globalPictureGeometry", []))
 
     for name, part_plan in parts.items():
         if name not in files:

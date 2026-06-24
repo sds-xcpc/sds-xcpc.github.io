@@ -180,7 +180,7 @@ export function Home() {
           </div>
 
           <div className="quiet-card home-float-card rounded p-5 lg:col-span-2" style={entranceDelay(220)}>
-            <p className="orange-marker text-sm font-black uppercase tracking-normal text-purple">
+            <p className="orange-marker text-sm font-black tracking-normal text-purple">
               {site.englishName}
             </p>
             <h1 className="mt-4 max-w-4xl text-[clamp(1.65rem,3.4vw,3rem)] font-black leading-tight text-purple">

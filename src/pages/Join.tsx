@@ -35,7 +35,7 @@ export function Join() {
               </p>
               <p className="flex gap-3">
                 <MessageCircle className="mt-1 shrink-0 text-orange" size={20} />
-                学院招生交流 QQ 群：{site.qqGroup}
+                数据科学学院招生交流 QQ 群：{site.qqGroup}
               </p>
               <p className="flex gap-3">
                 <MapPin className="mt-1 shrink-0 text-orange" size={20} />
@@ -45,17 +45,17 @@ export function Join() {
             <div className="mt-5 flex flex-wrap gap-3">
               <CtaLink to="/contests">查看竞赛与训练</CtaLink>
               <CtaLink to={site.website} variant="ghost">
-                学院官网
+                数据科学学院官网
               </CtaLink>
             </div>
           </div>
 
           <div className="grid gap-4 sm:grid-cols-2">
             {[
-              ['学院微信公众号', 'images/contact/wechat-public-qr.png'],
-              ['学院刊物', 'images/contact/booklet-qr.png'],
-              ['学院官网', 'images/contact/site-qr.png'],
-              ['学院招生交流 QQ 群', 'images/contact/qq-group-qr.png'],
+              ['数据科学学院微信公众号', 'images/contact/wechat-public-qr.png'],
+              ['数据科学学院刊物', 'images/contact/booklet-qr.png'],
+              ['数据科学学院官网', 'images/contact/site-qr.png'],
+              ['数据科学学院招生交流 QQ 群', 'images/contact/qq-group-qr.png'],
             ].map(([label, image]) => (
               <article key={label} className="grid place-items-center rounded border border-purple/10 bg-white p-5 text-center shadow-sm">
                 <img src={`${import.meta.env.BASE_URL}${image}`} alt={label} className="h-40 w-40 object-contain" />
