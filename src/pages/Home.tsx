@@ -31,9 +31,9 @@ const fitMediaStyle = {
 
 const entranceDelay = (delay: number) => ({ '--enter-delay': `${delay}ms` }) as CSSProperties;
 const heroImagePositions: Record<string, string> = {
-  'images/home/gba-2026-group.jpg': 'center 40%',
-  'images/home/gba-2026-advisors.jpg': 'center 28%',
-  'images/home/icpc-2026-arena.jpg': 'center 70%',
+  'images/home/web/gba-2026-group.jpg': 'center 40%',
+  'images/home/web/gba-2026-advisors.jpg': 'center 28%',
+  'images/home/web/icpc-2026-arena.jpg': 'center 70%',
 };
 
 type AnimatedCounterProps = {
@@ -148,7 +148,10 @@ export function Home() {
               <img
                 key={image}
                 src={`${import.meta.env.BASE_URL}${image}`}
-                alt="香港中文大学（深圳）程序设计竞赛队合影"
+                alt=""
+                aria-hidden="true"
+                decoding="async"
+                loading="eager"
                 className="absolute inset-0 h-full w-full object-cover transition-opacity duration-[1200ms] ease-out"
                 style={{
                   opacity: index === heroImageIndex ? 1 : 0,
