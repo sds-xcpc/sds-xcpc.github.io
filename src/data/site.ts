@@ -114,11 +114,11 @@ export const hero = {
     '香港中文大学（深圳）程序设计竞赛队是代表香港中文大学（深圳）参加国际/国内大学生程序设计竞赛的组织。',
   image: 'images/hero-team.jpg',
   images: [
-    'images/home/web/icpc-2026-arena.jpg',
-    'images/home/web/gba-2026-group.jpg',
-    'images/home/web/gba-2026-advisors.jpg',
     'images/home/web/icpc-2026-advisors.jpg',
+    'images/home/web/icpc-2026-arena.jpg',
+    'images/home/web/gba-2026-advisors.jpg',
     'images/home/web/hero-team.jpg',
+    'images/home/web/gba-2026-group.jpg',
   ],
 };
 
