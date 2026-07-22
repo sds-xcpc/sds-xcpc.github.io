@@ -8,4 +8,6 @@ work
 .codex-vite.err.log
 .codex-vite.job.log
 .codex-vite.pid
+.codex-vite-*.log
+.codex-standing/
 vite-*.log

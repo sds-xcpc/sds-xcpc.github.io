@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
-import { MapPin, Percent, Trophy, Users } from 'lucide-react';
+import { BarChart3, MapPin, Percent, Trophy, Users } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 const scoreParts = [
   {
@@ -198,17 +199,17 @@ export function TrainingRules() {
                 ))}
               </div>
               <div className="flex min-h-20 flex-1 items-center justify-center py-5">
-                <button
-                  className="cursor-not-allowed rounded border border-purple/20 bg-white px-5 py-2 text-sm font-black text-purple/45"
-                  type="button"
-                  disabled
+                <Link
+                  className="inline-flex items-center gap-2 rounded bg-purple px-5 py-2.5 text-sm font-black text-white shadow-sm transition hover:bg-orange"
+                  to="/training/standing"
                 >
-                  Scoreboard
-                </button>
+                  <BarChart3 size={17} />
+                  查看 Standing
+                </Link>
               </div>
               <div>
                 <p className="rounded border border-orange/20 bg-orange/10 px-4 py-3 text-base font-black leading-7 text-purple">
-                  个人综合分 = ZJU 七月集训标准分 × 20% + 个人选拔赛 Day 1 标准分 × 40% + 个人选拔赛 Day 2 标准分 × 40%
+                  个人综合分 = ZJU 七月集训折算分（20 分）+ 个人选拔赛 Day 1 折算分（40 分）+ 个人选拔赛 Day 2 折算分（40 分）
                 </p>
               </div>
             </article>

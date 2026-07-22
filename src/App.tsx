@@ -12,6 +12,7 @@ import { People } from './pages/People';
 import { Present } from './pages/Present';
 import { ResearchCareer } from './pages/ResearchCareer';
 import { TrainingRules } from './pages/TrainingRules';
+import { TrainingStanding } from './pages/TrainingStanding';
 
 function ScrollToTop() {
   const location = useLocation();
@@ -42,6 +43,7 @@ function AppShell() {
         <Route path="/join" element={<Join />} />
         <Route path="/archive" element={<Archive />} />
         <Route path="/training" element={<TrainingRules />} />
+        <Route path="/training/standing" element={<TrainingStanding />} />
       </Routes>
       {!isPresent && <Footer />}
     </div>
