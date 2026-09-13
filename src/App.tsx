@@ -13,6 +13,7 @@ import { Present } from './pages/Present';
 import { ResearchCareer } from './pages/ResearchCareer';
 import { TrainingRules } from './pages/TrainingRules';
 import { TrainingStanding } from './pages/TrainingStanding';
+import { TrainingContestScoreboard, TrainingTeamScoreboard } from './pages/TrainingTeamScoreboard';
 
 function ScrollToTop() {
   const location = useLocation();
@@ -44,6 +45,8 @@ function AppShell() {
         <Route path="/archive" element={<Archive />} />
         <Route path="/training" element={<TrainingRules />} />
         <Route path="/training/standing" element={<TrainingStanding />} />
+        <Route path="/training/scoreboard" element={<TrainingTeamScoreboard />} />
+        <Route path="/training/scoreboard/:contestId" element={<TrainingContestScoreboard />} />
       </Routes>
       {!isPresent && <Footer />}
     </div>

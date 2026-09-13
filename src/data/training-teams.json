@@ -1,0 +1,82 @@
+[
+  {
+    "id": "gather-and-scatter",
+    "name": "聚散似浮萍",
+    "englishName": "Gather and Scatter,as we're all drifters",
+    "qojUsername": "Gather_and_Scatter",
+    "status": "正式队伍",
+    "members": ["欧奕阳", "司梓翰", "张佳艺"]
+  },
+  {
+    "id": "thoughts-everyone",
+    "name": "大家觉得呢？",
+    "englishName": "Thoughts, everyone?",
+    "qojUsername": "Thoughts_everyone",
+    "status": "正式队伍",
+    "members": ["林毅", "吴彦儒", "罗辰骏"]
+  },
+  {
+    "id": "beyond-the-equation",
+    "name": "破局方程式",
+    "englishName": "Beyond the equation",
+    "qojUsername": "Equation32768",
+    "status": "正式队伍",
+    "members": ["韩靖颢", "余哲伟", "叶梓弘"]
+  },
+  {
+    "id": "human-verification",
+    "name": "该队已通过人机验证。",
+    "englishName": "Human verification passed.",
+    "qojUsername": "Verifying we are human.",
+    "status": "正式队伍",
+    "members": ["张力文", "孙超逸", "邓沣庭"]
+  },
+  {
+    "id": "easons-milk-dragon",
+    "name": "Eason的奶龙才是老大",
+    "englishName": "Eason's Milk Dragon is the Real Boss",
+    "qojUsername": "Easons_MD_istheRealBOSS",
+    "status": "正式队伍",
+    "members": ["孙海纳", "梁书源", "谭文礼"]
+  },
+  {
+    "id": "mynoghra",
+    "name": "Mynoghra",
+    "englishName": "Mynoghra",
+    "qojUsername": "Mynoghra",
+    "status": "正式队伍",
+    "members": ["周莫非", "陈嘉年", "王泽诚"]
+  },
+  {
+    "id": "team-accept",
+    "name": "你说的队",
+    "englishName": "Team Accept",
+    "qojUsername": "TeamAccept",
+    "status": "候选队伍",
+    "members": ["刘翀", "何隽哲", "李衍硕"]
+  },
+  {
+    "id": "slay-the-judge",
+    "name": "slay the judge",
+    "englishName": "slay the judge",
+    "qojUsername": "Slay_the_Judge",
+    "status": "候选队伍",
+    "members": ["刘梓涵", "Adam", "俞卓群"]
+  },
+  {
+    "id": "pear-money-team",
+    "name": "压力一个自费队伍？",
+    "englishName": "pear a money team？",
+    "qojUsername": "pear_money_team",
+    "status": "候选队伍",
+    "members": ["潘彦", "史佳航", "张宸略"]
+  },
+  {
+    "id": "meowfia",
+    "name": "Meowfia",
+    "englishName": "Meowfia",
+    "qojUsername": "Meowfia",
+    "status": "候选队伍",
+    "members": ["陆珏行", "邵辰航", "谷旭涵"]
+  }
+]

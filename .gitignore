@@ -11,3 +11,5 @@ work
 .codex-vite-*.log
 .codex-standing/
 vite-*.log
+__pycache__/
+*.pyc

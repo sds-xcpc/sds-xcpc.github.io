@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react';
 import { BarChart3, MapPin, Percent, Trophy, Users } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { trainingTeams } from '../data/trainingTeams';
 
 const scoreParts = [
   {
@@ -62,7 +63,7 @@ const trainingAssignments = [
   ['集体训练', '参加国庆 3 天集训（日期 TBD），以及 9 月 13 日、9 月 19 日、9 月 20 日、9 月 26 日、9 月 27 日共 8 场集训。'],
 ];
 
-const participationRules = [
+const participationRules: [string, ReactNode][] = [
   [
     '区域赛',
     (
@@ -109,54 +110,6 @@ const ccpcSites = [
   ['乐山', '乐山师范大学', '11 月 15 日', ''],
   ['厦门', '厦门大学', '11 月 22 日', ''],
   ['广东省赛', 'TBD', '预计次年 5 月', ''],
-];
-
-const teamRoster = [
-  {
-    name: '聚散似浮萍',
-    englishName: "Gather and Scatter,as we're all drifters",
-    members: ['欧奕阳', '司梓翰', '张佳艺'],
-  },
-  {
-    name: '大家觉得呢？',
-    englishName: 'Thoughts, everyone?',
-    members: ['林毅', '吴彦儒', '罗辰骏'],
-  },
-  {
-    name: '破局方程式',
-    englishName: 'Beyond the equation',
-    members: ['韩靖颢', '余哲伟', '叶梓弘'],
-  },
-  {
-    name: '该队已通过人机验证。',
-    englishName: 'Human verification passed.',
-    members: ['张力文', '孙超逸', '邓沣庭'],
-  },
-  {
-    name: 'Eason的奶龙才是老大',
-    englishName: "Eason's Milk Dragon is the Real Boss",
-    members: ['孙海纳', '梁书源', '谭文礼'],
-  },
-  {
-    name: 'Mynoghra',
-    englishName: 'Mynoghra',
-    members: ['周莫非', '陈嘉年', '王泽诚'],
-  },
-  {
-    name: '你说的队',
-    englishName: 'Team Accept',
-    members: ['刘翀', '何隽哲', '李衍硕'],
-  },
-  {
-    name: 'slay the judge',
-    englishName: 'slay the judge',
-    members: ['刘梓涵', 'Adam', '俞卓群'],
-  },
-  {
-    name: '压力一个自费队伍？',
-    englishName: 'pear a money team？',
-    members: ['潘彦', '史佳航', '张宸略'],
-  },
 ];
 
 function SiteTable({ rows }: { rows: string[][] }) {
@@ -299,13 +252,13 @@ export function TrainingRules() {
               ))}
             </div>
             <div className="flex h-28 items-center justify-center">
-              <button
-                className="cursor-not-allowed rounded border border-orange/30 bg-orange/10 px-5 py-2 text-sm font-black text-orange/60"
-                type="button"
-                disabled
+              <Link
+                className="inline-flex items-center gap-2 rounded border border-orange/30 bg-orange/10 px-5 py-2 text-sm font-black text-orange transition hover:bg-orange hover:text-white"
+                to="/training/scoreboard"
               >
+                <BarChart3 size={17} />
                 Scoreboard
-              </button>
+              </Link>
             </div>
           </article>
 
@@ -347,19 +300,26 @@ export function TrainingRules() {
           </article>
         </section>
 
-        <section className="mt-12">
+        <section id="team-roster" className="mt-12 scroll-mt-40">
           <div className="flex items-center gap-3">
             <Users className="text-orange" size={30} />
             <h2 className="text-3xl font-black text-purple">队伍名单</h2>
           </div>
           <div className="mt-6 grid auto-rows-fr gap-4 md:grid-cols-2 xl:grid-cols-3">
-            {teamRoster.map((team) => (
+            {trainingTeams.map((team) => (
               <article
-                key={`${team.name}-${team.members.join('-')}`}
+                key={team.id}
                 className="flex min-h-48 flex-col rounded border border-purple/10 bg-white p-5 shadow-sm"
               >
+                <p className="mb-3 flex items-center gap-2 text-sm font-black text-slatecopy">
+                  <span
+                    aria-hidden="true"
+                    className={`h-2 w-2 shrink-0 rounded-full ${team.status === '正式队伍' ? 'bg-purple' : 'bg-orange'}`}
+                  />
+                  {team.status}
+                </p>
                 <h3 className="text-2xl font-black leading-tight text-purple">{team.name}</h3>
-                <p className="mt-2 text-sm font-semibold leading-6 text-slatecopy">{team.englishName}</p>
+                <p className="mb-5 mt-2 text-sm font-semibold leading-6 text-slatecopy">{team.englishName}</p>
                 <p className="mt-auto border-t border-purple/10 pt-4 text-base leading-7 text-slatecopy">
                   <span className="font-black text-purple">成员：</span>
                   {team.members.join('、')}
