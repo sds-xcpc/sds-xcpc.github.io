@@ -9,7 +9,9 @@ export function averageTeamRating(teamId: string, contests: readonly RatingConte
     const entry = contest.standings.find((result) => result.teamId === teamId);
     return entry ? [entry.rating] : [];
   });
-  return ratings.length > 0 ? ratings.reduce((sum, rating) => sum + rating, 0) / ratings.length : null;
+  if (ratings.length === 0) return null;
+  const total = ratings.reduce((sum, rating) => sum + rating, 0);
+  return ratings.length > 5 ? (total - Math.min(...ratings)) / (ratings.length - 1) : total / ratings.length;
 }
 
 export function rankTeamRatings(teams: readonly TrainingTeam[], contests: readonly RatingContest[]) {

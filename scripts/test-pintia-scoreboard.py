@@ -39,15 +39,20 @@ class PintiaScoreboardTests(unittest.TestCase):
         })
         self.assertEqual(contest['problems'][0], {'label': 'A', 'accepted': 33, 'submissions': 304})
 
-    def test_aliases_members_and_problem_cells(self):
+    def test_only_canonical_identity_and_problem_cells_are_published(self):
         contest = self.parse()
         rows = {row['teamId']: row for row in contest['standings']}
-        self.assertEqual(rows['mynoghra']['sourceTeamName'], '我将辍学研究这道题')
-        self.assertEqual(rows['meowfia']['sourceTeamName'], '小猫坏事做尽')
-        self.assertEqual(rows['meowfia']['sourceMembers'], ['谷旭涵', '陆珏行'])
-        self.assertEqual(rows['human-verification']['sourceMembers'], ['孙超逸', '张力文', '周天'])
+        self.assertEqual(rows['mynoghra']['username'], 'Mynoghra')
+        self.assertEqual(rows['meowfia']['username'], 'Meowfia')
+        self.assertTrue(all('sourceTeamName' not in row and 'sourceMembers' not in row for row in rows.values()))
         self.assertEqual(rows['thoughts-everyone']['problems'][1], {'status': 'accepted', 'result': '+0', 'time': '0:23'})
         self.assertEqual(rows['thoughts-everyone']['problems'][0], {'status': 'rejected', 'result': '+8', 'time': '4:59'})
+
+    def test_snapshot_has_no_source_names_or_member_lists(self):
+        serialized = json.dumps(self.source, ensure_ascii=False)
+        self.assertNotIn('teamName', serialized)
+        self.assertNotIn('memberNames', serialized)
+        self.assertNotIn('sourceMembers', serialized)
 
     def test_total_time_matches_all_ten_public_rows_without_double_counting(self):
         contest = self.parse()
@@ -80,15 +85,15 @@ class PintiaScoreboardTests(unittest.TestCase):
         self.assertEqual((special['rating'] + previous['rating']) / 2, 60.45)
 
         changed = copy.deepcopy(self.source)
-        source_special = next(row for row in changed['xcpcRankings']['rankings'] if row['teamFid'] == '39')
+        source_special = next(row for row in changed['xcpcRankings']['rankings'] if row.get('teamFid') == '39')
         source_special['rank'] = 2000
         updated = self.parse(changed)
         self.assertNotIn('human-verification', [row['teamId'] for row in updated['standings']])
 
     def test_unexpected_identity_is_rejected(self):
         changed = copy.deepcopy(self.source)
-        source_meowfia = next(row for row in changed['xcpcRankings']['rankings'] if row['teamFid'] == '2')
-        source_meowfia['teamInfo']['teamName'] = 'Another team'
+        source_meowfia = next(row for row in changed['xcpcRankings']['rankings'] if row.get('teamFid') == '2')
+        source_meowfia['teamInfo']['schoolName'] = 'Another school'
         with self.assertRaisesRegex(ValueError, 'Unexpected identity'):
             self.parse(changed)
 

@@ -5,7 +5,6 @@
   "date": "2026-09-19",
   "sourceUrl": "https://pintia.cn/rankings/2099750481526394880",
   "sourceSnapshot": "pintia-ccpc-online-20260919.json.gz",
-  "showSourceIdentity": true,
   "topSolved": 13,
   "totalTeams": 2169,
   "problems": [
@@ -84,12 +83,6 @@
     {
       "teamId": "thoughts-everyone",
       "username": "大家觉得呢？",
-      "sourceTeamName": "大家觉得呢？",
-      "sourceMembers": [
-        "林毅",
-        "吴彦儒",
-        "罗辰骏"
-      ],
       "rank": 36,
       "rating": 151.4,
       "ratingFormula": "10 / 13 × (2169 − 36 + 1) / 2169 × 200",
@@ -171,13 +164,7 @@
     },
     {
       "teamId": "mynoghra",
-      "username": "我将辍学研究这道题",
-      "sourceTeamName": "我将辍学研究这道题",
-      "sourceMembers": [
-        "周莫非",
-        "陈嘉年",
-        "王泽诚"
-      ],
+      "username": "Mynoghra",
       "rank": 43,
       "rating": 150.9,
       "ratingFormula": "10 / 13 × (2169 − 43 + 1) / 2169 × 200",
@@ -260,12 +247,6 @@
     {
       "teamId": "easons-milk-dragon",
       "username": "Eason的奶龙才是老大",
-      "sourceTeamName": "Eason的奶龙才是老大",
-      "sourceMembers": [
-        "孙海纳",
-        "梁书源",
-        "谭文礼"
-      ],
       "rank": 120,
       "rating": 130.9,
       "ratingFormula": "9 / 13 × (2169 − 120 + 1) / 2169 × 200",
@@ -348,12 +329,6 @@
     {
       "teamId": "gather-and-scatter",
       "username": "聚散似浮萍",
-      "sourceTeamName": "聚散似浮萍",
-      "sourceMembers": [
-        "欧奕阳",
-        "司梓翰",
-        "张佳艺"
-      ],
       "rank": 233,
       "rating": 109.9,
       "ratingFormula": "8 / 13 × (2169 − 233 + 1) / 2169 × 200",
@@ -436,12 +411,6 @@
     {
       "teamId": "beyond-the-equation",
       "username": "破局方程式",
-      "sourceTeamName": "破局方程式",
-      "sourceMembers": [
-        "韩靖颢",
-        "余哲伟",
-        "叶梓弘"
-      ],
       "rank": 283,
       "rating": 107.1,
       "ratingFormula": "8 / 13 × (2169 − 283 + 1) / 2169 × 200",
@@ -523,13 +492,7 @@
     },
     {
       "teamId": "human-verification",
-      "username": "正在验证该队是否是真人。",
-      "sourceTeamName": "正在验证该队是否是真人。",
-      "sourceMembers": [
-        "孙超逸",
-        "张力文",
-        "周天"
-      ],
+      "username": "该队已通过人机验证。",
       "rank": 407,
       "rating": 87.5,
       "ratingFormula": "7 / 13 × (2169 − 407 + 1) / 2169 × 200",
@@ -611,12 +574,7 @@
     },
     {
       "teamId": "team-accept",
-      "username": "你说得队",
-      "sourceTeamName": "你说得队",
-      "sourceMembers": [
-        "刘翀",
-        "何隽哲"
-      ],
+      "username": "你说的队",
       "rank": 578,
       "rating": 79.0,
       "ratingFormula": "7 / 13 × (2169 − 578 + 1) / 2169 × 200",
@@ -699,11 +657,6 @@
     {
       "teamId": "slay-the-judge",
       "username": "slay the judge",
-      "sourceTeamName": "slay the judge",
-      "sourceMembers": [
-        "刘梓涵",
-        "TejasukmanaAdam"
-      ],
       "rank": 643,
       "rating": 65.0,
       "ratingFormula": "6 / 13 × (2169 − 643 + 1) / 2169 × 200",
@@ -786,12 +739,6 @@
     {
       "teamId": "pear-money-team",
       "username": "压力一个自费队伍？",
-      "sourceTeamName": "压力一个自费队伍？",
-      "sourceMembers": [
-        "潘彦",
-        "史佳航",
-        "张宸略"
-      ],
       "rank": 674,
       "rating": 63.7,
       "ratingFormula": "6 / 13 × (2169 − 674 + 1) / 2169 × 200",
@@ -873,12 +820,7 @@
     },
     {
       "teamId": "meowfia",
-      "username": "小猫坏事做尽",
-      "sourceTeamName": "小猫坏事做尽",
-      "sourceMembers": [
-        "谷旭涵",
-        "陆珏行"
-      ],
+      "username": "Meowfia",
       "rank": 897,
       "rating": 54.2,
       "ratingFormula": "6 / 13 × (2169 − 897 + 1) / 2169 × 200",

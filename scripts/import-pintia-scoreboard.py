@@ -15,21 +15,54 @@ OUTPUT = PROJECT / 'src/data/team-contests/ccpc-online-20260919.json'
 FIRST_CONTEST = PROJECT / 'src/data/team-contests/xix-gp-of-korea.json'
 
 TEAM_IDS_BY_FID = {
-    '42': ('thoughts-everyone', '大家觉得呢？'),
-    '43': ('mynoghra', '我将辍学研究这道题'),
-    '40': ('easons-milk-dragon', 'Eason的奶龙才是老大'),
-    '37': ('gather-and-scatter', '聚散似浮萍'),
-    '41': ('beyond-the-equation', '破局方程式'),
-    '39': ('human-verification', '正在验证该队是否是真人。'),
-    '16': ('team-accept', '你说得队'),
-    '13': ('slay-the-judge', 'slay the judge'),
-    '17': ('pear-money-team', '压力一个自费队伍？'),
-    '2': ('meowfia', '小猫坏事做尽'),
+    '42': 'thoughts-everyone',
+    '43': 'mynoghra',
+    '40': 'easons-milk-dragon',
+    '37': 'gather-and-scatter',
+    '41': 'beyond-the-equation',
+    '39': 'human-verification',
+    '16': 'team-accept',
+    '13': 'slay-the-judge',
+    '17': 'pear-money-team',
+    '2': 'meowfia',
 }
 
 
 def minute_time(minutes):
     return f'{minutes // 60}:{minutes % 60:02d}'
+
+
+def compact_payload(payload):
+    competition = payload['competitionBasicInfo']
+    source = payload['xcpcRankings']
+    rankings = []
+    for entry in source['rankings']:
+        fid = entry.get('teamFid')
+        reduced = {
+            'solvedCount': entry['solvedCount'],
+            'teamInfo': {'excluded': entry['teamInfo']['excluded']},
+        }
+        if fid in TEAM_IDS_BY_FID:
+            reduced.update({
+                'teamFid': fid,
+                'rank': entry['rank'],
+                'solvingTime': entry['solvingTime'],
+                'detailsByProblemSetProblemId': entry['detailsByProblemSetProblemId'],
+            })
+            reduced['teamInfo']['schoolName'] = entry['teamInfo']['schoolName']
+        rankings.append(reduced)
+    return {
+        'competitionBasicInfo': {
+            key: competition[key] for key in ('id', 'name', 'publicRanking', 'endAt')
+        },
+        'xcpcRankings': {
+            'rankings': rankings,
+            'problemInfoByProblemSetProblemId': {
+                problem_id: {key: info[key] for key in ('label', 'acceptCount', 'submitCount')}
+                for problem_id, info in source['problemInfoByProblemSetProblemId'].items()
+            },
+        },
+    }
 
 
 def parse_scoreboard(payload, roster, first_contest):
@@ -60,23 +93,20 @@ def parse_scoreboard(payload, roster, first_contest):
 
     roster_by_id = {team['id']: team for team in roster}
     first_ratings = {entry['teamId']: entry['rating'] for entry in first_contest['standings']}
-    if len(roster_by_id) != len(roster) or set(roster_by_id) != {team_id for team_id, _ in TEAM_IDS_BY_FID.values()}:
+    if len(roster_by_id) != len(roster) or set(roster_by_id) != set(TEAM_IDS_BY_FID.values()):
         raise ValueError('Team roster does not match the expected ten teams.')
 
     standings = []
     seen = set()
     for entry in official:
-        fid = entry['teamFid']
+        fid = entry.get('teamFid')
         if fid not in TEAM_IDS_BY_FID:
             continue
-        team_id, expected_name = TEAM_IDS_BY_FID[fid]
+        team_id = TEAM_IDS_BY_FID[fid]
         info = entry['teamInfo']
-        if fid in seen or info['teamName'] != expected_name or info['schoolName'] != '香港中文大学（深圳）':
+        if fid in seen or info['schoolName'] != '香港中文大学（深圳）':
             raise ValueError(f'Unexpected identity for Pintia team {fid}.')
         seen.add(fid)
-        members = info['memberNames']
-        if not set(members).intersection(roster_by_id[team_id]['members']):
-            raise ValueError(f'Pintia team {fid} has no matching roster members.')
         rank = entry['rank']
         solved = entry['solvedCount']
         if not 1 <= rank <= total_teams or not 0 <= solved <= top_solved:
@@ -116,9 +146,7 @@ def parse_scoreboard(payload, roster, first_contest):
         dirt = f'{100 * (total_accepted_submissions - solved) // total_accepted_submissions}%' if total_accepted_submissions else '-'
         standings.append({
             'teamId': team_id,
-            'username': expected_name,
-            'sourceTeamName': expected_name,
-            'sourceMembers': members,
+            'username': roster_by_id[team_id]['name'],
             'rank': rank,
             'rating': rating,
             'ratingFormula': f'{solved} / {top_solved} × ({total_teams} − {rank} + 1) / {total_teams} × 200',
@@ -137,7 +165,6 @@ def parse_scoreboard(payload, roster, first_contest):
         'date': '2026-09-19',
         'sourceUrl': SOURCE_URL,
         'sourceSnapshot': SNAPSHOT.name,
-        'showSourceIdentity': True,
         'topSolved': top_solved,
         'totalTeams': total_teams,
         'problems': problems,
@@ -150,15 +177,18 @@ def main():
     parser.add_argument('--refresh', action='store_true', help='Download a new source snapshot before importing.')
     args = parser.parse_args()
     if args.refresh or not SNAPSHOT.exists():
-        SNAPSHOT.parent.mkdir(parents=True, exist_ok=True)
         with urlopen(API_URL, timeout=30) as response:
             raw = response.read()
         if raw.startswith(b'\x1f\x8b'):
             raw = gzip.decompress(raw)
-        with gzip.open(SNAPSHOT, 'wb') as snapshot:
-            snapshot.write(raw)
-    with gzip.open(SNAPSHOT, 'rt', encoding='utf-8') as snapshot:
-        payload = json.load(snapshot)
+        payload = json.loads(raw)
+    else:
+        with gzip.open(SNAPSHOT, 'rt', encoding='utf-8') as snapshot:
+            payload = json.load(snapshot)
+    payload = compact_payload(payload)
+    SNAPSHOT.parent.mkdir(parents=True, exist_ok=True)
+    with gzip.open(SNAPSHOT, 'wt', encoding='utf-8') as snapshot:
+        json.dump(payload, snapshot, ensure_ascii=False, separators=(',', ':'))
     roster = json.loads((PROJECT / 'src/data/training-teams.json').read_text(encoding='utf-8'))
     first = json.loads(FIRST_CONTEST.read_text(encoding='utf-8'))
     contest = parse_scoreboard(payload, roster, first)

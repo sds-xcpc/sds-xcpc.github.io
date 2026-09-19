@@ -30,6 +30,14 @@ test('a published zero rating counts in the average', () => {
   ]), 50);
 });
 
+test('drops exactly one lowest published rating after a team has more than five results', () => {
+  const ratings = [100, 120, 80, 60, 90, 140];
+  const contests = ratings.map((rating) => ({ standings: [{ teamId: 'a', rating }] }));
+  assert.equal(averageTeamRating('a', contests.slice(0, 5)), 90);
+  assert.equal(averageTeamRating('a', contests), 106);
+  assert.equal(averageTeamRating('a', [...contests, { standings: [] }]), 106);
+});
+
 test('sorts by average rather than latest rating, preserving ties and placing unscored teams last', () => {
   const roster = ['a', 'b', 'c', 'd'].map((id) => ({ id }));
   const ranked = rankTeamRatings(roster, [

@@ -20,13 +20,7 @@ const problemStyles: Record<string, string> = {
   empty: 'text-slatecopy/40',
 };
 
-function TeamIdentity({ team, rank, sourceName, sourceMembers }: {
-  team: TrainingTeam;
-  rank?: number;
-  sourceName?: string;
-  sourceMembers?: string[];
-}) {
-  const differentMembers = sourceMembers && sourceMembers.join(',') !== team.members.join(',');
+function TeamIdentity({ team, rank }: { team: TrainingTeam; rank?: number }) {
   return (
     <div className="min-w-0 text-left">
       <p className="mb-2 flex items-center gap-2 text-xs font-bold text-slatecopy">
@@ -36,9 +30,7 @@ function TeamIdentity({ team, rank, sourceName, sourceMembers }: {
       </p>
       <p className="text-base font-black leading-6 text-purple">{team.name}</p>
       {team.englishName !== team.name && <p className="mt-1 text-xs leading-5 text-slatecopy/70">{team.englishName}</p>}
-      {sourceName && sourceName !== team.name && <p className="mt-1 text-xs leading-5 text-slatecopy/70">本场队名：{sourceName}</p>}
       <p className="mt-2 text-sm font-medium leading-6 text-slatecopy">{team.members.join('、')}</p>
-      {differentMembers && <p className="mt-1 text-xs leading-5 text-slatecopy/70">本场队员：{sourceMembers.join('、')}</p>}
     </div>
   );
 }
@@ -59,6 +51,7 @@ export function TrainingTeamScoreboard() {
         </Link>
         <header className="mb-7 mt-5">
           <h1 className="text-2xl font-black leading-snug text-purple sm:text-3xl">组队训练 Scoreboard</h1>
+          <p className="mt-2 text-sm leading-6 text-slatecopy">单队有效训练成绩超过 5 场后，去掉最低分的一场，再计算 Average Rating。</p>
         </header>
 
         <div className="hidden xl:block">
@@ -203,7 +196,7 @@ export function TrainingContestScoreboard() {
                       <tr key={entry.teamId} className="border-b border-purple/10 even:bg-[#fcfbfe]">
                         <td className="px-1 py-4 font-mono font-bold text-slatecopy">{entry.rank}</td>
                         <th scope="row" title={`原榜：${entry.username}`} className="px-4 py-4 font-normal">
-                          {team ? <TeamIdentity team={team} sourceName={contest.showSourceIdentity ? entry.sourceTeamName : undefined} sourceMembers={contest.showSourceIdentity ? entry.sourceMembers : undefined} /> : entry.username}
+                          {team ? <TeamIdentity team={team} /> : entry.username}
                         </th>
                         <td title={entry.ratingFormula} className="bg-purple/5 px-1 py-4 font-mono text-lg font-black text-purple">{ratingFormatter.format(entry.rating)}</td>
                         {entry.problems.map((problem, index) => (
@@ -228,7 +221,7 @@ export function TrainingContestScoreboard() {
                 return (
                   <article key={entry.teamId} className="py-5">
                     <div className="grid gap-4 sm:grid-cols-[minmax(0,1fr)_auto]">
-                      {team ? <TeamIdentity team={team} rank={entry.rank} sourceName={contest.showSourceIdentity ? entry.sourceTeamName : undefined} sourceMembers={contest.showSourceIdentity ? entry.sourceMembers : undefined} /> : <p>{entry.username}</p>}
+                      {team ? <TeamIdentity team={team} rank={entry.rank} /> : <p>{entry.username}</p>}
                       <dl className="grid grid-cols-4 gap-4 sm:text-right">
                         {[
                           ['Rating', ratingFormatter.format(entry.rating)],
