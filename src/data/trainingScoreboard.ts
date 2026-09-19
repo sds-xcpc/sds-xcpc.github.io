@@ -3,13 +3,16 @@ export type TrainingContest = {
   title: string;
   shortTitle: string;
   date: string;
+  sourceUrl?: string;
   sourceSnapshot: string;
+  showSourceIdentity?: boolean;
   topSolved: number;
   totalTeams: number;
   problems: { label: string; accepted: number; submissions: number }[];
   standings: {
     teamId: string;
     username: string;
+    sourceTeamName?: string;
     sourceMembers: string[];
     rank: number;
     rating: number;

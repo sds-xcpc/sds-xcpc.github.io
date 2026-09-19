@@ -8,6 +8,10 @@ const ratingFormatter = new Intl.NumberFormat('en-US', {
   minimumFractionDigits: 1,
   maximumFractionDigits: 1,
 });
+const averageFormatter = new Intl.NumberFormat('en-US', {
+  minimumFractionDigits: 1,
+  maximumFractionDigits: 2,
+});
 
 const problemStyles: Record<string, string> = {
   accepted: 'bg-[#e4f4eb] text-[#16633d]',
@@ -16,7 +20,13 @@ const problemStyles: Record<string, string> = {
   empty: 'text-slatecopy/40',
 };
 
-function TeamIdentity({ team, rank }: { team: TrainingTeam; rank?: number }) {
+function TeamIdentity({ team, rank, sourceName, sourceMembers }: {
+  team: TrainingTeam;
+  rank?: number;
+  sourceName?: string;
+  sourceMembers?: string[];
+}) {
+  const differentMembers = sourceMembers && sourceMembers.join(',') !== team.members.join(',');
   return (
     <div className="min-w-0 text-left">
       <p className="mb-2 flex items-center gap-2 text-xs font-bold text-slatecopy">
@@ -26,13 +36,15 @@ function TeamIdentity({ team, rank }: { team: TrainingTeam; rank?: number }) {
       </p>
       <p className="text-base font-black leading-6 text-purple">{team.name}</p>
       {team.englishName !== team.name && <p className="mt-1 text-xs leading-5 text-slatecopy/70">{team.englishName}</p>}
+      {sourceName && sourceName !== team.name && <p className="mt-1 text-xs leading-5 text-slatecopy/70">本场队名：{sourceName}</p>}
       <p className="mt-2 text-sm font-medium leading-6 text-slatecopy">{team.members.join('、')}</p>
+      {differentMembers && <p className="mt-1 text-xs leading-5 text-slatecopy/70">本场队员：{sourceMembers.join('、')}</p>}
     </div>
   );
 }
 
-function RatingValue({ value }: { value: number | null | undefined }) {
-  return <>{value == null ? <span className="text-slatecopy/30">-</span> : ratingFormatter.format(value)}</>;
+function RatingValue({ value, average = false }: { value: number | null | undefined; average?: boolean }) {
+  return <>{value == null ? <span className="text-slatecopy/30">-</span> : (average ? averageFormatter : ratingFormatter).format(value)}</>;
 }
 
 export function TrainingTeamScoreboard() {
@@ -80,7 +92,7 @@ export function TrainingTeamScoreboard() {
               {rankedTeams.map(({ team, averageRating }) => (
                 <tr key={team.id} className="border-b border-purple/10 even:bg-[#fcfbfe] hover:bg-lavender2/60">
                   <th scope="row" className="px-4 py-4 font-normal"><TeamIdentity team={team} /></th>
-                  <td className="bg-purple/5 px-2 py-4 font-mono text-lg font-black text-purple"><RatingValue value={averageRating} /></td>
+                  <td className="bg-purple/5 px-2 py-4 font-mono text-lg font-black text-purple"><RatingValue value={averageRating} average /></td>
                   {trainingScoreboardColumns.map((column) => (
                     <td key={column.id} className="px-2 py-4 font-mono text-base font-bold text-purple">
                       <RatingValue value={column.contest?.standings.find((entry) => entry.teamId === team.id)?.rating} />
@@ -107,7 +119,7 @@ export function TrainingTeamScoreboard() {
                   <TeamIdentity team={team} />
                   <div className="text-right">
                     <p className="text-xs font-bold leading-5 text-slatecopy">Average Rating</p>
-                    <p className="mt-2 font-mono text-2xl font-black tabular-nums text-purple"><RatingValue value={averageRating} /></p>
+                    <p className="mt-2 font-mono text-2xl font-black tabular-nums text-purple"><RatingValue value={averageRating} average /></p>
                   </div>
                 </div>
                 <div className="mt-4 grid grid-cols-3 gap-2 min-[480px]:grid-cols-4 md:grid-cols-8">
@@ -151,6 +163,11 @@ export function TrainingContestScoreboard() {
                 <span className="mx-2 text-purple/20">|</span>
                 {contest.standings.length} 支队伍
               </p>
+              {contest.sourceUrl && (
+                <a href={contest.sourceUrl} target="_blank" rel="noreferrer" className="mt-3 inline-flex items-center gap-1 text-sm font-bold text-purple underline decoration-orange/50 underline-offset-4 hover:text-orange">
+                  查看原榜 <ArrowUpRight size={15} />
+                </a>
+              )}
             </header>
 
             <div className="hidden xl:block">
@@ -171,10 +188,12 @@ export function TrainingContestScoreboard() {
                     {contest.problems.map((problem) => (
                       <th key={problem.label} scope="col" className="px-1 py-3">
                         <span className="block font-mono text-sm font-black">{problem.label}</span>
-                        <span className="mt-1 block font-mono text-[10px] font-medium text-slatecopy/60" title="原榜统计">{problem.accepted}/{problem.submissions}</span>
+                        <span className="mt-1 block font-mono text-[10px] font-medium leading-3 text-slatecopy/60" title={`原榜统计 ${problem.accepted}/${problem.submissions}`}>
+                          <span className="block">{problem.accepted}</span><span className="block">/{problem.submissions}</span>
+                        </span>
                       </th>
                     ))}
-                    {['Solved', 'Penalty', 'Dirt'].map((label) => <th key={label} scope="col" className="px-1 py-4 text-xs font-black">{label}</th>)}
+                    {['Solved', contest.sourceUrl ? '总用时' : 'Penalty', 'Dirt'].map((label) => <th key={label} scope="col" className="px-1 py-4 text-xs font-black">{label}</th>)}
                   </tr>
                 </thead>
                 <tbody>
@@ -183,7 +202,9 @@ export function TrainingContestScoreboard() {
                     return (
                       <tr key={entry.teamId} className="border-b border-purple/10 even:bg-[#fcfbfe]">
                         <td className="px-1 py-4 font-mono font-bold text-slatecopy">{entry.rank}</td>
-                        <th scope="row" title={`QOJ: ${entry.username}`} className="px-4 py-4 font-normal">{team ? <TeamIdentity team={team} /> : entry.username}</th>
+                        <th scope="row" title={`原榜：${entry.username}`} className="px-4 py-4 font-normal">
+                          {team ? <TeamIdentity team={team} sourceName={contest.showSourceIdentity ? entry.sourceTeamName : undefined} sourceMembers={contest.showSourceIdentity ? entry.sourceMembers : undefined} /> : entry.username}
+                        </th>
                         <td title={entry.ratingFormula} className="bg-purple/5 px-1 py-4 font-mono text-lg font-black text-purple">{ratingFormatter.format(entry.rating)}</td>
                         {entry.problems.map((problem, index) => (
                           <td key={contest.problems[index].label} className={`border-l border-white/70 px-1 py-4 font-mono ${problemStyles[problem.status] ?? problemStyles.empty}`}>
@@ -207,12 +228,12 @@ export function TrainingContestScoreboard() {
                 return (
                   <article key={entry.teamId} className="py-5">
                     <div className="grid gap-4 sm:grid-cols-[minmax(0,1fr)_auto]">
-                      {team ? <TeamIdentity team={team} rank={entry.rank} /> : <p>{entry.username}</p>}
+                      {team ? <TeamIdentity team={team} rank={entry.rank} sourceName={contest.showSourceIdentity ? entry.sourceTeamName : undefined} sourceMembers={contest.showSourceIdentity ? entry.sourceMembers : undefined} /> : <p>{entry.username}</p>}
                       <dl className="grid grid-cols-4 gap-4 sm:text-right">
                         {[
                           ['Rating', ratingFormatter.format(entry.rating)],
                           ['Solved', entry.solved],
-                          ['Penalty', entry.penalty],
+                          [contest.sourceUrl ? '总用时' : 'Penalty', entry.penalty],
                           ['Dirt', entry.dirt],
                         ].map(([label, value]) => (
                           <div key={label} title={label === 'Rating' ? entry.ratingFormula : undefined}>
@@ -222,7 +243,7 @@ export function TrainingContestScoreboard() {
                         ))}
                       </dl>
                     </div>
-                    <div className="mt-4 grid grid-cols-5 gap-1.5 min-[480px]:grid-cols-7 lg:grid-cols-[repeat(13,minmax(0,1fr))]">
+                    <div className={`mt-4 grid grid-cols-5 gap-1.5 min-[480px]:grid-cols-7 ${contest.problems.length === 14 ? 'lg:grid-cols-[repeat(14,minmax(0,1fr))]' : 'lg:grid-cols-[repeat(13,minmax(0,1fr))]'}`}>
                       {entry.problems.map((problem, index) => {
                         const heading = contest.problems[index];
                         return (
@@ -244,6 +265,8 @@ export function TrainingContestScoreboard() {
             <p className="mt-5 text-sm leading-7 text-slatecopy/70">
               Rating = y / x × (n − rk + 1) / n × 200；本场 x = {contest.topSolved}，n = {contest.totalTeams}。
               x 为原榜第一名题数，y 为本队题数，n 为原榜队伍数，rk 为原榜排名；保留一位小数。
+              {' '}Dirt = 已通过题目的错误提交 / 这些题的总提交，向下取整。
+              {contest.sourceUrl && ' 本场 n 不含打星队伍；总用时沿用 Pintia 原榜，已含错误提交罚时；Dirt 根据逐题提交记录计算。'}
             </p>
           </>
         ) : <h1 className="mt-8 border-y border-purple/10 py-12 text-center text-2xl font-black text-purple">未找到比赛榜单</h1>}

@@ -10,6 +10,7 @@ const compiled = ts.transpileModule(source, {
 const { averageTeamRating, rankTeamRatings } = await import(`data:text/javascript;base64,${Buffer.from(compiled).toString('base64')}`);
 const teams = JSON.parse(await readFile(new URL('../src/data/training-teams.json', import.meta.url), 'utf8'));
 const contest = JSON.parse(await readFile(new URL('../src/data/team-contests/xix-gp-of-korea.json', import.meta.url), 'utf8'));
+const ccpcContest = JSON.parse(await readFile(new URL('../src/data/team-contests/ccpc-online-20260919.json', import.meta.url), 'utf8'));
 
 test('averages published results, excluding pending contests and missing entries', () => {
   const contests = [
@@ -43,4 +44,15 @@ test('the imported ten-team contest produces the expected average ranking', () =
   const ranked = rankTeamRatings(teams, [contest]);
   assert.deepEqual(ranked.map(({ team }) => team.id), contest.standings.map((entry) => entry.teamId));
   assert.deepEqual(ranked.map(({ averageRating }) => averageRating), contest.standings.map((entry) => entry.rating));
+});
+
+test('two published contests sort by their exact arithmetic average', () => {
+  const ranked = rankTeamRatings(teams, [contest, ccpcContest]);
+  assert.deepEqual(ranked.map(({ team }) => team.id), [
+    'thoughts-everyone', 'mynoghra', 'easons-milk-dragon', 'beyond-the-equation',
+    'gather-and-scatter', 'human-verification', 'slay-the-judge', 'team-accept',
+    'pear-money-team', 'meowfia',
+  ]);
+  assert.ok(Math.abs(ranked[0].averageRating - 170.95) < 1e-9);
+  assert.ok(Math.abs(ranked[5].averageRating - 60.45) < 1e-9);
 });
