@@ -11,6 +11,7 @@ const { averageTeamRating, rankTeamRatings } = await import(`data:text/javascrip
 const teams = JSON.parse(await readFile(new URL('../src/data/training-teams.json', import.meta.url), 'utf8'));
 const contest = JSON.parse(await readFile(new URL('../src/data/team-contests/xix-gp-of-korea.json', import.meta.url), 'utf8'));
 const ccpcContest = JSON.parse(await readFile(new URL('../src/data/team-contests/ccpc-online-20260919.json', import.meta.url), 'utf8'));
+const pkuContest = JSON.parse(await readFile(new URL('../src/data/team-contests/pku-team-selection-day-1.json', import.meta.url), 'utf8'));
 
 test('averages published results, excluding pending contests and missing entries', () => {
   const contests = [
@@ -63,4 +64,15 @@ test('two published contests sort by their exact arithmetic average', () => {
   ]);
   assert.ok(Math.abs(ranked[0].averageRating - 170.95) < 1e-9);
   assert.ok(Math.abs(ranked[5].averageRating - 60.45) < 1e-9);
+});
+
+test('third contest ratings update the overall average and team order', () => {
+  const ranked = rankTeamRatings(teams, [contest, ccpcContest, pkuContest]);
+  assert.deepEqual(ranked.map(({ team }) => team.id), [
+    'thoughts-everyone', 'mynoghra', 'easons-milk-dragon', 'beyond-the-equation',
+    'gather-and-scatter', 'slay-the-judge', 'human-verification', 'team-accept',
+    'pear-money-team', 'meowfia',
+  ]);
+  assert.ok(Math.abs(ranked[0].averageRating - 139.5) < 1e-9);
+  assert.ok(Math.abs(ranked[2].averageRating - (145.1 + 130.9 + 30.7) / 3) < 1e-9);
 });

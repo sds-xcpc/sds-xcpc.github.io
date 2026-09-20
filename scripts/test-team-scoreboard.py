@@ -1,5 +1,6 @@
 import importlib.util
 import json
+from copy import deepcopy
 from pathlib import Path
 import unittest
 
@@ -15,12 +16,21 @@ class TeamScoreboardTests(unittest.TestCase):
     def setUpClass(cls):
         cls.html = (PROJECT / 'resources/training-scoreboards/qoj4114-20260913.html').read_text(encoding='utf-8')
         cls.roster = json.loads((PROJECT / 'src/data/training-teams.json').read_text(encoding='utf-8'))
+        cls.pku_html = (PROJECT / 'resources/training-scoreboards/qoj4129-20260920.html').read_text(encoding='utf-8')
+        cls.pku_supplement = json.loads((PROJECT / 'resources/training-scoreboards/qoj4129-supplement.json').read_text(encoding='utf-8'))
 
     def parse(self, html=None, slug='xix-gp-of-korea', date='2026-09-13'):
         return importer.parse_scoreboard(
             self.html if html is None else html, self.roster,
             'XIX Open Cup named after E.V. Pankratiev, Grand Prix of Korea',
             date, slug, 'qoj4114-20260913.html', 'XIX Gp of Korea',
+        )
+
+    def parse_pku(self, supplement=None):
+        return importer.parse_scoreboard(
+            self.pku_html, self.roster, 'The 2026 Peking University Team Selection Day 1',
+            '2026-09-20', 'pku-team-selection-day-1', 'qoj4129-20260920.html',
+            'PKU Selection D1', self.pku_supplement if supplement is None else supplement,
         )
 
     def test_generated_file_matches_source(self):
@@ -63,6 +73,38 @@ class TeamScoreboardTests(unittest.TestCase):
             self.parse(slug='../outside')
         with self.assertRaises(ValueError):
             self.parse(date='2026-09-31')
+
+    def test_pku_snapshot_and_supplement_match_generated_file(self):
+        saved = json.loads((PROJECT / 'src/data/team-contests/pku-team-selection-day-1.json').read_text(encoding='utf-8'))
+        contest = self.parse_pku()
+        self.assertEqual(contest, saved)
+        self.assertEqual((contest['topSolved'], contest['totalTeams'], len(contest['standings'])), (9, 47, 10))
+        self.assertEqual([(row['teamId'], row['rank'], row['rating']) for row in contest['standings']], [
+            ('thoughts-everyone', 21, 76.6), ('mynoghra', 24, 56.7),
+            ('slay-the-judge', 29, 44.9), ('easons-milk-dragon', 35, 30.7),
+            ('gather-and-scatter', 38, 18.9), ('beyond-the-equation', 39, 17.0),
+            ('team-accept', 40, 11.3), ('human-verification', 41, 9.9),
+            ('pear-money-team', 42, 8.5), ('meowfia', 43, 7.1),
+        ])
+
+    def test_pku_supplemental_totals_and_problem_statistics(self):
+        contest = self.parse_pku()
+        easons = contest['standings'][3]
+        self.assertEqual((easons['solved'], easons['penalty'], easons['dirt']), (5, 908, '64%'))
+        self.assertEqual(easons['problems'][1], {'status': 'accepted', 'result': '+2', 'time': '2:45'})
+        self.assertEqual(easons['problems'][9], {'status': 'accepted', 'result': '+2', 'time': '4:08'})
+        self.assertEqual((contest['problems'][1]['accepted'], contest['problems'][1]['submissions']), (45, 75))
+        self.assertEqual((contest['problems'][9]['accepted'], contest['problems'][9]['submissions']), (40, 108))
+
+    def test_pku_invalid_supplement_is_rejected(self):
+        wrong_population = deepcopy(self.pku_supplement)
+        wrong_population['sourceTotalTeams'] = 45
+        with self.assertRaisesRegex(ValueError, 'source population'):
+            self.parse_pku(wrong_population)
+        wrong_penalty = deepcopy(self.pku_supplement)
+        wrong_penalty['extraRows'][0]['penalty'] = 907
+        with self.assertRaisesRegex(ValueError, 'Supplemental totals'):
+            self.parse_pku(wrong_penalty)
 
 
 if __name__ == '__main__':

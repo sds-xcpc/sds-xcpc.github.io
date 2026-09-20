@@ -1,0 +1,27 @@
+{
+  "topSolved": 9,
+  "sourceTotalTeams": 46,
+  "extraRows": [
+    {
+      "username": "Easons_MD_istheRealBOSS",
+      "rank": 35,
+      "solved": 5,
+      "penalty": 908,
+      "problems": [
+        { "result": "-" },
+        { "result": "+2", "time": "2:45" },
+        { "result": "-" },
+        { "result": "+2", "time": "4:17" },
+        { "result": "+1", "time": "0:39" },
+        { "result": "-" },
+        { "result": "-" },
+        { "result": "-" },
+        { "result": "-" },
+        { "result": "+2", "time": "4:08" },
+        { "result": "+2", "time": "0:19" },
+        { "result": "-" },
+        { "result": "-" }
+      ]
+    }
+  ]
+}
