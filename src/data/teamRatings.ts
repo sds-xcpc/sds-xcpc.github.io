@@ -1,13 +1,13 @@
 import type { TrainingTeam } from './trainingTeams';
 
 type RatingContest = {
-  standings: { teamId: string; rating: number }[];
+  standings: { teamId: string; rating: number; countsForRating?: boolean }[];
 };
 
 export function averageTeamRating(teamId: string, contests: readonly RatingContest[]) {
   const ratings = contests.flatMap((contest) => {
     const entry = contest.standings.find((result) => result.teamId === teamId);
-    return entry ? [entry.rating] : [];
+    return entry && entry.countsForRating !== false ? [entry.rating] : [];
   });
   if (ratings.length === 0) return null;
   const total = ratings.reduce((sum, rating) => sum + rating, 0);

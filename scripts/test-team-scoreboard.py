@@ -24,6 +24,7 @@ class TeamScoreboardTests(unittest.TestCase):
             self.html if html is None else html, self.roster,
             'XIX Open Cup named after E.V. Pankratiev, Grand Prix of Korea',
             date, slug, 'qoj4114-20260913.html', 'XIX Gp of Korea',
+            excluded_team_ids=['beyond-the-equation'],
         )
 
     def parse_pku(self, supplement=None):
@@ -31,6 +32,7 @@ class TeamScoreboardTests(unittest.TestCase):
             self.pku_html, self.roster, 'The 2026 Peking University Team Selection Day 1',
             '2026-09-20', 'pku-team-selection-day-1', 'qoj4129-20260920.html',
             'PKU Selection D1', self.pku_supplement if supplement is None else supplement,
+            ['beyond-the-equation'],
         )
 
     def test_generated_file_matches_source(self):
@@ -49,6 +51,8 @@ class TeamScoreboardTests(unittest.TestCase):
         })
         self.assertEqual(sum(team['status'] == '正式队伍' for team in self.roster), 6)
         self.assertEqual(sum(team['status'] == '候选队伍' for team in self.roster), 4)
+        self.assertFalse(next(row for row in contest['standings'] if row['teamId'] == 'beyond-the-equation')['countsForRating'])
+        self.assertEqual(next(team for team in self.roster if team['id'] == 'beyond-the-equation')['members'][0], '叶嘉弘')
         accept = next(team for team in self.roster if team['id'] == 'team-accept')
         self.assertEqual(accept['members'][0], '刘翀')
 
@@ -73,6 +77,11 @@ class TeamScoreboardTests(unittest.TestCase):
             self.parse(slug='../outside')
         with self.assertRaises(ValueError):
             self.parse(date='2026-09-31')
+        with self.assertRaisesRegex(ValueError, 'Unknown excluded team ids'):
+            importer.parse_scoreboard(
+                self.html, self.roster, 'Contest', '2026-09-13', 'contest',
+                'snapshot.html', excluded_team_ids=['missing-team'],
+            )
 
     def test_pku_snapshot_and_supplement_match_generated_file(self):
         saved = json.loads((PROJECT / 'src/data/team-contests/pku-team-selection-day-1.json').read_text(encoding='utf-8'))

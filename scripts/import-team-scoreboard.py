@@ -65,7 +65,7 @@ class ScoreboardParser(HTMLParser):
             self.in_table = False
 
 
-def parse_scoreboard(html, roster, title, date, slug, source_name, short_title=None, supplement=None):
+def parse_scoreboard(html, roster, title, date, slug, source_name, short_title=None, supplement=None, excluded_team_ids=None):
     datetime.date.fromisoformat(date)
     if not re.fullmatch(r'[a-z0-9]+(?:-[a-z0-9]+)*', slug):
         raise ValueError('Contest id must be a lowercase URL slug.')
@@ -89,6 +89,10 @@ def parse_scoreboard(html, roster, title, date, slug, source_name, short_title=N
     teams = {team['qojUsername'].casefold(): team for team in roster}
     if len(teams) != len(roster) or len({team['id'] for team in roster}) != len(roster):
         raise ValueError('Duplicate team id or QOJ username in the team roster.')
+    excluded_team_ids = set(excluded_team_ids or [])
+    unknown_exclusions = excluded_team_ids - {team['id'] for team in roster}
+    if unknown_exclusions:
+        raise ValueError(f'Unknown excluded team ids: {sorted(unknown_exclusions)}.')
     formula = rows[0][2]['attrs'].get('title', '')
     match = re.search(r'\d+\s*/\s*(\d+)\s*\u00d7\s*\((\d+)\s*[\u2212-]', formula)
     if match:
@@ -149,6 +153,7 @@ def parse_scoreboard(html, roster, title, date, slug, source_name, short_title=N
         standings.append({
             'teamId': team['id'], 'username': username, 'sourceMembers': source_members,
             'rank': rank, 'rating': expected,
+            **({'countsForRating': False} if team['id'] in excluded_team_ids else {}),
             'ratingFormula': (f'{solved} / {top_solved} \u00d7 ({total_teams} \u2212 {rank} + 1) / {total_teams} \u00d7 200 = {expected}'
                               if supplement else row[2]['attrs'].get('title', '')),
             'problems': cells, 'solved': solved, 'penalty': int(row[-2]['text']), 'dirt': row[-1]['text'],
@@ -188,6 +193,7 @@ def parse_scoreboard(html, roster, title, date, slug, source_name, short_title=N
         standings.append({
             'teamId': team['id'], 'username': username, 'sourceMembers': team['members'],
             'rank': rank, 'rating': rating,
+            **({'countsForRating': False} if team['id'] in excluded_team_ids else {}),
             'ratingFormula': f'{solved} / {top_solved} \u00d7 ({total_teams} \u2212 {rank} + 1) / {total_teams} \u00d7 200 = {rating}',
             'problems': cells, 'solved': solved, 'penalty': penalty, 'dirt': dirt,
         })
@@ -207,10 +213,14 @@ def main():
     arguments.add_argument('--date', required=True)
     arguments.add_argument('--id', required=True)
     arguments.add_argument('--supplement', type=Path)
+    arguments.add_argument('--exclude-team', action='append', default=[])
     args = arguments.parse_args()
     roster = json.loads((PROJECT / 'src/data/training-teams.json').read_text(encoding='utf-8'))
     supplement = json.loads(args.supplement.read_text(encoding='utf-8')) if args.supplement else None
-    contest = parse_scoreboard(args.source.read_text(encoding='utf-8-sig'), roster, args.title, args.date, args.id, args.source.name, args.short_title, supplement)
+    contest = parse_scoreboard(
+        args.source.read_text(encoding='utf-8-sig'), roster, args.title, args.date, args.id,
+        args.source.name, args.short_title, supplement, args.exclude_team,
+    )
     output = PROJECT / 'src/data/team-contests' / f'{args.id}.json'
     output.parent.mkdir(parents=True, exist_ok=True)
     output.write_text(json.dumps(contest, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')

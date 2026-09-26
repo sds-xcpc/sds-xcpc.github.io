@@ -330,6 +330,7 @@
       ],
       "rank": 32,
       "rating": 97.6,
+      "countsForRating": false,
       "ratingFormula": "9 / 13 × (105 − 32 + 1) / 105 × 200",
       "problems": [
         {

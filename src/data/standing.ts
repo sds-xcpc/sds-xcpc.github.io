@@ -29,7 +29,7 @@ export const selectionStanding: SelectionStandingEntry[] = [
   { name: '谭文礼', zjuScore: 4.97, day1Score: 18.57, day2Score: 6.43, totalScore: 29.97 },
   { name: '欧奕阳', zjuScore: 2.07, day1Score: 5.71, day2Score: 21.43, totalScore: 29.21 },
   { name: '张佳艺', zjuScore: 10.57, day1Score: 11.25, day2Score: 2.32, totalScore: 24.14 },
-  { name: '韩靖颢', zjuScore: 6.18, day1Score: 9.64, day2Score: 7.5, totalScore: 23.32 },
+  { name: '叶嘉弘', zjuScore: 6.18, day1Score: 9.64, day2Score: 7.5, totalScore: 23.32 },
   { name: '孙超逸', zjuScore: 10.14, day1Score: 10.18, day2Score: 2.14, totalScore: 22.46 },
   { name: '叶梓弘', zjuScore: 10.1, day1Score: 2.86, day2Score: 8.21, totalScore: 21.17 },
   { name: '邓沣庭', zjuScore: 10.1, day1Score: 6.07, day2Score: 1.79, totalScore: 17.96 },

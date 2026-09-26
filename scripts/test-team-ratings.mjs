@@ -49,10 +49,11 @@ test('sorts by average rather than latest rating, preserving ties and placing un
   assert.deepEqual(ranked.map(({ averageRating }) => averageRating), [100, 50, 50, null]);
 });
 
-test('the imported ten-team contest produces the expected average ranking', () => {
+test('a non-counting imported result is shown as absent from the average ranking', () => {
   const ranked = rankTeamRatings(teams, [contest]);
-  assert.deepEqual(ranked.map(({ team }) => team.id), contest.standings.map((entry) => entry.teamId));
-  assert.deepEqual(ranked.map(({ averageRating }) => averageRating), contest.standings.map((entry) => entry.rating));
+  const counted = contest.standings.filter((entry) => entry.countsForRating !== false);
+  assert.deepEqual(ranked.map(({ team }) => team.id), [...counted.map((entry) => entry.teamId), 'beyond-the-equation']);
+  assert.deepEqual(ranked.map(({ averageRating }) => averageRating), [...counted.map((entry) => entry.rating), null]);
 });
 
 test('two published contests sort by their exact arithmetic average', () => {
@@ -69,10 +70,11 @@ test('two published contests sort by their exact arithmetic average', () => {
 test('third contest ratings update the overall average and team order', () => {
   const ranked = rankTeamRatings(teams, [contest, ccpcContest, pkuContest]);
   assert.deepEqual(ranked.map(({ team }) => team.id), [
-    'thoughts-everyone', 'mynoghra', 'easons-milk-dragon', 'beyond-the-equation',
+    'thoughts-everyone', 'mynoghra', 'beyond-the-equation', 'easons-milk-dragon',
     'gather-and-scatter', 'slay-the-judge', 'human-verification', 'team-accept',
     'pear-money-team', 'meowfia',
   ]);
   assert.ok(Math.abs(ranked[0].averageRating - 139.5) < 1e-9);
-  assert.ok(Math.abs(ranked[2].averageRating - (145.1 + 130.9 + 30.7) / 3) < 1e-9);
+  assert.equal(ranked[2].averageRating, 107.1);
+  assert.ok(Math.abs(ranked[3].averageRating - (145.1 + 130.9 + 30.7) / 3) < 1e-9);
 });

@@ -13,16 +13,18 @@
 The first QOJ snapshot is imported with:
 
 ```powershell
-python scripts/import-team-scoreboard.py resources/training-scoreboards/qoj4114-20260913.html --title "XIX Open Cup named after E.V. Pankratiev, Grand Prix of Korea" --short-title "XIX Gp of Korea" --date 2026-09-13 --id xix-gp-of-korea
+python scripts/import-team-scoreboard.py resources/training-scoreboards/qoj4114-20260913.html --title "XIX Open Cup named after E.V. Pankratiev, Grand Prix of Korea" --short-title "XIX Gp of Korea" --date 2026-09-13 --id xix-gp-of-korea --exclude-team beyond-the-equation
 ```
 
 The September 20 QOJ snapshot omits `Easons_MD_istheRealBOSS` and has no first-place solved count, so import it with the reviewed supplement:
 
 ```powershell
-python scripts/import-team-scoreboard.py resources/training-scoreboards/qoj4129-20260920.html --title "The 2026 Peking University Team Selection Day 1" --short-title "PKU Selection D1" --date 2026-09-20 --id pku-team-selection-day-1 --supplement resources/training-scoreboards/qoj4129-supplement.json
+python scripts/import-team-scoreboard.py resources/training-scoreboards/qoj4129-20260920.html --title "The 2026 Peking University Team Selection Day 1" --short-title "PKU Selection D1" --date 2026-09-20 --id pku-team-selection-day-1 --supplement resources/training-scoreboards/qoj4129-supplement.json --exclude-team beyond-the-equation
 ```
 
 The supplement records the first-place total of 9 solves and Easons' 13 problem cells from `qoj4129-first-place.png` and `qoj4129-easons-result.png`. It inserts Easons at rank 35, moves the source's ranks 35 and later down one, and changes the rating population from 46 to 47. The importer checks the supplemental penalty against solve times and wrong submissions, derives Dirt, and updates problem attempt totals. Do not change only the generated contest JSON; regenerate it from the snapshot and supplement.
+
+`--exclude-team beyond-the-equation` retains that team's source rank and problem record but marks its Rating as non-counting. The overview and contest detail display a dash for those results, and Average Rating ignores them. Its CCPC Online result remains valid.
 
 The September 19 CCPC Online standings come from Pintia's public read-only XCPC ranking for competition `2099750481526394880`. Run `python scripts/import-pintia-scoreboard.py` to regenerate from the compact snapshot. Use `--refresh` only to intentionally fetch and replace that snapshot. The snapshot and generated contest data retain no Pintia team names or member lists. Fixed Pintia team IDs map to the canonical roster IDs.
 

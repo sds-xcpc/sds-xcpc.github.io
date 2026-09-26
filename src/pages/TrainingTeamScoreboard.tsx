@@ -39,6 +39,10 @@ function RatingValue({ value, average = false }: { value: number | null | undefi
   return <>{value == null ? <span className="text-slatecopy/30">-</span> : (average ? averageFormatter : ratingFormatter).format(value)}</>;
 }
 
+function countedRating(entry: { rating: number; countsForRating?: boolean } | undefined) {
+  return entry?.countsForRating === false ? null : entry?.rating;
+}
+
 export function TrainingTeamScoreboard() {
   const rankedTeams = rankTeamRatings(trainingTeams, trainingContests);
 
@@ -88,7 +92,7 @@ export function TrainingTeamScoreboard() {
                   <td className="bg-purple/5 px-2 py-4 font-mono text-lg font-black text-purple"><RatingValue value={averageRating} average /></td>
                   {trainingScoreboardColumns.map((column) => (
                     <td key={column.id} className="px-2 py-4 font-mono text-base font-bold text-purple">
-                      <RatingValue value={column.contest?.standings.find((entry) => entry.teamId === team.id)?.rating} />
+                      <RatingValue value={countedRating(column.contest?.standings.find((entry) => entry.teamId === team.id))} />
                     </td>
                   ))}
                 </tr>
@@ -120,7 +124,7 @@ export function TrainingTeamScoreboard() {
                     <div key={column.id} className={`border-t border-purple/10 py-2 text-center ${column.contest ? 'bg-purple/5' : ''}`}>
                       <time dateTime={column.date} className="text-xs font-medium text-slatecopy">{formatTrainingDate(column.date)}</time>
                       <p className="mt-2 font-mono text-base font-bold tabular-nums text-purple">
-                        <RatingValue value={column.contest?.standings.find((entry) => entry.teamId === team.id)?.rating} />
+                        <RatingValue value={countedRating(column.contest?.standings.find((entry) => entry.teamId === team.id))} />
                       </p>
                     </div>
                   ))}
@@ -198,7 +202,9 @@ export function TrainingContestScoreboard() {
                         <th scope="row" title={`原榜：${entry.username}`} className="px-4 py-4 font-normal">
                           {team ? <TeamIdentity team={team} /> : entry.username}
                         </th>
-                        <td title={entry.ratingFormula} className="bg-purple/5 px-1 py-4 font-mono text-lg font-black text-purple">{ratingFormatter.format(entry.rating)}</td>
+                        <td title={entry.countsForRating === false ? '本场成绩不计入 Rating' : entry.ratingFormula} className="bg-purple/5 px-1 py-4 font-mono text-lg font-black text-purple">
+                          <RatingValue value={countedRating(entry)} />
+                        </td>
                         {entry.problems.map((problem, index) => (
                           <td key={contest.problems[index].label} className={`border-l border-white/70 px-1 py-4 font-mono ${problemStyles[problem.status] ?? problemStyles.empty}`}>
                             <span className="block font-bold">{problem.result}</span>
@@ -224,12 +230,12 @@ export function TrainingContestScoreboard() {
                       {team ? <TeamIdentity team={team} rank={entry.rank} /> : <p>{entry.username}</p>}
                       <dl className="grid grid-cols-4 gap-4 sm:text-right">
                         {[
-                          ['Rating', ratingFormatter.format(entry.rating)],
+                          ['Rating', entry.countsForRating === false ? '-' : ratingFormatter.format(entry.rating)],
                           ['Solved', entry.solved],
                           [contest.sourceUrl ? '总用时' : 'Penalty', entry.penalty],
                           ['Dirt', entry.dirt],
                         ].map(([label, value]) => (
-                          <div key={label} title={label === 'Rating' ? entry.ratingFormula : undefined}>
+                          <div key={label} title={label === 'Rating' ? (entry.countsForRating === false ? '本场成绩不计入 Rating' : entry.ratingFormula) : undefined}>
                             <dt className="text-xs font-medium text-slatecopy/70">{label}</dt>
                             <dd className="mt-1 font-mono text-lg font-bold tabular-nums text-purple">{value}</dd>
                           </div>

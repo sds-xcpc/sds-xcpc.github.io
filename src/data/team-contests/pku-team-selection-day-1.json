@@ -494,6 +494,7 @@
       ],
       "rank": 39,
       "rating": 17.0,
+      "countsForRating": false,
       "ratingFormula": "4 / 9 × (47 − 39 + 1) / 47 × 200 = 17.0",
       "problems": [
         {

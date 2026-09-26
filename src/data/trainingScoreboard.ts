@@ -14,6 +14,7 @@ export type TrainingContest = {
     sourceMembers?: string[];
     rank: number;
     rating: number;
+    countsForRating?: boolean;
     ratingFormula: string;
     problems: { status: string; result: string; time: string }[];
     solved: number;
