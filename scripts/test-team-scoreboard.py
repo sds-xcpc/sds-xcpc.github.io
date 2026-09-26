@@ -18,6 +18,7 @@ class TeamScoreboardTests(unittest.TestCase):
         cls.roster = json.loads((PROJECT / 'src/data/training-teams.json').read_text(encoding='utf-8'))
         cls.pku_html = (PROJECT / 'resources/training-scoreboards/qoj4129-20260920.html').read_text(encoding='utf-8')
         cls.pku_supplement = json.loads((PROJECT / 'resources/training-scoreboards/qoj4129-supplement.json').read_text(encoding='utf-8'))
+        cls.hong_kong_html = (PROJECT / 'resources/training-scoreboards/qoj4535-20260926.html').read_text(encoding='utf-8')
 
     def parse(self, html=None, slug='xix-gp-of-korea', date='2026-09-13'):
         return importer.parse_scoreboard(
@@ -33,6 +34,13 @@ class TeamScoreboardTests(unittest.TestCase):
             '2026-09-20', 'pku-team-selection-day-1', 'qoj4129-20260920.html',
             'PKU Selection D1', self.pku_supplement if supplement is None else supplement,
             ['beyond-the-equation'],
+        )
+
+    def parse_hong_kong(self):
+        return importer.parse_scoreboard(
+            self.hong_kong_html, self.roster, '2016 ICPC Hong Kong',
+            '2026-09-26', '2016-icpc-hong-kong', 'qoj4535-20260926.html',
+            '2016 ICPC Hong Kong',
         )
 
     def test_generated_file_matches_source(self):
@@ -114,6 +122,19 @@ class TeamScoreboardTests(unittest.TestCase):
         wrong_penalty['extraRows'][0]['penalty'] = 907
         with self.assertRaisesRegex(ValueError, 'Supplemental totals'):
             self.parse_pku(wrong_penalty)
+
+    def test_hong_kong_snapshot_matches_generated_file(self):
+        saved = json.loads((PROJECT / 'src/data/team-contests/2016-icpc-hong-kong.json').read_text(encoding='utf-8'))
+        contest = self.parse_hong_kong()
+        self.assertEqual(contest, saved)
+        self.assertEqual((contest['topSolved'], contest['totalTeams'], len(contest['problems'])), (11, 70, 11))
+        self.assertEqual([(row['teamId'], row['rank'], row['rating']) for row in contest['standings']], [
+            ('thoughts-everyone', 1, 200.0), ('mynoghra', 4, 104.4),
+            ('easons-milk-dragon', 5, 85.7), ('gather-and-scatter', 7, 83.1),
+            ('pear-money-team', 14, 59.2), ('slay-the-judge', 20, 39.7),
+            ('human-verification', 34, 19.2), ('meowfia', 37, 8.8),
+            ('team-accept', 42, 7.5), ('beyond-the-equation', 50, 5.5),
+        ])
 
 
 if __name__ == '__main__':

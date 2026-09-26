@@ -26,6 +26,12 @@ The supplement records the first-place total of 9 solves and Easons' 13 problem 
 
 `--exclude-team beyond-the-equation` retains that team's source rank and problem record but marks its Rating as non-counting. The overview and contest detail display a dash for those results, and Average Rating ignores them. Its CCPC Online result remains valid.
 
+The September 26 Day 4 result is imported with:
+
+```powershell
+python scripts/import-team-scoreboard.py resources/training-scoreboards/qoj4535-20260926.html --title "2016 ICPC Hong Kong" --short-title "2016 ICPC Hong Kong" --date 2026-09-26 --id 2016-icpc-hong-kong
+```
+
 The September 19 CCPC Online standings come from Pintia's public read-only XCPC ranking for competition `2099750481526394880`. Run `python scripts/import-pintia-scoreboard.py` to regenerate from the compact snapshot. Use `--refresh` only to intentionally fetch and replace that snapshot. The snapshot and generated contest data retain no Pintia team names or member lists. Fixed Pintia team IDs map to the canonical roster IDs.
 
 The Pintia rating formula uses `n = 2169` non-excluded teams and `x = 13` solved problems by the top team. Pintia's `solvingTime` is already the displayed total time including wrong-submission penalties; do not add `penaltyTime` again. Dirt is the floor of 100 times wrong submissions on accepted problems divided by all submissions on those accepted problems. Attempts on unsolved problems are excluded; this reproduces the first QOJ contest's ten published Dirt values.

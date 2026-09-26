@@ -12,6 +12,7 @@ const teams = JSON.parse(await readFile(new URL('../src/data/training-teams.json
 const contest = JSON.parse(await readFile(new URL('../src/data/team-contests/xix-gp-of-korea.json', import.meta.url), 'utf8'));
 const ccpcContest = JSON.parse(await readFile(new URL('../src/data/team-contests/ccpc-online-20260919.json', import.meta.url), 'utf8'));
 const pkuContest = JSON.parse(await readFile(new URL('../src/data/team-contests/pku-team-selection-day-1.json', import.meta.url), 'utf8'));
+const hongKongContest = JSON.parse(await readFile(new URL('../src/data/team-contests/2016-icpc-hong-kong.json', import.meta.url), 'utf8'));
 
 test('averages published results, excluding pending contests and missing entries', () => {
   const contests = [
@@ -77,4 +78,15 @@ test('third contest ratings update the overall average and team order', () => {
   assert.ok(Math.abs(ranked[0].averageRating - 139.5) < 1e-9);
   assert.equal(ranked[2].averageRating, 107.1);
   assert.ok(Math.abs(ranked[3].averageRating - (145.1 + 130.9 + 30.7) / 3) < 1e-9);
+});
+
+test('Day 4 Hong Kong results update the overall average and team order', () => {
+  const ranked = rankTeamRatings(teams, [contest, ccpcContest, pkuContest, hongKongContest]);
+  assert.deepEqual(ranked.map(({ team }) => team.id), [
+    'thoughts-everyone', 'mynoghra', 'easons-milk-dragon', 'gather-and-scatter',
+    'beyond-the-equation', 'slay-the-judge', 'pear-money-team', 'human-verification',
+    'team-accept', 'meowfia',
+  ]);
+  assert.ok(Math.abs(ranked[0].averageRating - (190.5 + 151.4 + 76.6 + 200.0) / 4) < 1e-9);
+  assert.equal(ranked[4].averageRating, (107.1 + 5.5) / 2);
 });
