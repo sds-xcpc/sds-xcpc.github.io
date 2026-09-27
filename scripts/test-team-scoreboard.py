@@ -19,6 +19,7 @@ class TeamScoreboardTests(unittest.TestCase):
         cls.pku_html = (PROJECT / 'resources/training-scoreboards/qoj4129-20260920.html').read_text(encoding='utf-8')
         cls.pku_supplement = json.loads((PROJECT / 'resources/training-scoreboards/qoj4129-supplement.json').read_text(encoding='utf-8'))
         cls.hong_kong_html = (PROJECT / 'resources/training-scoreboards/qoj4535-20260926.html').read_text(encoding='utf-8')
+        cls.pku_day_2_html = (PROJECT / 'resources/training-scoreboards/qoj4537-20260927.html').read_text(encoding='utf-8')
 
     def parse(self, html=None, slug='xix-gp-of-korea', date='2026-09-13'):
         return importer.parse_scoreboard(
@@ -41,6 +42,13 @@ class TeamScoreboardTests(unittest.TestCase):
             self.hong_kong_html, self.roster, '2016 ICPC Hong Kong',
             '2026-09-26', '2016-icpc-hong-kong', 'qoj4535-20260926.html',
             '2016 ICPC Hong Kong',
+        )
+
+    def parse_pku_day_2(self):
+        return importer.parse_scoreboard(
+            self.pku_day_2_html, self.roster, 'The 2026 Peking University Team Selection Day 2',
+            '2026-09-27', 'pku-team-selection-day-2', 'qoj4537-20260927.html',
+            'PKU Selection D2',
         )
 
     def test_generated_file_matches_source(self):
@@ -134,6 +142,19 @@ class TeamScoreboardTests(unittest.TestCase):
             ('pear-money-team', 14, 59.2), ('slay-the-judge', 20, 39.7),
             ('human-verification', 34, 19.2), ('meowfia', 37, 8.8),
             ('team-accept', 42, 7.5), ('beyond-the-equation', 50, 5.5),
+        ])
+
+    def test_pku_day_2_snapshot_matches_generated_file(self):
+        saved = json.loads((PROJECT / 'src/data/team-contests/pku-team-selection-day-2.json').read_text(encoding='utf-8'))
+        contest = self.parse_pku_day_2()
+        self.assertEqual(contest, saved)
+        self.assertEqual((contest['topSolved'], contest['totalTeams'], len(contest['problems'])), (7, 44, 13))
+        self.assertEqual([(row['teamId'], row['rank'], row['rating']) for row in contest['standings']], [
+            ('thoughts-everyone', 6, 151.9), ('mynoghra', 17, 90.9),
+            ('slay-the-judge', 31, 36.4), ('beyond-the-equation', 34, 28.6),
+            ('human-verification', 35, 26.0), ('pear-money-team', 37, 20.8),
+            ('easons-milk-dragon', 38, 13.6), ('gather-and-scatter', 39, 11.7),
+            ('team-accept', 40, 9.7), ('meowfia', 41, 7.8),
         ])
 
 
