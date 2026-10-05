@@ -24,8 +24,14 @@ function TeamIdentity({ team, rank }: { team: TrainingTeam; rank?: number }) {
   return (
     <div className="min-w-0 text-left">
       <p className="mb-2 flex items-center gap-2 text-xs font-bold text-slatecopy">
-        <span aria-hidden="true" className={`h-1.5 w-1.5 shrink-0 rounded-full ${team.status === '正式队伍' ? 'bg-purple' : 'bg-orange'}`} />
-        {team.status}
+        {team.status === 'ZJU' ? (
+          <span className="rounded bg-[#f3e8ff] px-2 py-0.5 font-black text-[#7e22ce]">ZJU</span>
+        ) : (
+          <>
+            <span aria-hidden="true" className={`h-1.5 w-1.5 shrink-0 rounded-full ${team.status === '正式队伍' ? 'bg-purple' : 'bg-orange'}`} />
+            {team.status}
+          </>
+        )}
         {rank !== undefined && <span className="ml-auto font-mono text-slatecopy/60">原榜 #{rank}</span>}
       </p>
       <p className="text-base font-black leading-6 text-purple">{team.name}</p>
@@ -43,8 +49,18 @@ function countedRating(entry: { rating: number; countsForRating?: boolean } | un
   return entry?.countsForRating === false ? null : entry?.rating;
 }
 
+function isPintiaSource(sourceUrl: string | undefined) {
+  if (!sourceUrl) return false;
+  try {
+    const { hostname } = new URL(sourceUrl);
+    return hostname === 'pintia.cn' || hostname.endsWith('.pintia.cn');
+  } catch {
+    return false;
+  }
+}
+
 export function TrainingTeamScoreboard() {
-  const rankedTeams = rankTeamRatings(trainingTeams, trainingContests);
+  const rankedTeams = rankTeamRatings(trainingTeams.filter((team) => team.status !== 'ZJU'), trainingContests);
 
   return (
     <main className="bg-white">
@@ -142,6 +158,7 @@ export function TrainingTeamScoreboard() {
 export function TrainingContestScoreboard() {
   const { contestId } = useParams();
   const contest = trainingContests.find((entry) => entry.id === contestId);
+  const isPintia = isPintiaSource(contest?.sourceUrl);
 
   return (
     <main className="bg-white">
@@ -190,7 +207,7 @@ export function TrainingContestScoreboard() {
                         </span>
                       </th>
                     ))}
-                    {['Solved', contest.sourceUrl ? '总用时' : 'Penalty', 'Dirt'].map((label) => <th key={label} scope="col" className="px-1 py-4 text-xs font-black">{label}</th>)}
+                    {['Solved', isPintia ? '总用时' : 'Penalty', 'Dirt'].map((label) => <th key={label} scope="col" className="px-1 py-4 text-xs font-black">{label}</th>)}
                   </tr>
                 </thead>
                 <tbody>
@@ -232,7 +249,7 @@ export function TrainingContestScoreboard() {
                         {[
                           ['Rating', entry.countsForRating === false ? '-' : ratingFormatter.format(entry.rating)],
                           ['Solved', entry.solved],
-                          [contest.sourceUrl ? '总用时' : 'Penalty', entry.penalty],
+                          [isPintia ? '总用时' : 'Penalty', entry.penalty],
                           ['Dirt', entry.dirt],
                         ].map(([label, value]) => (
                           <div key={label} title={label === 'Rating' ? (entry.countsForRating === false ? '本场成绩不计入 Rating' : entry.ratingFormula) : undefined}>
@@ -265,7 +282,7 @@ export function TrainingContestScoreboard() {
               Rating = y / x × (n − rk + 1) / n × 200；本场 x = {contest.topSolved}，n = {contest.totalTeams}。
               x 为原榜第一名题数，y 为本队题数，n 为原榜队伍数，rk 为原榜排名；保留一位小数。
               {' '}Dirt = 已通过题目的错误提交 / 这些题的总提交，向下取整。
-              {contest.sourceUrl && ' 本场 n 不含打星队伍；总用时沿用 Pintia 原榜，已含错误提交罚时；Dirt 根据逐题提交记录计算。'}
+              {isPintia && ' 本场 n 不含打星队伍；总用时沿用 Pintia 原榜，已含错误提交罚时；Dirt 根据逐题提交记录计算。'}
             </p>
           </>
         ) : <h1 className="mt-8 border-y border-purple/10 py-12 text-center text-2xl font-black text-purple">未找到比赛榜单</h1>}

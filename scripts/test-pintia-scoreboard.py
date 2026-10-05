@@ -27,6 +27,21 @@ class PintiaScoreboardTests(unittest.TestCase):
         saved = json.loads(importer.OUTPUT.read_text(encoding='utf-8'))
         self.assertEqual(self.parse(), saved)
 
+    def test_unrelated_roster_teams_do_not_change_existing_results(self):
+        mapped_roster = [team for team in self.roster if team['id'] in importer.TEAM_IDS_BY_FID.values()]
+        self.assertEqual(len(mapped_roster), 10)
+        self.assertGreater(len(self.roster), len(mapped_roster))
+        original = importer.parse_scoreboard(self.source, mapped_roster, self.first)
+        self.assertEqual(self.parse(), original)
+        self.assertEqual({row['teamId'] for row in original['standings']}, set(importer.TEAM_IDS_BY_FID.values()))
+
+    def test_missing_or_duplicate_roster_identity_is_rejected(self):
+        missing_team = [team for team in self.roster if team['id'] != 'mynoghra']
+        duplicate_team = [*self.roster, self.roster[0]]
+        for roster in (missing_team, duplicate_team):
+            with self.assertRaisesRegex(ValueError, 'missing expected Pintia teams or contains duplicate ids'):
+                importer.parse_scoreboard(self.source, roster, self.first)
+
     def test_official_population_and_all_team_ratings(self):
         contest = self.parse()
         self.assertEqual((contest['totalTeams'], contest['topSolved']), (2169, 13))
@@ -96,6 +111,22 @@ class PintiaScoreboardTests(unittest.TestCase):
         source_meowfia['teamInfo']['schoolName'] = 'Another school'
         with self.assertRaisesRegex(ValueError, 'Unexpected identity'):
             self.parse(changed)
+
+    def test_duplicate_source_identity_is_rejected(self):
+        changed = copy.deepcopy(self.source)
+        source_meowfia = next(row for row in changed['xcpcRankings']['rankings'] if row.get('teamFid') == '2')
+        changed['xcpcRankings']['rankings'].append(copy.deepcopy(source_meowfia))
+        with self.assertRaisesRegex(ValueError, 'Unexpected identity for Pintia team 2'):
+            self.parse(changed)
+
+    def test_missing_or_unknown_source_identity_is_rejected(self):
+        for replacement in (None, 'unknown-team'):
+            with self.subTest(replacement=replacement):
+                changed = copy.deepcopy(self.source)
+                source_meowfia = next(row for row in changed['xcpcRankings']['rankings'] if row.get('teamFid') == '2')
+                source_meowfia['teamFid'] = replacement
+                with self.assertRaisesRegex(ValueError, 'Missing Pintia teams'):
+                    self.parse(changed)
 
 
 if __name__ == '__main__':

@@ -20,6 +20,8 @@ class TeamScoreboardTests(unittest.TestCase):
         cls.pku_supplement = json.loads((PROJECT / 'resources/training-scoreboards/qoj4129-supplement.json').read_text(encoding='utf-8'))
         cls.hong_kong_html = (PROJECT / 'resources/training-scoreboards/qoj4535-20260926.html').read_text(encoding='utf-8')
         cls.pku_day_2_html = (PROJECT / 'resources/training-scoreboards/qoj4537-20260927.html').read_text(encoding='utf-8')
+        cls.swerc_html = (PROJECT / 'resources/training-scoreboards/qoj4568-20261005.html').read_text(encoding='utf-8')
+        cls.swerc_supplement = json.loads((PROJECT / 'resources/training-scoreboards/qoj4568-supplement.json').read_text(encoding='utf-8'))
 
     def parse(self, html=None, slug='xix-gp-of-korea', date='2026-09-13'):
         return importer.parse_scoreboard(
@@ -49,6 +51,13 @@ class TeamScoreboardTests(unittest.TestCase):
             self.pku_day_2_html, self.roster, 'The 2026 Peking University Team Selection Day 2',
             '2026-09-27', 'pku-team-selection-day-2', 'qoj4537-20260927.html',
             'PKU Selection D2',
+        )
+
+    def parse_swerc(self, html=None, supplement=None):
+        return importer.parse_scoreboard(
+            self.swerc_html if html is None else html, self.roster, 'SWERC 2024',
+            '2026-10-05', 'swerc-2024', 'qoj4568-20261005.html', 'SWERC 2024',
+            self.swerc_supplement if supplement is None else supplement,
         )
 
     def test_generated_file_matches_source(self):
@@ -156,6 +165,70 @@ class TeamScoreboardTests(unittest.TestCase):
             ('easons-milk-dragon', 38, 13.6), ('gather-and-scatter', 39, 11.7),
             ('team-accept', 40, 9.7), ('meowfia', 41, 7.8),
         ])
+
+    def test_swerc_snapshot_matches_generated_file(self):
+        saved = json.loads((PROJECT / 'src/data/team-contests/swerc-2024.json').read_text(encoding='utf-8'))
+        contest = self.parse_swerc()
+        self.assertEqual(contest, saved)
+        self.assertEqual(contest['sourceUrl'], 'https://qoj.ac/results/QOJ4568')
+        self.assertEqual((contest['topSolved'], contest['totalTeams'], len(contest['problems'])), (12, 199, 13))
+        self.assertEqual([(row['username'], row['rank'], row['solved'], row['penalty'], row['rating'])
+                          for row in contest['standings']], [
+            ('Thoughts_everyone', 1, 12, 1142, 200.0),
+            ('Brightest_Flame_Plus', 2, 11, 1348, 182.4),
+            ('Yuyu-Yuyu-Yuyuko', 3, 10, 809, 165.0),
+            ('Wait_What', 4, 10, 1182, 164.2),
+            ('If-Chinese-130', 5, 10, 1206, 163.3),
+            ('Slay_the_Judge', 8, 9, 879, 144.7),
+            ('Mynoghra', 10, 9, 907, 143.2),
+            ('no_more_time_penalty', 13, 9, 1480, 141.0),
+            ('StarfruitSupernova', 14, 8, 627, 124.6),
+            ('Verifying we are human.', 15, 8, 636, 124.0),
+            ('Easons_MD_istheRealBOSS', 17, 8, 701, 122.6),
+            ('Gather_and_Scatter', 20, 8, 822, 120.6),
+            ('Equation32768', 28, 7, 487, 100.8),
+            ('pear_money_team', 30, 7, 508, 99.7),
+            ('TeamAccept', 35, 7, 589, 96.7),
+            ('catcannotpassturingtest', 39, 7, 654, 94.4),
+            ('_IAKIOI', 42, 7, 700, 92.6),
+            ('tengZF', 50, 6, 203, 75.4),
+            ('Meowfia', 52, 6, 288, 74.4),
+        ])
+        teams = {team['id']: team for team in self.roster}
+        for row in contest['standings']:
+            self.assertEqual(row['sourceMembers'], teams[row['teamId']]['members'])
+        self.assertNotIn('wang_xun', [row['username'] for row in contest['standings']])
+
+    def test_swerc_explicit_account_takes_precedence_over_display_name(self):
+        changed_display = self.swerc_html.replace('>Brightest Flame+</span>', '>Thoughts_everyone</span>', 1)
+        self.assertEqual(self.parse_swerc(changed_display), self.parse_swerc())
+
+    def test_swerc_unknown_or_duplicate_explicit_account_is_rejected(self):
+        with self.assertRaisesRegex(ValueError, 'Unknown QOJ username: UnknownTeam'):
+            self.parse_swerc(self.swerc_html.replace('QOJ 账号：Brightest_Flame_Plus', 'QOJ 账号：UnknownTeam', 1))
+        with self.assertRaisesRegex(ValueError, 'Duplicate result for Yuyu-Yuyu-Yuyuko'):
+            self.parse_swerc(self.swerc_html.replace('QOJ 账号：Brightest_Flame_Plus', 'QOJ 账号：Yuyu-Yuyu-Yuyuko', 1))
+        with self.assertRaisesRegex(ValueError, 'Invalid or conflicting QOJ account metadata'):
+            self.parse_swerc(self.swerc_html.replace('QOJ 账号：Brightest_Flame_Plus', 'QOJ 账号：', 1))
+        with self.assertRaisesRegex(ValueError, 'Invalid or conflicting QOJ account metadata'):
+            self.parse_swerc(self.swerc_html.replace(
+                '>Brightest Flame+</span>', '>Brightest Flame+</span><span title="QOJ 账号：UnknownTeam"></span>', 1))
+
+    def test_swerc_invalid_source_metadata_is_rejected(self):
+        wrong_population = deepcopy(self.swerc_supplement)
+        wrong_population['sourceTotalTeams'] = 198
+        with self.assertRaisesRegex(ValueError, 'source population'):
+            self.parse_swerc(supplement=wrong_population)
+        wrong_top_solved = deepcopy(self.swerc_supplement)
+        wrong_top_solved['topSolved'] = 11
+        with self.assertRaisesRegex(ValueError, 'Invalid rank or solved count'):
+            self.parse_swerc(supplement=wrong_top_solved)
+        for source_url in ('javascript:alert(1)', '/results/QOJ4568', 'https://', 'https://user:pass@qoj.ac/', 4568):
+            with self.subTest(source_url=source_url):
+                invalid_url = deepcopy(self.swerc_supplement)
+                invalid_url['sourceUrl'] = source_url
+                with self.assertRaisesRegex(ValueError, 'Source URL must be an absolute HTTP'):
+                    self.parse_swerc(supplement=invalid_url)
 
 
 if __name__ == '__main__':

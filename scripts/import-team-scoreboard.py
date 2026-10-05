@@ -6,6 +6,7 @@ from html.parser import HTMLParser
 from pathlib import Path
 import re
 import sys
+from urllib.parse import urlsplit
 
 
 PROJECT = Path(__file__).resolve().parent.parent
@@ -36,6 +37,10 @@ class ScoreboardParser(HTMLParser):
             self.cell = {'attrs': attrs, 'fragments': [], 'members': []}
         elif tag == 'small' and self.cell is not None:
             self.in_members = True
+        elif tag == 'span' and self.cell is not None:
+            title = attrs.get('title', '')
+            if title.startswith('QOJ 账号：'):
+                self.cell.setdefault('qojUsernames', []).append(title.split('：', 1)[1].strip())
         elif tag == 'br' and self.cell is not None:
             self.cell['fragments'].append('\n')
 
@@ -114,13 +119,24 @@ def parse_scoreboard(html, roster, title, date, slug, source_name, short_title=N
         raise ValueError('Rating denominator must be positive.')
     if len(set(extra_ranks)) != len(extra_ranks) or any(not 1 <= rank <= total_teams for rank in extra_ranks):
         raise ValueError('Invalid supplement ranks.')
+    source_url = supplement.get('sourceUrl') if supplement else None
+    if source_url is not None:
+        if not isinstance(source_url, str):
+            raise ValueError('Source URL must be an absolute HTTP(S) URL.')
+        parsed_url = urlsplit(source_url)
+        if parsed_url.scheme not in ('http', 'https') or not parsed_url.hostname or parsed_url.username or parsed_url.password:
+            raise ValueError('Source URL must be an absolute HTTP(S) URL.')
 
     standings = []
     seen = set()
     for row in rows:
         if len(row) != len(header):
             raise ValueError('Scoreboard row does not match its column headings.')
-        username = next(fragment.strip() for fragment in row[1]['fragments'] if fragment.strip())
+        source_usernames = set(row[1].get('qojUsernames', []))
+        if len(source_usernames) > 1 or '' in source_usernames:
+            raise ValueError('Invalid or conflicting QOJ account metadata in username cell.')
+        username = (next(iter(source_usernames)) if source_usernames else
+                    next((fragment.strip() for fragment in row[1]['fragments'] if fragment.strip()), ''))
         team = teams.get(username.casefold())
         if team is None:
             raise ValueError(f'Unknown QOJ username: {username}. Add it to training-teams.json first.')
@@ -200,6 +216,7 @@ def parse_scoreboard(html, roster, title, date, slug, source_name, short_title=N
     standings.sort(key=lambda entry: entry['rank'])
     return {
         'id': slug, 'title': title, 'shortTitle': short_title or title, 'date': date, 'sourceSnapshot': source_name,
+        **({'sourceUrl': source_url} if source_url is not None else {}),
         'topSolved': top_solved, 'totalTeams': total_teams,
         'problems': problems, 'standings': standings,
     }

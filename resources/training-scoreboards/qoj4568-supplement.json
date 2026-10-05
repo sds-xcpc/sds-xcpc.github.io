@@ -1,0 +1,12 @@
+{
+  "topSolved": 12,
+  "sourceTotalTeams": 199,
+  "sourceUrl": "https://qoj.ac/results/QOJ4568",
+  "extraRows": [],
+  "evidence": {
+    "snapshot": "qoj4568-20261005.html",
+    "topSolved": "The snapshot's original rank 1 is Thoughts_everyone with 12 solved problems. Its 12 accepted problem cells independently confirm this total.",
+    "sourceTotalTeams": "The snapshot's rating-info paragraph explicitly reports n = 199.",
+    "rating": "The export could not read x, so its Rating cells are blank. Recompute every rating from the source rank and solved count using x = 12 and n = 199; do not renumber the filtered standings."
+  }
+}

@@ -306,7 +306,7 @@ export function TrainingRules() {
             <h2 className="text-3xl font-black text-purple">队伍名单</h2>
           </div>
           <div className="mt-6 grid auto-rows-fr gap-4 md:grid-cols-2 xl:grid-cols-3">
-            {trainingTeams.map((team) => (
+            {trainingTeams.filter((team) => team.status === '正式队伍' || team.status === '候选队伍').map((team) => (
               <article
                 key={team.id}
                 className="flex min-h-48 flex-col rounded border border-purple/10 bg-white p-5 shadow-sm"

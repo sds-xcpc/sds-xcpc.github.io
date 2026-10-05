@@ -78,5 +78,77 @@
     "qojUsername": "Meowfia",
     "status": "候选队伍",
     "members": ["陆珏行", "邵辰航", "谷旭涵"]
+  },
+  {
+    "id": "zju-if-chinese-130",
+    "name": "If Chinese 130",
+    "englishName": "If Chinese 130",
+    "qojUsername": "If-Chinese-130",
+    "status": "ZJU",
+    "members": ["毛艺婷", "张涵硕", "姜圻圣"]
+  },
+  {
+    "id": "zju-yuyu-yuyu-yuyuko",
+    "name": "Yuyu-Yuyu-Yuyuko",
+    "englishName": "Yuyu-Yuyu-Yuyuko",
+    "qojUsername": "Yuyu-Yuyu-Yuyuko",
+    "status": "ZJU",
+    "members": ["陈玉彬", "姜宇辰", "倪琛航"]
+  },
+  {
+    "id": "zju-starfruit-supernova",
+    "name": "Starfruit Supernova V",
+    "englishName": "Starfruit Supernova V",
+    "qojUsername": "StarfruitSupernova",
+    "status": "ZJU",
+    "members": ["应宸宇", "王喆", "周学诚"]
+  },
+  {
+    "id": "zju-plantagenet",
+    "name": "Plantagenet",
+    "englishName": "Plantagenet",
+    "qojUsername": "tengZF",
+    "status": "ZJU",
+    "members": ["滕梓凡", "王勋", "李沐阳"]
+  },
+  {
+    "id": "zju-cat-cannot-pass-turing-test",
+    "name": "Cat cannot pass turing test",
+    "englishName": "Cat cannot pass turing test",
+    "qojUsername": "catcannotpassturingtest",
+    "status": "ZJU",
+    "members": ["李俊睿", "陆安易", "施翔天"]
+  },
+  {
+    "id": "zju-brightest-flame-plus",
+    "name": "Brightest Flame+",
+    "englishName": "Brightest Flame+",
+    "qojUsername": "Brightest_Flame_Plus",
+    "status": "ZJU",
+    "members": ["徐锐扬", "朱天煜", "陈铭凯"]
+  },
+  {
+    "id": "zju-no-time-penalty",
+    "name": "no time penalty",
+    "englishName": "no time penalty",
+    "qojUsername": "no_more_time_penalty",
+    "status": "ZJU",
+    "members": ["黄翊轩", "徐子萱", "林子睿"]
+  },
+  {
+    "id": "zju-wait-what",
+    "name": "Wait What?",
+    "englishName": "Wait What?",
+    "qojUsername": "Wait_What",
+    "status": "ZJU",
+    "members": ["柯怀俊", "张厚华", "李宸宇"]
+  },
+  {
+    "id": "zju-i-ak-ioi",
+    "name": "I AK IOI",
+    "englishName": "I AK IOI",
+    "qojUsername": "_IAKIOI",
+    "status": "ZJU",
+    "members": ["胡淞锦", "陈子谦", "房俊哲"]
   }
 ]

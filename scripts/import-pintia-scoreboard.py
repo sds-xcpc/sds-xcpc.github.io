@@ -93,8 +93,8 @@ def parse_scoreboard(payload, roster, first_contest):
 
     roster_by_id = {team['id']: team for team in roster}
     first_ratings = {entry['teamId']: entry['rating'] for entry in first_contest['standings']}
-    if len(roster_by_id) != len(roster) or set(roster_by_id) != set(TEAM_IDS_BY_FID.values()):
-        raise ValueError('Team roster does not match the expected ten teams.')
+    if len(roster_by_id) != len(roster) or not set(TEAM_IDS_BY_FID.values()).issubset(roster_by_id):
+        raise ValueError('Team roster is missing expected Pintia teams or contains duplicate ids.')
 
     standings = []
     seen = set()
