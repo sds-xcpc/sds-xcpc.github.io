@@ -75,9 +75,9 @@ class TeamScoreboardTests(unittest.TestCase):
 
     def parse_nowcoder(self, rating_scope='tracked'):
         return importer.parse_scoreboard(
-            self.nowcoder_html, self.roster, 'Nowcoder Training - ZJU Contest',
+            self.nowcoder_html, self.roster, '2024 Nowcoder Training - ZJU Contest',
             '2026-10-07', 'nowcoder-training-zju', 'qoj4573-20261007.html',
-            'Nowcoder ZJU', self.nowcoder_supplement, rating_scope=rating_scope,
+            '2024 Nowcoder ZJU', self.nowcoder_supplement, rating_scope=rating_scope,
         )
 
     def parse_small_tracked(self, results):

@@ -8,7 +8,7 @@
 
 `src/data/training-teams.json` is the shared source for the training-page roster and both scoreboard levels. Keep stable team IDs when editing names or members. Results join by team ID, not display order. The detailed page always shows the canonical team name and members, never temporary contest aliases or lineups.
 
-The October 5 SWERC 2024, October 6 Universal Cup Hongō and October 7 Nowcoder Training - ZJU Contest details include nine visiting Zhejiang University teams, labelled `ZJU`, in addition to the ten school teams, for 19 teams in each contest. The training roster on `/training` and the overall Rating scoreboard on `/training/scoreboard` contain only the six official and four candidate school teams. ZJU results remain in the contest data and detail pages but do not appear in the overall Rating ranking. ZJU teams have no entries in earlier contests; do not insert zero scores for those missing results.
+The October 5 SWERC 2024, October 6 Universal Cup Hongō and October 7 2024 Nowcoder Training - ZJU Contest details include nine visiting Zhejiang University teams, labelled `ZJU`, in addition to the ten school teams, for 19 teams in each contest. The training roster on `/training` and the overall Rating scoreboard on `/training/scoreboard` contain only the six official and four candidate school teams. ZJU results remain in the contest data and detail pages but do not appear in the overall Rating ranking. ZJU teams have no entries in earlier contests; do not insert zero scores for those missing results.
 
 ## Import Results
 
@@ -59,10 +59,10 @@ This snapshot was exported on October 7 but records the October 6 training speci
 The final training result is imported with:
 
 ```powershell
-python scripts/import-team-scoreboard.py resources/training-scoreboards/qoj4573-20261007.html --title "Nowcoder Training - ZJU Contest" --short-title "Nowcoder ZJU" --date 2026-10-07 --id nowcoder-training-zju --supplement resources/training-scoreboards/qoj4573-supplement.json --rating-scope tracked
+python scripts/import-team-scoreboard.py resources/training-scoreboards/qoj4573-20261007.html --title "2024 Nowcoder Training - ZJU Contest" --short-title "2024 Nowcoder ZJU" --date 2026-10-07 --id nowcoder-training-zju --supplement resources/training-scoreboards/qoj4573-supplement.json --rating-scope tracked
 ```
 
-The user identified this final contest as Nowcoder Training - ZJU Contest. October 7 is inferred from the final planned training date and the export just after midnight on October 8; the export timestamp itself is not a competition date. The snapshot includes 19 tracked teams and 11 problems. Its source metadata uses `sourceTopSolved = 10`, `sourceTotalTeams = 21`; the independent scoreboard uses `topSolved = 10`, `totalTeams = 19`. The tracked teams occupy original ranks 1–19, so their numerical ranks stay the same while Ratings are recalculated for 19 teams. The supplement records source metadata and the results URL without adding rows. Preserve the original 209 problem cells, penalties, Dirt and full-source problem-header statistics.
+The user identified this final contest as 2024 Nowcoder Training - ZJU Contest. October 7 is inferred from the final planned training date and the export just after midnight on October 8; the export timestamp itself is not a competition date. The snapshot includes 19 tracked teams and 11 problems. Its source metadata uses `sourceTopSolved = 10`, `sourceTotalTeams = 21`; the independent scoreboard uses `topSolved = 10`, `totalTeams = 19`. The tracked teams occupy original ranks 1–19, so their numerical ranks stay the same while Ratings are recalculated for 19 teams. The supplement records source metadata and the results URL without adding rows. Preserve the original 209 problem cells, penalties, Dirt and full-source problem-header statistics.
 
 ## Independent Rating Scope and Audit
 
