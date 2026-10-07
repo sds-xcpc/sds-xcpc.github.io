@@ -1,0 +1,13 @@
+{
+  "topSolved": 13,
+  "sourceTotalTeams": 135,
+  "sourceUrl": "https://qoj.ac/results/QOJ4571",
+  "extraRows": [],
+  "evidence": {
+    "snapshot": "qoj4571-20261006.html",
+    "sourceRating": "Every source Rating tooltip and the rating-info paragraph report x = 13 and n = 135. These values validate the original snapshot before applying the tracked-team rating scope.",
+    "trackedRating": "The snapshot contains all ten school teams and nine ZJU teams. Within this independent scoreboard, Thoughts_everyone leads with 8 solved problems; use x = 8, n = 19 and ranks restricted to these teams.",
+    "firstBlood": "If-Chinese-130 has *+1 at 2:10 on K without an accepted CSS class. This is an accepted first-blood result: all seven accepted cells sum to penalty 880, with seven wrong submissions and Dirt 50%.",
+    "event": "The user identified the event as The 4th Universal Cup. Stage 18: Grand Prix of Hongō (https://qoj.ac/contest/3420) and the training date as 2026-10-06. The October 7 timestamp is the snapshot export date."
+  }
+}

@@ -17,8 +17,10 @@ const pkuContest = JSON.parse(await readFile(new URL('../src/data/team-contests/
 const hongKongContest = JSON.parse(await readFile(new URL('../src/data/team-contests/2016-icpc-hong-kong.json', import.meta.url), 'utf8'));
 const pkuDay2Contest = JSON.parse(await readFile(new URL('../src/data/team-contests/pku-team-selection-day-2.json', import.meta.url), 'utf8'));
 const swercContest = JSON.parse(await readFile(new URL('../src/data/team-contests/swerc-2024.json', import.meta.url), 'utf8'));
+const hongoContest = JSON.parse(await readFile(new URL('../src/data/team-contests/ucup-4-stage-18-hongo.json', import.meta.url), 'utf8'));
 const historicalContests = [contest, ccpcContest, pkuContest, hongKongContest, pkuDay2Contest];
-const currentContests = [...historicalContests, swercContest];
+const afterSwercContests = [...historicalContests, swercContest];
+const currentContests = [...afterSwercContests, hongoContest];
 
 test('averages published results, excluding pending contests and missing entries', () => {
   const contests = [
@@ -108,45 +110,60 @@ test('PKU Selection Day 2 updates the five-contest average and team order', () =
   assert.ok(Math.abs(ranked[4].averageRating - (107.1 + 5.5 + 28.6) / 3) < 1e-9);
 });
 
-test('SWERC retains all 19 teams including nine ZJU visitors without adding historical results', () => {
+test('both independent contests retain all 19 teams without adding historical ZJU results', () => {
   assert.equal(schoolTeams.length, 10);
   assert.equal(zjuTeams.length, 9);
-  assert.equal(swercContest.standings.length, 19);
-  assert.deepEqual(new Set(swercContest.standings.map((entry) => entry.teamId)), new Set(teams.map((team) => team.id)));
+  for (const item of [swercContest, hongoContest]) {
+    assert.equal(item.ratingScope, 'tracked');
+    assert.equal(item.totalTeams, 19);
+    assert.equal(item.standings.length, 19);
+    assert.deepEqual(new Set(item.standings.map((entry) => entry.teamId)), new Set(teams.map((team) => team.id)));
+    assert.deepEqual(item.standings.map((entry) => entry.rank), Array.from({ length: 19 }, (_, index) => index + 1));
+  }
+  assert.equal(swercContest.topSolved, 12);
+  assert.equal(hongoContest.topSolved, 8);
 
   for (const team of zjuTeams) {
     assert.ok(historicalContests.every((pastContest) => !pastContest.standings.some((entry) => entry.teamId === team.id)));
     assert.equal(averageTeamRating(team.id, historicalContests), null);
-    const result = swercContest.standings.find((entry) => entry.teamId === team.id);
-    assert.ok(result, `${team.id} has a SWERC result`);
-    assert.equal(result.rating, Number((result.solved / 12 * (199 - result.rank + 1) / 199 * 200).toFixed(1)));
+    assert.ok([swercContest, hongoContest].every((item) => item.standings.some((entry) => entry.teamId === team.id)));
   }
 });
 
 test('SWERC uses the sixth counted result to drop exactly one minimum and keeps excluded results excluded', () => {
   const thoughtsRatings = [190.5, 151.4, 76.6, 200.0, 151.9, 200.0];
-  assert.deepEqual(currentContests.map((item) => item.standings.find((entry) => entry.teamId === 'thoughts-everyone').rating), thoughtsRatings);
+  assert.deepEqual(afterSwercContests.map((item) => item.standings.find((entry) => entry.teamId === 'thoughts-everyone').rating), thoughtsRatings);
   assert.ok(Math.abs(averageTeamRating('thoughts-everyone', historicalContests) - 154.08) < 1e-9);
-  assert.ok(Math.abs(averageTeamRating('thoughts-everyone', currentContests) - 178.76) < 1e-9);
+  assert.ok(Math.abs(averageTeamRating('thoughts-everyone', afterSwercContests) - 178.76) < 1e-9);
 
   // Six contest files do not imply six eligible results: Korea and PKU Day 1 are excluded for this team.
   assert.equal(contest.standings.find((entry) => entry.teamId === 'beyond-the-equation').countsForRating, false);
   assert.equal(pkuContest.standings.find((entry) => entry.teamId === 'beyond-the-equation').countsForRating, false);
-  assert.equal(averageTeamRating('beyond-the-equation', currentContests), (107.1 + 5.5 + 28.6 + 100.8) / 4);
+  assert.equal(averageTeamRating('beyond-the-equation', afterSwercContests), (107.1 + 5.5 + 28.6 + 43.0) / 4);
 });
 
-test('SWERC updates the ten school teams in the overall ranking using exact averages', () => {
+test('seven contests drop only one minimum while five eligible results retain every score', () => {
+  assert.ok(Math.abs(averageTeamRating('thoughts-everyone', currentContests) - 182.3) < 1e-9);
+  assert.equal(averageTeamRating('beyond-the-equation', currentContests), (107.1 + 5.5 + 28.6 + 43.0 + 15.8) / 5);
+  // The newly added Hongō score is now the minimum for these two teams.
+  assert.equal(hongoContest.standings.find((entry) => entry.teamId === 'slay-the-judge').rating, 19.7);
+  assert.equal(hongoContest.standings.find((entry) => entry.teamId === 'meowfia').rating, 3.9);
+  assert.ok(Math.abs(averageTeamRating('slay-the-judge', currentContests) - 330.8 / 6) < 1e-9);
+  assert.ok(Math.abs(averageTeamRating('meowfia', currentContests) - 90.2 / 6) < 1e-9);
+});
+
+test('independent October ratings update the ten school teams using audited exact averages', () => {
   const expected = [
-    ['thoughts-everyone', 178.76],
-    ['mynoghra', 127.86],
-    ['easons-milk-dragon', 103.0],
-    ['gather-and-scatter', 73.54],
-    ['slay-the-judge', 66.14],
-    ['beyond-the-equation', 60.5],
-    ['human-verification', 58.02],
-    ['pear-money-team', 52.78],
-    ['team-accept', 40.98],
-    ['meowfia', 30.46],
+    ['thoughts-everyone', 1093.8 / 6],
+    ['mynoghra', 701.3 / 6],
+    ['easons-milk-dragon', 479.3 / 6],
+    ['gather-and-scatter', 369.0 / 6],
+    ['slay-the-judge', 330.8 / 6],
+    ['human-verification', 278.4 / 6],
+    ['beyond-the-equation', 200.0 / 5],
+    ['pear-money-team', 212.8 / 6],
+    ['team-accept', 146.8 / 6],
+    ['meowfia', 90.2 / 6],
   ];
   const ranked = rankTeamRatings(schoolTeams, currentContests);
   assert.deepEqual(ranked.map(({ team }) => team.id), expected.map(([id]) => id));

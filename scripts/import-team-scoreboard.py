@@ -70,7 +70,9 @@ class ScoreboardParser(HTMLParser):
             self.in_table = False
 
 
-def parse_scoreboard(html, roster, title, date, slug, source_name, short_title=None, supplement=None, excluded_team_ids=None):
+def parse_scoreboard(html, roster, title, date, slug, source_name, short_title=None, supplement=None, excluded_team_ids=None, rating_scope='source'):
+    if rating_scope not in ('source', 'tracked'):
+        raise ValueError('Rating scope must be source or tracked.')
     datetime.date.fromisoformat(date)
     if not re.fullmatch(r'[a-z0-9]+(?:-[a-z0-9]+)*', slug):
         raise ValueError('Contest id must be a lowercase URL slug.')
@@ -115,7 +117,7 @@ def parse_scoreboard(html, roster, title, date, slug, source_name, short_title=N
     extra_rows = supplement.get('extraRows', []) if supplement else []
     extra_ranks = [entry['rank'] for entry in extra_rows]
     total_teams = source_total_teams + len(extra_rows)
-    if top_solved <= 0 or total_teams <= 0:
+    if top_solved <= 0 or source_total_teams <= 0 or total_teams <= 0:
         raise ValueError('Rating denominator must be positive.')
     if len(set(extra_ranks)) != len(extra_ranks) or any(not 1 <= rank <= total_teams for rank in extra_ranks):
         raise ValueError('Invalid supplement ranks.')
@@ -163,12 +165,18 @@ def parse_scoreboard(html, roster, title, date, slug, source_name, short_title=N
         for cell in row[3:-3]:
             status = next((item for item in cell['attrs'].get('class', '').split() if item in ('accepted', 'rejected', 'pending')), 'empty')
             lines = [line.strip() for line in cell['text'].splitlines() if line.strip()]
+            if not lines:
+                raise ValueError(f'Missing problem result for {username}.')
+            # QOJ's first-blood marker can survive an export without its CSS class.
+            if status == 'empty' and re.fullmatch(r'\*?\+\d*', lines[0]) and len(lines) == 2 and re.fullmatch(r'\d+:[0-5]\d', lines[1]):
+                status = 'accepted'
             cells.append({'status': status, 'result': lines[0], 'time': lines[1] if len(lines) > 1 else ''})
         if sum(cell['status'] == 'accepted' for cell in cells) != solved:
             raise ValueError(f'Solved total disagrees with problem cells for {username}.')
         standings.append({
             'teamId': team['id'], 'username': username, 'sourceMembers': source_members,
             'rank': rank, 'rating': expected,
+            **({'sourceRank': source_rank} if rating_scope == 'tracked' else {}),
             **({'countsForRating': False} if team['id'] in excluded_team_ids else {}),
             'ratingFormula': (f'{solved} / {top_solved} \u00d7 ({total_teams} \u2212 {rank} + 1) / {total_teams} \u00d7 200 = {expected}'
                               if supplement else row[2]['attrs'].get('title', '')),
@@ -201,22 +209,47 @@ def parse_scoreboard(html, roster, title, date, slug, source_name, short_title=N
                 raise ValueError(f'Invalid supplemental problem result for {username}: {result} {time}.')
             cells.append({'status': status, 'result': result, 'time': time})
         solved = sum(cell['status'] == 'accepted' for cell in cells)
-        if solved != extra['solved'] or penalty != extra['penalty']:
+        if solved != extra['solved'] or penalty != extra['penalty'] or not 0 <= solved <= min(top_solved, len(problems)):
             raise ValueError(f'Supplemental totals disagree with problem cells for {username}.')
         rank = extra['rank']
         rating = round(solved / top_solved * (total_teams - rank + 1) / total_teams * 200, 1)
-        dirt = f'{math.floor(100 * wrong_on_solved / (solved + wrong_on_solved))}%'
+        dirt = f'{math.floor(100 * wrong_on_solved / (solved + wrong_on_solved)) if solved + wrong_on_solved else 0}%'
         standings.append({
             'teamId': team['id'], 'username': username, 'sourceMembers': team['members'],
             'rank': rank, 'rating': rating,
+            **({'sourceRank': rank} if rating_scope == 'tracked' else {}),
             **({'countsForRating': False} if team['id'] in excluded_team_ids else {}),
             'ratingFormula': f'{solved} / {top_solved} \u00d7 ({total_teams} \u2212 {rank} + 1) / {total_teams} \u00d7 200 = {rating}',
             'problems': cells, 'solved': solved, 'penalty': penalty, 'dirt': dirt,
         })
     standings.sort(key=lambda entry: entry['rank'])
+    source_top_solved = top_solved
+    if rating_scope == 'tracked':
+        if not standings:
+            raise ValueError('Tracked rating requires participating teams.')
+        top_solved = standings[0]['solved']
+        total_teams = len(standings)
+        if top_solved <= 0:
+            raise ValueError('Rating denominator must be positive.')
+        if any(entry['solved'] > top_solved for entry in standings):
+            raise ValueError('Tracked leader must have the highest solved count.')
+        previous_source_rank = None
+        tracked_rank = 0
+        for index, entry in enumerate(standings, start=1):
+            original_rank = entry['rank']
+            if original_rank != previous_source_rank:
+                tracked_rank = index
+            previous_source_rank = original_rank
+            entry['rank'] = tracked_rank
+            solved = entry['solved']
+            rating = round(solved / top_solved * (total_teams - tracked_rank + 1) / total_teams * 200, 1)
+            entry['rating'] = rating
+            entry['ratingFormula'] = f'{solved} / {top_solved} \u00d7 ({total_teams} \u2212 {tracked_rank} + 1) / {total_teams} \u00d7 200 = {rating}'
     return {
         'id': slug, 'title': title, 'shortTitle': short_title or title, 'date': date, 'sourceSnapshot': source_name,
         **({'sourceUrl': source_url} if source_url is not None else {}),
+        **({'ratingScope': 'tracked', 'sourceTopSolved': source_top_solved, 'sourceTotalTeams': source_total_teams}
+           if rating_scope == 'tracked' else {}),
         'topSolved': top_solved, 'totalTeams': total_teams,
         'problems': problems, 'standings': standings,
     }
@@ -231,12 +264,14 @@ def main():
     arguments.add_argument('--id', required=True)
     arguments.add_argument('--supplement', type=Path)
     arguments.add_argument('--exclude-team', action='append', default=[])
+    arguments.add_argument('--rating-scope', choices=('source', 'tracked'), default='source',
+                           help='Use the original source population (default), or rerank only imported teams.')
     args = arguments.parse_args()
     roster = json.loads((PROJECT / 'src/data/training-teams.json').read_text(encoding='utf-8'))
     supplement = json.loads(args.supplement.read_text(encoding='utf-8')) if args.supplement else None
     contest = parse_scoreboard(
         args.source.read_text(encoding='utf-8-sig'), roster, args.title, args.date, args.id,
-        args.source.name, args.short_title, supplement, args.exclude_team,
+        args.source.name, args.short_title, supplement, args.exclude_team, args.rating_scope,
     )
     output = PROJECT / 'src/data/team-contests' / f'{args.id}.json'
     output.parent.mkdir(parents=True, exist_ok=True)

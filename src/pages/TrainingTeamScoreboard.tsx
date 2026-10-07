@@ -20,7 +20,12 @@ const problemStyles: Record<string, string> = {
   empty: 'text-slatecopy/40',
 };
 
-function TeamIdentity({ team, rank }: { team: TrainingTeam; rank?: number }) {
+function TeamIdentity({ team, rank, rankLabel = '原榜', sourceRank }: {
+  team: TrainingTeam;
+  rank?: number;
+  rankLabel?: string;
+  sourceRank?: number;
+}) {
   return (
     <div className="min-w-0 text-left">
       <p className="mb-2 flex items-center gap-2 text-xs font-bold text-slatecopy">
@@ -32,7 +37,12 @@ function TeamIdentity({ team, rank }: { team: TrainingTeam; rank?: number }) {
             {team.status}
           </>
         )}
-        {rank !== undefined && <span className="ml-auto font-mono text-slatecopy/60">原榜 #{rank}</span>}
+        {(rank !== undefined || sourceRank !== undefined) && (
+          <span className="ml-auto text-right font-mono text-slatecopy/60">
+            {rank !== undefined && <span className="block">{rankLabel} #{rank}</span>}
+            {sourceRank !== undefined && <span className="block text-[10px] font-normal">QOJ 原榜 #{sourceRank}</span>}
+          </span>
+        )}
       </p>
       <p className="text-base font-black leading-6 text-purple">{team.name}</p>
       {team.englishName !== team.name && <p className="mt-1 text-xs leading-5 text-slatecopy/70">{team.englishName}</p>}
@@ -159,6 +169,7 @@ export function TrainingContestScoreboard() {
   const { contestId } = useParams();
   const contest = trainingContests.find((entry) => entry.id === contestId);
   const isPintia = isPintiaSource(contest?.sourceUrl);
+  const isTracked = contest?.ratingScope === 'tracked';
 
   return (
     <main className="bg-white">
@@ -177,6 +188,7 @@ export function TrainingContestScoreboard() {
                 <span className="mx-2 text-purple/20">|</span>
                 {contest.standings.length} 支队伍
               </p>
+              {isTracked && <p className="mt-3 text-sm font-bold text-purple">独立榜单（本校＋ZJU）</p>}
               {contest.sourceUrl && (
                 <a href={contest.sourceUrl} target="_blank" rel="noreferrer" className="mt-3 inline-flex items-center gap-1 text-sm font-bold text-purple underline decoration-orange/50 underline-offset-4 hover:text-orange">
                   查看原榜 <ArrowUpRight size={15} />
@@ -186,7 +198,9 @@ export function TrainingContestScoreboard() {
 
             <div className="hidden xl:block">
               <table data-testid="contest-standings" className="w-full table-fixed border-collapse text-center text-sm tabular-nums">
-                <caption className="sr-only">{contest.title} 完整成绩榜，排名和题目统计沿用原榜</caption>
+                <caption className="sr-only">
+                  {contest.title} {isTracked ? '独立成绩榜，排名与 Rating 按本校和 ZJU 队伍计算，题目统计沿用 QOJ 原榜' : '完整成绩榜，排名和题目统计沿用原榜'}
+                </caption>
                 <colgroup>
                   <col className="w-10" />
                   <col className="w-64" />
@@ -196,7 +210,7 @@ export function TrainingContestScoreboard() {
                 </colgroup>
                 <thead>
                   <tr className="border-y border-purple/15 bg-lavender2 text-purple">
-                    <th scope="col" className="px-1 py-4 text-xs font-black">Rank.</th>
+                    <th scope="col" className="px-1 py-4 text-xs font-black">{isTracked ? '独立排名' : 'Rank.'}</th>
                     <th scope="col" className="px-4 py-4 text-left font-black">队伍</th>
                     <th scope="col" className="bg-purple px-1 py-4 font-black text-white">Rating</th>
                     {contest.problems.map((problem) => (
@@ -217,7 +231,7 @@ export function TrainingContestScoreboard() {
                       <tr key={entry.teamId} className="border-b border-purple/10 even:bg-[#fcfbfe]">
                         <td className="px-1 py-4 font-mono font-bold text-slatecopy">{entry.rank}</td>
                         <th scope="row" title={`原榜：${entry.username}`} className="px-4 py-4 font-normal">
-                          {team ? <TeamIdentity team={team} /> : entry.username}
+                          {team ? <TeamIdentity team={team} sourceRank={isTracked ? entry.sourceRank : undefined} /> : entry.username}
                         </th>
                         <td title={entry.countsForRating === false ? '本场成绩不计入 Rating' : entry.ratingFormula} className="bg-purple/5 px-1 py-4 font-mono text-lg font-black text-purple">
                           <RatingValue value={countedRating(entry)} />
@@ -244,7 +258,7 @@ export function TrainingContestScoreboard() {
                 return (
                   <article key={entry.teamId} className="py-5">
                     <div className="grid gap-4 sm:grid-cols-[minmax(0,1fr)_auto]">
-                      {team ? <TeamIdentity team={team} rank={entry.rank} /> : <p>{entry.username}</p>}
+                      {team ? <TeamIdentity team={team} rank={entry.rank} rankLabel={isTracked ? '独立' : '原榜'} sourceRank={isTracked ? entry.sourceRank : undefined} /> : <p>{entry.username}</p>}
                       <dl className="grid grid-cols-4 gap-4 sm:text-right">
                         {[
                           ['Rating', entry.countsForRating === false ? '-' : ratingFormatter.format(entry.rating)],
@@ -280,8 +294,11 @@ export function TrainingContestScoreboard() {
             </div>
             <p className="mt-5 text-sm leading-7 text-slatecopy/70">
               Rating = y / x × (n − rk + 1) / n × 200；本场 x = {contest.topSolved}，n = {contest.totalTeams}。
-              x 为原榜第一名题数，y 为本队题数，n 为原榜队伍数，rk 为原榜排名；保留一位小数。
+              {isTracked
+                ? ' x 为独立榜单第一名题数，y 为本队题数，n 为独立榜单队伍数，rk 为独立排名；保留一位小数。'
+                : ' x 为原榜第一名题数，y 为本队题数，n 为原榜队伍数，rk 为原榜排名；保留一位小数。'}
               {' '}Dirt = 已通过题目的错误提交 / 这些题的总提交，向下取整。
+              {isTracked && ' 题目下方的通过数 / 提交数沿用 QOJ 原榜统计。'}
               {isPintia && ' 本场 n 不含打星队伍；总用时沿用 Pintia 原榜，已含错误提交罚时；Dirt 根据逐题提交记录计算。'}
             </p>
           </>

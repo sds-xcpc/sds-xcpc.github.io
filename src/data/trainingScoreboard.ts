@@ -5,6 +5,9 @@ export type TrainingContest = {
   date: string;
   sourceUrl?: string;
   sourceSnapshot: string;
+  ratingScope?: 'tracked';
+  sourceTopSolved?: number;
+  sourceTotalTeams?: number;
   topSolved: number;
   totalTeams: number;
   problems: { label: string; accepted: number; submissions: number }[];
@@ -13,6 +16,7 @@ export type TrainingContest = {
     username: string;
     sourceMembers?: string[];
     rank: number;
+    sourceRank?: number;
     rating: number;
     countsForRating?: boolean;
     ratingFormula: string;

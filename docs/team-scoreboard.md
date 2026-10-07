@@ -1,14 +1,14 @@
 # Team Training Scoreboard
 
 - `/training/scoreboard`: ten school teams, Average Rating and per-contest ratings. Contest headings link to details.
-- `/training/scoreboard/:contestId`: source or corrected ranks, ratings, problem results, solved totals, total time and Dirt.
+- `/training/scoreboard/:contestId`: source or independent ranks, ratings, problem results, solved totals, total time and Dirt. Independent standings also show the original QOJ ranks.
 - `/training/standing`: individual selection standings, unchanged.
 
 ## Shared Team Roster
 
 `src/data/training-teams.json` is the shared source for the training-page roster and both scoreboard levels. Keep stable team IDs when editing names or members. Results join by team ID, not display order. The detailed page always shows the canonical team name and members, never temporary contest aliases or lineups.
 
-The SWERC 2024 contest detail includes nine visiting Zhejiang University teams, labelled `ZJU`, in addition to the ten school teams, for 19 teams in total. The training roster on `/training` and the overall Rating scoreboard on `/training/scoreboard` contain only the six official and four candidate school teams. ZJU results remain in the contest data and detail page but do not appear in the overall Rating ranking. ZJU teams have no entries in earlier contests; do not insert zero scores for those missing results.
+The October 5 SWERC 2024 and October 6 Universal Cup Hongō contest details include nine visiting Zhejiang University teams, labelled `ZJU`, in addition to the ten school teams, for 19 teams in each contest. The training roster on `/training` and the overall Rating scoreboard on `/training/scoreboard` contain only the six official and four candidate school teams. ZJU results remain in the contest data and detail pages but do not appear in the overall Rating ranking. ZJU teams have no entries in earlier contests; do not insert zero scores for those missing results.
 
 ## Import Results
 
@@ -43,10 +43,28 @@ python scripts/import-team-scoreboard.py resources/training-scoreboards/qoj4537-
 The October 5 SWERC 2024 training result is imported with:
 
 ```powershell
-python scripts/import-team-scoreboard.py resources/training-scoreboards/qoj4568-20261005.html --title "SWERC 2024" --short-title "SWERC 2024" --date 2026-10-05 --id swerc-2024 --supplement resources/training-scoreboards/qoj4568-supplement.json
+python scripts/import-team-scoreboard.py resources/training-scoreboards/qoj4568-20261005.html --title "SWERC 2024" --short-title "SWERC 2024" --date 2026-10-05 --id swerc-2024 --supplement resources/training-scoreboards/qoj4568-supplement.json --rating-scope tracked
 ```
 
-The original export contains all 19 tracked teams and 13 problems. It reports a full population of 199 but leaves Rating blank because it did not capture the leader's solved count in its metadata. The same snapshot explicitly shows original rank 1, `Thoughts_everyone`, solving 12 problems. The supplement records this evidence (`x = 12`, `n = 199`) so the importer can reproduce all ratings without changing the snapshot or renumbering the ranks. It adds no extra rows and keeps the original problem totals, penalties and Dirt values. Friendly ZJU names are mapped through the export's explicit `QOJ 账号：...` title metadata to the stable roster usernames. The user identified the contest as SWERC 2024; October 5 is the training date.
+The original export contains all 19 tracked teams and 13 problems. It reports a full population of 199 but leaves Rating blank because it did not capture the leader's solved count in its metadata. The same snapshot explicitly shows original rank 1, `Thoughts_everyone`, solving 12 problems. The supplement retains this evidence (`sourceTopSolved = 12`, `sourceTotalTeams = 199`). The requested independent scoreboard uses `topSolved = 12`, `totalTeams = 19` and ranks restricted to the school and ZJU teams. It adds no extra rows and keeps the original problem totals, penalties and Dirt values. Friendly ZJU names are mapped through the export's explicit `QOJ 账号：...` title metadata to the stable roster usernames. The user identified the contest as SWERC 2024; October 5 is the training date.
+
+The October 6 training result is imported with:
+
+```powershell
+python scripts/import-team-scoreboard.py resources/training-scoreboards/qoj4571-20261006.html --title "The 4th Universal Cup. Stage 18: Grand Prix of Hongō" --short-title "4th UCup: Hongō" --date 2026-10-06 --id ucup-4-stage-18-hongo --supplement resources/training-scoreboards/qoj4571-supplement.json --rating-scope tracked
+```
+
+This snapshot was exported on October 7 but records the October 6 training specified by the user. It includes the same 19 teams and 14 problems. Its original QOJ ratings use `sourceTopSolved = 13`, `sourceTotalTeams = 135`. Within the independent scoreboard, `Thoughts_everyone` is first with eight solves, so `topSolved = 8`, `totalTeams = 19`. The `*+1` at `2:10` on problem K for `If-Chinese-130` denotes an accepted first-blood result despite the missing CSS class; preserve its text and count it as accepted. Its seven solves, penalty 880 and Dirt 50% independently reconcile.
+
+## Independent Rating Scope and Audit
+
+Only these two October contests opt into `--rating-scope tracked`; the default remains `source`, and September data is unchanged. Both modes use the existing formula `Rating = y / x × (n − rk + 1) / n × 200`, rounded to one decimal place using the same importer calculation. In tracked mode, `y` is the team's solved count, `x` is the leader's solved count among the imported teams, `n` is their count, and `rk` is the rank within that subset. Restricting the source order removes gaps from outside teams; source ties retain competition ranking (for example, 1, 2, 2, 4). Both supplied October snapshots have distinct ranks.
+
+Original nonblank Rating values are validated against the original source population before recalculation. `sourceRank`, `sourceTopSolved` and `sourceTotalTeams` retain that provenance, while `rank`, `topSolved`, `totalTeams` and `ratingFormula` describe the independent scoreboard. Problem-header statistics still come from the full QOJ source and are explicitly labelled as such; they are not used in Rating. Raw HTML snapshots remain unchanged.
+
+For example, on October 5 `Mynoghra` is independent rank 7: `9 / 12 × (19 − 7 + 1) / 19 × 200 = 102.6`. On October 6 `Thoughts_everyone` moves from QOJ rank 13 to independent rank 1: `8 / 8 × (19 − 1 + 1) / 19 × 200 = 200.0`. The total-scoreboard averaging rule is unchanged: use the stored single-contest ratings; exclude absent and explicitly non-counting entries; remove exactly one lowest score only when a team has more than five valid results. This includes seven valid results for most school teams and five for `beyond-the-equation` after October 6.
+
+## Pintia Results
 
 The September 19 CCPC Online standings come from Pintia's public read-only XCPC ranking for competition `2099750481526394880`. Run `python scripts/import-pintia-scoreboard.py` to regenerate from the compact snapshot. Use `--refresh` only to intentionally fetch and replace that snapshot. The snapshot and generated contest data retain no Pintia team names or member lists. Fixed Pintia team IDs map to the canonical roster IDs.
 

@@ -5,8 +5,11 @@
   "date": "2026-10-05",
   "sourceSnapshot": "qoj4568-20261005.html",
   "sourceUrl": "https://qoj.ac/results/QOJ4568",
+  "ratingScope": "tracked",
+  "sourceTopSolved": 12,
+  "sourceTotalTeams": 199,
   "topSolved": 12,
-  "totalTeams": 199,
+  "totalTeams": 19,
   "problems": [
     {
       "label": "A",
@@ -85,7 +88,8 @@
       ],
       "rank": 1,
       "rating": 200.0,
-      "ratingFormula": "12 / 12 × (199 − 1 + 1) / 199 × 200 = 200.0",
+      "sourceRank": 1,
+      "ratingFormula": "12 / 12 × (19 − 1 + 1) / 19 × 200 = 200.0",
       "problems": [
         {
           "status": "accepted",
@@ -166,8 +170,9 @@
         "陈铭凯"
       ],
       "rank": 2,
-      "rating": 182.4,
-      "ratingFormula": "11 / 12 × (199 − 2 + 1) / 199 × 200 = 182.4",
+      "rating": 173.7,
+      "sourceRank": 2,
+      "ratingFormula": "11 / 12 × (19 − 2 + 1) / 19 × 200 = 173.7",
       "problems": [
         {
           "status": "accepted",
@@ -248,8 +253,9 @@
         "倪琛航"
       ],
       "rank": 3,
-      "rating": 165.0,
-      "ratingFormula": "10 / 12 × (199 − 3 + 1) / 199 × 200 = 165.0",
+      "rating": 149.1,
+      "sourceRank": 3,
+      "ratingFormula": "10 / 12 × (19 − 3 + 1) / 19 × 200 = 149.1",
       "problems": [
         {
           "status": "accepted",
@@ -330,8 +336,9 @@
         "李宸宇"
       ],
       "rank": 4,
-      "rating": 164.2,
-      "ratingFormula": "10 / 12 × (199 − 4 + 1) / 199 × 200 = 164.2",
+      "rating": 140.4,
+      "sourceRank": 4,
+      "ratingFormula": "10 / 12 × (19 − 4 + 1) / 19 × 200 = 140.4",
       "problems": [
         {
           "status": "accepted",
@@ -412,8 +419,9 @@
         "姜圻圣"
       ],
       "rank": 5,
-      "rating": 163.3,
-      "ratingFormula": "10 / 12 × (199 − 5 + 1) / 199 × 200 = 163.3",
+      "rating": 131.6,
+      "sourceRank": 5,
+      "ratingFormula": "10 / 12 × (19 − 5 + 1) / 19 × 200 = 131.6",
       "problems": [
         {
           "status": "accepted",
@@ -493,9 +501,10 @@
         "Adam",
         "俞卓群"
       ],
-      "rank": 8,
-      "rating": 144.7,
-      "ratingFormula": "9 / 12 × (199 − 8 + 1) / 199 × 200 = 144.7",
+      "rank": 6,
+      "rating": 110.5,
+      "sourceRank": 8,
+      "ratingFormula": "9 / 12 × (19 − 6 + 1) / 19 × 200 = 110.5",
       "problems": [
         {
           "status": "accepted",
@@ -575,9 +584,10 @@
         "陈嘉年",
         "王泽诚"
       ],
-      "rank": 10,
-      "rating": 143.2,
-      "ratingFormula": "9 / 12 × (199 − 10 + 1) / 199 × 200 = 143.2",
+      "rank": 7,
+      "rating": 102.6,
+      "sourceRank": 10,
+      "ratingFormula": "9 / 12 × (19 − 7 + 1) / 19 × 200 = 102.6",
       "problems": [
         {
           "status": "accepted",
@@ -657,9 +667,10 @@
         "徐子萱",
         "林子睿"
       ],
-      "rank": 13,
-      "rating": 141.0,
-      "ratingFormula": "9 / 12 × (199 − 13 + 1) / 199 × 200 = 141.0",
+      "rank": 8,
+      "rating": 94.7,
+      "sourceRank": 13,
+      "ratingFormula": "9 / 12 × (19 − 8 + 1) / 19 × 200 = 94.7",
       "problems": [
         {
           "status": "accepted",
@@ -739,9 +750,10 @@
         "王喆",
         "周学诚"
       ],
-      "rank": 14,
-      "rating": 124.6,
-      "ratingFormula": "8 / 12 × (199 − 14 + 1) / 199 × 200 = 124.6",
+      "rank": 9,
+      "rating": 77.2,
+      "sourceRank": 14,
+      "ratingFormula": "8 / 12 × (19 − 9 + 1) / 19 × 200 = 77.2",
       "problems": [
         {
           "status": "accepted",
@@ -821,9 +833,10 @@
         "孙超逸",
         "邓沣庭"
       ],
-      "rank": 15,
-      "rating": 124.0,
-      "ratingFormula": "8 / 12 × (199 − 15 + 1) / 199 × 200 = 124.0",
+      "rank": 10,
+      "rating": 70.2,
+      "sourceRank": 15,
+      "ratingFormula": "8 / 12 × (19 − 10 + 1) / 19 × 200 = 70.2",
       "problems": [
         {
           "status": "accepted",
@@ -903,9 +916,10 @@
         "梁书源",
         "谭文礼"
       ],
-      "rank": 17,
-      "rating": 122.6,
-      "ratingFormula": "8 / 12 × (199 − 17 + 1) / 199 × 200 = 122.6",
+      "rank": 11,
+      "rating": 63.2,
+      "sourceRank": 17,
+      "ratingFormula": "8 / 12 × (19 − 11 + 1) / 19 × 200 = 63.2",
       "problems": [
         {
           "status": "rejected",
@@ -985,9 +999,10 @@
         "司梓翰",
         "张佳艺"
       ],
-      "rank": 20,
-      "rating": 120.6,
-      "ratingFormula": "8 / 12 × (199 − 20 + 1) / 199 × 200 = 120.6",
+      "rank": 12,
+      "rating": 56.1,
+      "sourceRank": 20,
+      "ratingFormula": "8 / 12 × (19 − 12 + 1) / 19 × 200 = 56.1",
       "problems": [
         {
           "status": "accepted",
@@ -1067,9 +1082,10 @@
         "余哲伟",
         "叶梓弘"
       ],
-      "rank": 28,
-      "rating": 100.8,
-      "ratingFormula": "7 / 12 × (199 − 28 + 1) / 199 × 200 = 100.8",
+      "rank": 13,
+      "rating": 43.0,
+      "sourceRank": 28,
+      "ratingFormula": "7 / 12 × (19 − 13 + 1) / 19 × 200 = 43.0",
       "problems": [
         {
           "status": "empty",
@@ -1149,9 +1165,10 @@
         "史佳航",
         "张宸略"
       ],
-      "rank": 30,
-      "rating": 99.7,
-      "ratingFormula": "7 / 12 × (199 − 30 + 1) / 199 × 200 = 99.7",
+      "rank": 14,
+      "rating": 36.8,
+      "sourceRank": 30,
+      "ratingFormula": "7 / 12 × (19 − 14 + 1) / 19 × 200 = 36.8",
       "problems": [
         {
           "status": "empty",
@@ -1231,9 +1248,10 @@
         "何隽哲",
         "李衍硕"
       ],
-      "rank": 35,
-      "rating": 96.7,
-      "ratingFormula": "7 / 12 × (199 − 35 + 1) / 199 × 200 = 96.7",
+      "rank": 15,
+      "rating": 30.7,
+      "sourceRank": 35,
+      "ratingFormula": "7 / 12 × (19 − 15 + 1) / 19 × 200 = 30.7",
       "problems": [
         {
           "status": "rejected",
@@ -1313,9 +1331,10 @@
         "陆安易",
         "施翔天"
       ],
-      "rank": 39,
-      "rating": 94.4,
-      "ratingFormula": "7 / 12 × (199 − 39 + 1) / 199 × 200 = 94.4",
+      "rank": 16,
+      "rating": 24.6,
+      "sourceRank": 39,
+      "ratingFormula": "7 / 12 × (19 − 16 + 1) / 19 × 200 = 24.6",
       "problems": [
         {
           "status": "rejected",
@@ -1395,9 +1414,10 @@
         "陈子谦",
         "房俊哲"
       ],
-      "rank": 42,
-      "rating": 92.6,
-      "ratingFormula": "7 / 12 × (199 − 42 + 1) / 199 × 200 = 92.6",
+      "rank": 17,
+      "rating": 18.4,
+      "sourceRank": 42,
+      "ratingFormula": "7 / 12 × (19 − 17 + 1) / 19 × 200 = 18.4",
       "problems": [
         {
           "status": "empty",
@@ -1477,9 +1497,10 @@
         "王勋",
         "李沐阳"
       ],
-      "rank": 50,
-      "rating": 75.4,
-      "ratingFormula": "6 / 12 × (199 − 50 + 1) / 199 × 200 = 75.4",
+      "rank": 18,
+      "rating": 10.5,
+      "sourceRank": 50,
+      "ratingFormula": "6 / 12 × (19 − 18 + 1) / 19 × 200 = 10.5",
       "problems": [
         {
           "status": "rejected",
@@ -1559,9 +1580,10 @@
         "邵辰航",
         "谷旭涵"
       ],
-      "rank": 52,
-      "rating": 74.4,
-      "ratingFormula": "6 / 12 × (199 − 52 + 1) / 199 × 200 = 74.4",
+      "rank": 19,
+      "rating": 5.3,
+      "sourceRank": 52,
+      "ratingFormula": "6 / 12 × (19 − 19 + 1) / 19 × 200 = 5.3",
       "problems": [
         {
           "status": "empty",

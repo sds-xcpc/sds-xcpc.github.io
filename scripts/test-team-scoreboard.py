@@ -22,6 +22,8 @@ class TeamScoreboardTests(unittest.TestCase):
         cls.pku_day_2_html = (PROJECT / 'resources/training-scoreboards/qoj4537-20260927.html').read_text(encoding='utf-8')
         cls.swerc_html = (PROJECT / 'resources/training-scoreboards/qoj4568-20261005.html').read_text(encoding='utf-8')
         cls.swerc_supplement = json.loads((PROJECT / 'resources/training-scoreboards/qoj4568-supplement.json').read_text(encoding='utf-8'))
+        cls.hongo_html = (PROJECT / 'resources/training-scoreboards/qoj4571-20261006.html').read_text(encoding='utf-8')
+        cls.hongo_supplement = json.loads((PROJECT / 'resources/training-scoreboards/qoj4571-supplement.json').read_text(encoding='utf-8'))
 
     def parse(self, html=None, slug='xix-gp-of-korea', date='2026-09-13'):
         return importer.parse_scoreboard(
@@ -53,11 +55,36 @@ class TeamScoreboardTests(unittest.TestCase):
             'PKU Selection D2',
         )
 
-    def parse_swerc(self, html=None, supplement=None):
+    def parse_swerc(self, html=None, supplement=None, rating_scope='source'):
         return importer.parse_scoreboard(
             self.swerc_html if html is None else html, self.roster, 'SWERC 2024',
             '2026-10-05', 'swerc-2024', 'qoj4568-20261005.html', 'SWERC 2024',
             self.swerc_supplement if supplement is None else supplement,
+            rating_scope=rating_scope,
+        )
+
+    def parse_hongo(self, html=None, rating_scope='source'):
+        return importer.parse_scoreboard(
+            self.hongo_html if html is None else html, self.roster,
+            'The 4th Universal Cup. Stage 18: Grand Prix of Hongō',
+            '2026-10-06', 'ucup-4-stage-18-hongo', 'qoj4571-20261006.html',
+            '4th UCup: Hongō', self.hongo_supplement, rating_scope=rating_scope,
+        )
+
+    def parse_small_tracked(self, results):
+        rows = []
+        for index, (rank, solved) in enumerate(results):
+            team = self.roster[index]
+            cells = ''.join('<td class="accepted">+\n0:10</td>' if problem < solved else '<td>-</td>'
+                            for problem in range(2))
+            rows.append(f'<tr><td>{rank}</td><td>{team["qojUsername"]}<small>({", ".join(team["members"])})</small></td>'
+                        f'<td>—</td>{cells}<td>{solved}</td><td>20</td><td>0%</td></tr>')
+        html = ('<p id="rating-info">n = 100</p><table id="table"><tr><th>Rank.</th><th>Username</th><th>Rating</th>'
+                '<th>A\n0/0</th><th>B\n0/0</th><th>Solved</th><th>Penalty</th><th>Dirt</th></tr>'
+                + ''.join(rows) + '</table>')
+        return importer.parse_scoreboard(
+            html, self.roster, 'Example', '2026-10-06', 'example', 'example.html',
+            supplement={'topSolved': 2, 'sourceTotalTeams': 100}, rating_scope='tracked',
         )
 
     def test_generated_file_matches_source(self):
@@ -166,10 +193,9 @@ class TeamScoreboardTests(unittest.TestCase):
             ('team-accept', 40, 9.7), ('meowfia', 41, 7.8),
         ])
 
-    def test_swerc_snapshot_matches_generated_file(self):
-        saved = json.loads((PROJECT / 'src/data/team-contests/swerc-2024.json').read_text(encoding='utf-8'))
+    def test_swerc_source_scope_preserves_original_results(self):
         contest = self.parse_swerc()
-        self.assertEqual(contest, saved)
+        self.assertNotIn('ratingScope', contest)
         self.assertEqual(contest['sourceUrl'], 'https://qoj.ac/results/QOJ4568')
         self.assertEqual((contest['topSolved'], contest['totalTeams'], len(contest['problems'])), (12, 199, 13))
         self.assertEqual([(row['username'], row['rank'], row['solved'], row['penalty'], row['rating'])
@@ -198,6 +224,74 @@ class TeamScoreboardTests(unittest.TestCase):
         for row in contest['standings']:
             self.assertEqual(row['sourceMembers'], teams[row['teamId']]['members'])
         self.assertNotIn('wang_xun', [row['username'] for row in contest['standings']])
+
+    def test_swerc_tracked_ratings_and_source_ranks(self):
+        contest = self.parse_swerc(rating_scope='tracked')
+        saved = json.loads((PROJECT / 'src/data/team-contests/swerc-2024.json').read_text(encoding='utf-8'))
+        self.assertEqual(contest, saved)
+        self.assertEqual(contest['ratingScope'], 'tracked')
+        self.assertEqual((contest['topSolved'], contest['totalTeams']), (12, 19))
+        self.assertEqual((contest['sourceTopSolved'], contest['sourceTotalTeams']), (12, 199))
+        self.assertEqual([row['rank'] for row in contest['standings']], list(range(1, 20)))
+        self.assertEqual([(row['username'], row['sourceRank'], row['rating']) for row in contest['standings']], [
+            ('Thoughts_everyone', 1, 200.0), ('Brightest_Flame_Plus', 2, 173.7),
+            ('Yuyu-Yuyu-Yuyuko', 3, 149.1), ('Wait_What', 4, 140.4), ('If-Chinese-130', 5, 131.6),
+            ('Slay_the_Judge', 8, 110.5), ('Mynoghra', 10, 102.6), ('no_more_time_penalty', 13, 94.7),
+            ('StarfruitSupernova', 14, 77.2), ('Verifying we are human.', 15, 70.2),
+            ('Easons_MD_istheRealBOSS', 17, 63.2), ('Gather_and_Scatter', 20, 56.1),
+            ('Equation32768', 28, 43.0), ('pear_money_team', 30, 36.8), ('TeamAccept', 35, 30.7),
+            ('catcannotpassturingtest', 39, 24.6), ('_IAKIOI', 42, 18.4), ('tengZF', 50, 10.5),
+            ('Meowfia', 52, 5.3),
+        ])
+
+    def test_hongo_tracked_ratings_and_first_blood(self):
+        contest = self.parse_hongo(rating_scope='tracked')
+        saved = json.loads((PROJECT / 'src/data/team-contests/ucup-4-stage-18-hongo.json').read_text(encoding='utf-8'))
+        self.assertEqual(contest, saved)
+        self.assertEqual(contest['ratingScope'], 'tracked')
+        self.assertEqual((contest['topSolved'], contest['totalTeams'], len(contest['problems'])), (8, 19, 14))
+        self.assertEqual((contest['sourceTopSolved'], contest['sourceTotalTeams']), (13, 135))
+        self.assertEqual([row['rank'] for row in contest['standings']], list(range(1, 20)))
+        self.assertEqual([(row['username'], row['sourceRank'], row['rating']) for row in contest['standings']], [
+            ('Thoughts_everyone', 13, 200.0), ('Brightest_Flame_Plus', 17, 189.5),
+            ('Yuyu-Yuyu-Yuyuko', 24, 156.6), ('If-Chinese-130', 25, 147.4),
+            ('_IAKIOI', 39, 118.4), ('tengZF', 45, 110.5), ('Mynoghra', 48, 102.6),
+            ('no_more_time_penalty', 51, 78.9), ('Wait_What', 52, 72.4), ('Gather_and_Scatter', 65, 65.8),
+            ('catcannotpassturingtest', 68, 59.2), ('Verifying we are human.', 89, 42.1),
+            ('StarfruitSupernova', 93, 27.6), ('Easons_MD_istheRealBOSS', 94, 23.7),
+            ('Slay_the_Judge', 99, 19.7), ('Equation32768', 103, 15.8), ('pear_money_team', 106, 11.8),
+            ('TeamAccept', 108, 7.9), ('Meowfia', 109, 3.9),
+        ])
+        chinese = next(row for row in contest['standings'] if row['username'] == 'If-Chinese-130')
+        self.assertEqual(chinese['solved'], 7)
+        self.assertEqual(chinese['problems'][10], {'status': 'accepted', 'result': '*+1', 'time': '2:10'})
+
+    def test_tracked_mode_validates_source_rating_before_recomputing(self):
+        source = self.parse_hongo()
+        self.assertEqual((source['topSolved'], source['totalTeams']), (13, 135))
+        self.assertEqual(source['standings'][0]['rating'], 112.1)
+        self.assertEqual(source['standings'][0]['rank'], 13)
+        # 200.0 is the correct independent rating, but is incorrect source evidence.
+        with self.assertRaisesRegex(ValueError, 'Rating mismatch'):
+            self.parse_hongo(self.hongo_html.replace('>112.1</td>', '>200.0</td>', 1), rating_scope='tracked')
+
+    def test_tracked_rank_preserves_competition_ties(self):
+        contest = self.parse_small_tracked([(40, 1), (20, 1), (10, 2), (20, 1)])
+        self.assertEqual([row['sourceRank'] for row in contest['standings']], [10, 20, 20, 40])
+        self.assertEqual([row['rank'] for row in contest['standings']], [1, 2, 2, 4])
+        self.assertEqual([row['rating'] for row in contest['standings']], [200.0, 75.0, 75.0, 25.0])
+
+    def test_tracked_invalid_scope_population_and_solved_are_rejected(self):
+        with self.assertRaisesRegex(ValueError, 'Rating scope'):
+            self.parse_swerc(rating_scope='all')
+        with self.assertRaisesRegex(ValueError, 'No populated table'):
+            self.parse_small_tracked([])
+        with self.assertRaisesRegex(ValueError, 'denominator must be positive'):
+            self.parse_small_tracked([(1, 0), (2, 0)])
+        with self.assertRaisesRegex(ValueError, 'Invalid rank or solved count'):
+            self.parse_small_tracked([(1, 3)])
+        with self.assertRaisesRegex(ValueError, 'leader must have the highest solved count'):
+            self.parse_small_tracked([(1, 1), (2, 2)])
 
     def test_swerc_explicit_account_takes_precedence_over_display_name(self):
         changed_display = self.swerc_html.replace('>Brightest Flame+</span>', '>Thoughts_everyone</span>', 1)

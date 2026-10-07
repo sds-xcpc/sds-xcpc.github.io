@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>QOJ4571 · 关注队伍榜单快照</title><style>
+    :root { color-scheme: light; --ink:#16243b; --muted:#64748b; --line:#dce3ed; --accent:#1958c7; }
+    * { box-sizing:border-box; }
+    body { margin:0; background:#f5f7fb; color:var(--ink); font:16px/1.5 "Segoe UI","Microsoft YaHei",sans-serif; }
+    main { max-width:1800px; margin:auto; padding:30px 28px; }
+    header { display:flex; align-items:center; justify-content:space-between; gap:24px; flex-wrap:wrap; margin-bottom:22px; }
+    h1 { font-size:26px; letter-spacing:-.6px; margin:0 0 5px; font-weight:700; }
+    h1 span { font-size:16px; font-weight:400; color:var(--muted); margin-left:12px; letter-spacing:0; }
+    .subtitle, .meta { color:var(--muted); font-size:14px; margin:0; }
+    .actions { display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
+    button, .button { min-height:44px; border:1px solid var(--line); border-radius:7px; padding:9px 16px; background:white; color:var(--ink); font-family:inherit; font-size:14px; font-weight:600; line-height:1.5; cursor:pointer; text-decoration:none; display:inline-flex; align-items:center; justify-content:center; gap:8px; }
+    button { font-family:inherit; font-size:14px; }
+    button.primary { color:white; background:var(--accent); border-color:var(--accent); }
+    button:hover { filter:brightness(.96); }
+    button:disabled { opacity:.6; cursor:wait; }
+    :focus-visible { outline:3px solid #82aafa; outline-offset:3px; }
+    .toolbar { display:flex; gap:18px; flex-wrap:wrap; justify-content:space-between; align-items:center; padding:13px 16px; background:#fff; border:1px solid var(--line); border-radius:9px 9px 0 0; }
+    #status { font-size:14px; }
+    .badge { color:var(--accent); font-weight:700; }
+    .settings { background:#fff; border:1px solid var(--line); border-radius:9px; padding:16px; margin-bottom:18px; }
+    .settings label { display:block; font-weight:600; font-size:14px; margin-bottom:8px; }
+    .settings-row { display:flex; gap:10px; flex-wrap:wrap; }
+    .settings input { flex:1; min-width:220px; border:1px solid #b8c7db; border-radius:7px; padding:10px 12px; font-family:inherit; font-size:14px; line-height:1.5; color:var(--ink); }
+    .settings .meta { margin-top:8px; }
+    #settings-error { color:#aa3446; margin:8px 0 0; font-size:14px; }
+    .notice { margin:0 0 18px; padding:16px 18px; border:1px solid #e2c37a; border-radius:7px; background:#fff9e9; color:#72510b; overflow-wrap:anywhere; }
+    .notice p { margin:0; }
+    .notice a { color:inherit; }
+    .table-wrap { overflow:auto; background:#fff; border:1px solid var(--line); border-top:0; border-radius:0 0 9px 9px; max-height:calc(100vh - 220px); min-height:220px; }
+    table { border-collapse:separate; border-spacing:0; width:100%; font-size:14px; font-variant-numeric:tabular-nums; }
+    th, td { padding:13px 12px; border-bottom:1px solid #e5eaf1; border-right:1px solid #eef1f6; text-align:center; white-space:pre-line; min-width:64px; vertical-align:middle; }
+    th { background:#edf2fa; font-size:13px; font-weight:650; color:#42536c; position:sticky; top:0; z-index:2; }
+    th.team, td.team { min-width:320px; max-width:440px; text-align:left; overflow-wrap:anywhere; }
+    td.team { font-weight:600; }
+    .team-top { display:flex; align-items:center; flex-wrap:wrap; gap:5px 10px; }
+    .team-status { flex:none; display:inline-block; border:1px solid #dce3ed; border-radius:4px; padding:1px 6px; font-size:12px; line-height:1.6; font-weight:500; white-space:nowrap; }
+    .team-status.official { background:#edf3ff; border-color:#c6d8fb; color:#1958c7; }
+    .team-status.candidate { background:#f3f4f6; color:#586579; }
+    .team-status.zju { background:#ede9fe; border-color:#c4b5fd; color:#6d28d9; font-weight:700; }
+    td.team.zju { background:#f7f2ff; box-shadow:inset 3px 0 0 #8b5cf6; }
+    td.team small { display:block; color:var(--muted); font-size:13px; font-weight:400; margin-top:4px; line-height:1.5; }
+    tbody tr:nth-child(even) { background:#fafbfe; }
+    tbody tr:hover { background:#eff4ff; }
+    td.accepted { background:#e0f4e9; color:#13643d; font-weight:600; }
+    td.rejected { background:#fcebed; color:#aa3446; }
+    td.pending { background:#fff3d4; color:#875d08; }
+    th.rating, td.rating { min-width:100px; background:#eef3ff; color:#1958c7; font-weight:700; }
+    #rating-info { margin:14px 0 0; font-size:13px; color:var(--muted); }
+    th a, td a { color:inherit; text-decoration:none; }
+    th a:hover, td a:hover { text-decoration:underline; }
+    #empty { text-align:center; padding:56px 24px; color:var(--muted); }
+    #empty strong { display:block; margin-bottom:8px; color:var(--ink); font-size:18px; }
+    #missing { color:#895a0b; font-size:14px; margin:14px 0 0; overflow-wrap:anywhere; }
+    footer { display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap; margin-top:15px; color:var(--muted); font-size:12px; }
+    footer a { color:var(--muted); }
+    [hidden] { display:none !important; }
+    @media (max-width:700px) { main { padding:20px 12px; } header { gap:14px; } h1 { font-size:22px; } h1 span { display:block; margin:3px 0 0; } .actions { width:100%; } .actions button { flex:1; } .table-wrap { max-height:70vh; } .toolbar { padding:12px; gap:7px; } }
+  
+.table-wrap{max-height:none;min-height:0}th{position:static}.snapshot-note{margin:12px 0;color:#64748b;font-size:14px}@media print{main{padding:0}.table-wrap{overflow:visible}body{background:white}}</style></head><body><main><header><div><h1>QOJ4571<span>关注队伍榜单快照</span></h1><p class="subtitle">6 支正式队伍 · 4 支候选队伍 · 9 支 ZJU 队伍 · 当前显示 19 / 19 支</p></div></header><p class="snapshot-note">成绩更新于 2026/10/7 09:23:35；导出于 2026/10/7 09:23:44。这是导出时的静态成绩，可离线打开。</p><div class="table-wrap"><table id="table" aria-label="QOJ4571 关注队伍成绩"><thead id="head"><tr><th scope="col" title="">Rank.</th><th scope="col" class="team" title="">Username</th><th class="rating" title="Rating = y / x × (n − rk + 1) / n × 200；x 为原榜单第一名题数，y 为本队题数，n 为原榜单总队伍数，rk 为原始排名。乘以 200 后保留一位小数。" scope="col">Rating</th><th scope="col" title="">A
+11/103</th><th scope="col" title="">B
+3/24</th><th scope="col" title="">C
+45/312</th><th scope="col" title="">D
+17/47</th><th scope="col" title="">E
+117/134</th><th scope="col" title="">F
+118/129</th><th scope="col" title="">G
+33/127</th><th scope="col" title="">H
+23/92</th><th scope="col" title="">I
+4/9</th><th scope="col" title="">J
+110/183</th><th scope="col" title="">K
+53/103</th><th scope="col" title="">L
+0/1</th><th scope="col" title="">M
+3/9</th><th scope="col" title="">N
+90/795</th><th scope="col" title="">Solved</th><th scope="col" title="">Penalty</th><th scope="col" title="">Dirt</th></tr></thead><tbody id="body"><tr><td title="">13</td><td class="team" title=""><div class="team-top"><span>Thoughts_everyone</span><span class="team-status official">正式队伍</span></div><small>(林毅, 吴彦儒, 罗辰骏)</small></td><td class="rating" title="8 / 13 × (135 − 13 + 1) / 135 × 200">112.1</td><td title="">-</td><td title="">-</td><td class="accepted" title="">+1
+3:14</td><td class="accepted" title="">+
+4:17</td><td class="accepted" title="">+
+0:10</td><td class="accepted" title="">+1
+0:18</td><td class="accepted" title="">+
+2:40</td><td class="rejected" title="">-1
+4:59</td><td title="">-</td><td class="accepted" title="">+
+0:40</td><td class="accepted" title="">+
+2:53</td><td title="">-</td><td title="">-</td><td class="accepted" title="">+
+0:30</td><td title="">8</td><td title="">922</td><td title="">20%</td></tr><tr><td title="">17</td><td class="team zju" title=""><div class="team-top"><span title="QOJ 账号：Brightest_Flame_Plus">Brightest Flame+</span><span class="team-status zju">ZJU</span></div><small>(徐锐扬, 朱天煜, 陈铭凯)</small></td><td class="rating" title="8 / 13 × (135 − 17 + 1) / 135 × 200">108.5</td><td class="rejected" title="">-8
+4:57</td><td title="">-</td><td class="accepted" title="">+1
+3:12</td><td class="accepted" title="">+
+4:56</td><td class="accepted" title="">+
+0:13</td><td class="accepted" title="">+
+0:08</td><td class="accepted" title="">+1
+1:24</td><td class="rejected" title="">-1
+4:26</td><td title="">-</td><td class="accepted" title="">+1
+0:48</td><td class="accepted" title="">+
+2:49</td><td title="">-</td><td title="">-</td><td class="accepted" title="">+7
+4:14</td><td title="">8</td><td title="">1264</td><td title="">55%</td></tr><tr><td title="">24</td><td class="team zju" title=""><div class="team-top"><span title="QOJ 账号：Yuyu-Yuyu-Yuyuko">Yuyu-Yuyu-Yuyuko</span><span class="team-status zju">ZJU</span></div><small>(陈玉彬, 姜宇辰, 倪琛航)</small></td><td class="rating" title="7 / 13 × (135 − 24 + 1) / 135 × 200">89.3</td><td title="">-</td><td title="">-</td><td class="accepted" title="">+4
+3:22</td><td title="">-</td><td class="accepted" title="">+
+0:29</td><td class="accepted" title="">+
+0:07</td><td title="">-</td><td class="accepted" title="">+2
+2:56</td><td title="">-</td><td class="accepted" title="">+
+0:27</td><td class="accepted" title="">+
+2:58</td><td title="">-</td><td title="">-</td><td class="accepted" title="">+2
+1:29</td><td title="">7</td><td title="">868</td><td title="">53%</td></tr><tr><td title="">25</td><td class="team zju" title=""><div class="team-top"><span title="QOJ 账号：If-Chinese-130">If Chinese 130</span><span class="team-status zju">ZJU</span></div><small>(毛艺婷, 张涵硕, 姜圻圣)</small></td><td class="rating" title="7 / 13 × (135 − 25 + 1) / 135 × 200">88.5</td><td title="">-</td><td title="">-</td><td title="">-</td><td title="">-</td><td class="accepted" title="">+
+0:33</td><td class="accepted" title="">+1
+0:24</td><td class="accepted" title="">+4
+4:48</td><td class="accepted" title="">+
+3:09</td><td title="">-</td><td class="accepted" title="">+
+0:30</td><td title="">*+1
+2:10</td><td title="">-</td><td title="">-</td><td class="accepted" title="">+1
+0:46</td><td title="">7</td><td title="">880</td><td title="">50%</td></tr><tr><td title="">39</td><td class="team zju" title=""><div class="team-top"><span title="QOJ 账号：_IAKIOI">I AK IOI</span><span class="team-status zju">ZJU</span></div><small>(胡淞锦, 陈子谦, 房俊哲)</small></td><td class="rating" title="6 / 13 × (135 − 39 + 1) / 135 × 200">66.3</td><td title="">-</td><td title="">-</td><td class="accepted" title="">+1
+4:41</td><td title="">-</td><td class="accepted" title="">+1
+0:24</td><td class="accepted" title="">+
+0:15</td><td title="">-</td><td title="">-</td><td title="">-</td><td class="accepted" title="">+
+0:49</td><td class="accepted" title="">+
+3:56</td><td title="">-</td><td title="">-</td><td class="accepted" title="">+4
+2:16</td><td title="">6</td><td title="">861</td><td title="">50%</td></tr><tr><td title="">45</td><td class="team zju" title=""><div class="team-top"><span title="QOJ 账号：tengZF">Plantagenet</span><span class="team-status zju">ZJU</span></div><small>(滕梓凡, 王勋, 李沐阳)</small></td><td class="rating" title="6 / 13 × (135 − 45 + 1) / 135 × 200">62.2</td><td title="">-</td><td title="">-</td><td title="">-</td><td title="">-</td><td class="accepted" title="">+
+0:13</td><td class="accepted" title="">+
+0:16</td><td class="accepted" title="">+2
+4:05</td><td class="rejected" title="">-1
+1:33</td><td title="">-</td><td class="accepted" title="">+
+0:55</td><td class="accepted" title="">+
+3:07</td><td title="">-</td><td title="">-</td><td class="accepted" title="">+5
+4:47</td><td title="">6</td><td title="">943</td><td title="">53%</td></tr><tr><td title="">48</td><td class="team" title=""><div class="team-top"><span>Mynoghra</span><span class="team-status official">正式队伍</span></div><small>(周莫非, 陈嘉年, 王泽诚)</small></td><td class="rating" title="6 / 13 × (135 − 48 + 1) / 135 × 200">60.2</td><td title="">-</td><td title="">-</td><td class="accepted" title="">+5
+3:32</td><td title="">-</td><td class="accepted" title="">+
+0:41</td><td class="accepted" title="">+
+0:09</td><td class="accepted" title="">+3
+4:48</td><td title="">-</td><td title="">-</td><td class="accepted" title="">+
+0:47</td><td title="">-</td><td title="">-</td><td title="">-</td><td class="accepted" title="">+8
+2:55</td><td title="">6</td><td title="">1092</td><td title="">72%</td></tr><tr><td title="">51</td><td class="team zju" title=""><div class="team-top"><span title="QOJ 账号：no_more_time_penalty">no time penalty</span><span class="team-status zju">ZJU</span></div><small>(黄翊轩, 徐子萱, 林子睿)</small></td><td class="rating" title="5 / 13 × (135 − 51 + 1) / 135 × 200">48.4</td><td title="">-</td><td title="">-</td><td title="">-</td><td title="">-</td><td class="accepted" title="">+
+0:33</td><td class="accepted" title="">+
+0:14</td><td class="accepted" title="">+
+2:38</td><td title="">-</td><td title="">-</td><td class="accepted" title="">+
+0:35</td><td title="">-</td><td title="">-</td><td title="">-</td><td class="accepted" title="">+
+3:01</td><td title="">5</td><td title="">421</td><td title="">0%</td></tr><tr><td title="">52</td><td class="team zju" title=""><div class="team-top"><span title="QOJ 账号：Wait_What">Wait What?</span><span class="team-status zju">ZJU</span></div><small>(柯怀俊, 张厚华, 李宸宇)</small></td><td class="rating" title="5 / 13 × (135 − 52 + 1) / 135 × 200">47.9</td><td title="">-</td><td title="">-</td><td class="rejected" title="">-6
+4:59</td><td title="">-</td><td class="accepted" title="">+
+0:47</td><td class="accepted" title="">+
+0:43</td><td class="accepted" title="">+1
+3:27</td><td title="">-</td><td title="">-</td><td class="accepted" title="">+
+0:32</td><td title="">-</td><td title="">-</td><td title="">-</td><td class="accepted" title="">+2
+1:28</td><td title="">5</td><td title="">477</td><td title="">37%</td></tr><tr><td title="">65</td><td class="team" title=""><div class="team-top"><span>Gather_and_Scatter</span><span class="team-status official">正式队伍</span></div><small>(欧奕阳, 司梓翰, 张佳艺)</small></td><td class="rating" title="5 / 13 × (135 − 65 + 1) / 135 × 200">40.5</td><td title="">-</td><td title="">-</td><td title="">-</td><td class="accepted" title="">+3
+4:01</td><td class="accepted" title="">+
+1:01</td><td class="accepted" title="">+
+0:19</td><td title="">-</td><td title="">-</td><td title="">-</td><td class="accepted" title="">+
+2:50</td><td title="">-</td><td title="">-</td><td title="">-</td><td class="accepted" title="">+5
+1:57</td><td title="">5</td><td title="">768</td><td title="">61%</td></tr><tr><td title="">68</td><td class="team zju" title=""><div class="team-top"><span title="QOJ 账号：catcannotpassturingtest">Cat cannot pass turing test</span><span class="team-status zju">ZJU</span></div><small>(李俊睿, 陆安易, 施翔天)</small></td><td class="rating" title="5 / 13 × (135 − 68 + 1) / 135 × 200">38.7</td><td title="">-</td><td title="">-</td><td class="rejected" title="">-16
+4:59</td><td title="">-</td><td class="accepted" title="">+
+1:02</td><td class="accepted" title="">+
+0:10</td><td title="">-</td><td class="rejected" title="">-4
+2:31</td><td title="">-</td><td class="accepted" title="">+2
+1:22</td><td class="accepted" title="">+4
+3:38</td><td title="">-</td><td title="">-</td><td class="accepted" title="">+11
+2:04</td><td title="">5</td><td title="">836</td><td title="">77%</td></tr><tr><td title="">89</td><td class="team" title=""><div class="team-top"><span>Verifying we are human.</span><span class="team-status official">正式队伍</span></div><small>(张力文, 孙超逸, 邓沣庭)</small></td><td class="rating" title="4 / 13 × (135 − 89 + 1) / 135 × 200">21.4</td><td title="">-</td><td title="">-</td><td class="rejected" title="">-2
+4:58</td><td title="">-</td><td class="accepted" title="">+
+0:47</td><td class="accepted" title="">+
+0:08</td><td title="">-</td><td title="">-</td><td title="">-</td><td class="accepted" title="">+2
+3:00</td><td title="">-</td><td title="">-</td><td title="">-</td><td class="accepted" title="">+6
+4:27</td><td title="">4</td><td title="">662</td><td title="">66%</td></tr><tr><td title="">93</td><td class="team zju" title=""><div class="team-top"><span title="QOJ 账号：StarfruitSupernova">Starfruit Supernova V</span><span class="team-status zju">ZJU</span></div><small>(应宸宇, 王喆, 周学诚)</small></td><td class="rating" title="3 / 13 × (135 − 93 + 1) / 135 × 200">14.7</td><td title="">-</td><td title="">-</td><td class="rejected" title="">-12
+4:58</td><td title="">-</td><td class="accepted" title="">+
+0:38</td><td class="accepted" title="">+
+0:12</td><td title="">-</td><td title="">-</td><td title="">-</td><td class="accepted" title="">+
+1:11</td><td title="">-</td><td title="">-</td><td title="">-</td><td class="rejected" title="">-18
+2:55</td><td title="">3</td><td title="">121</td><td title="">0%</td></tr><tr><td title="">94</td><td class="team" title=""><div class="team-top"><span>Easons_MD_istheRealBOSS</span><span class="team-status official">正式队伍</span></div><small>(孙海纳, 梁书源, 谭文礼)</small></td><td class="rating" title="3 / 13 × (135 − 94 + 1) / 135 × 200">14.4</td><td title="">-</td><td title="">-</td><td title="">-</td><td title="">-</td><td class="accepted" title="">+
+0:21</td><td class="accepted" title="">+
+0:10</td><td title="">-</td><td class="rejected" title="">-1
+1:58</td><td title="">-</td><td class="accepted" title="">+1
+1:12</td><td title="">-</td><td title="">-</td><td title="">-</td><td class="rejected" title="">-2
+3:58</td><td title="">3</td><td title="">123</td><td title="">25%</td></tr><tr><td title="">99</td><td class="team" title=""><div class="team-top"><span>Slay_the_Judge</span><span class="team-status candidate">候选队伍</span></div><small>(刘梓涵, Adam, 俞卓群)</small></td><td class="rating" title="3 / 13 × (135 − 99 + 1) / 135 × 200">12.6</td><td title="">-</td><td title="">-</td><td title="">-</td><td title="">-</td><td class="accepted" title="">+
+0:45</td><td class="accepted" title="">+
+0:11</td><td title="">-</td><td title="">-</td><td title="">-</td><td class="accepted" title="">+
+2:16</td><td class="rejected" title="">-1
+4:59</td><td title="">-</td><td title="">-</td><td class="rejected" title="">-5
+3:51</td><td title="">3</td><td title="">192</td><td title="">0%</td></tr><tr><td title="">103</td><td class="team" title=""><div class="team-top"><span>Equation32768</span><span class="team-status official">正式队伍</span></div><small>(叶嘉弘, 余哲伟, 叶梓弘)</small></td><td class="rating" title="3 / 13 × (135 − 103 + 1) / 135 × 200">11.3</td><td title="">-</td><td title="">-</td><td title="">-</td><td title="">-</td><td class="accepted" title="">+
+1:02</td><td class="accepted" title="">+
+0:22</td><td title="">-</td><td title="">-</td><td title="">-</td><td class="accepted" title="">+3
+1:50</td><td title="">-</td><td title="">-</td><td title="">-</td><td class="rejected" title="">-8
+4:54</td><td title="">3</td><td title="">254</td><td title="">50%</td></tr><tr><td title="">106</td><td class="team" title=""><div class="team-top"><span>pear_money_team</span><span class="team-status candidate">候选队伍</span></div><small>(潘彦, 史佳航, 张宸略)</small></td><td class="rating" title="3 / 13 × (135 − 106 + 1) / 135 × 200">10.3</td><td title="">-</td><td title="">-</td><td title="">-</td><td title="">-</td><td class="accepted" title="">+
+0:53</td><td class="accepted" title="">+
+0:17</td><td title="">-</td><td title="">-</td><td title="">-</td><td class="accepted" title="">+
+3:46</td><td title="">-</td><td title="">-</td><td title="">-</td><td class="rejected" title="">-18
+4:59</td><td title="">3</td><td title="">296</td><td title="">0%</td></tr><tr><td title="">108</td><td class="team" title=""><div class="team-top"><span>TeamAccept</span><span class="team-status candidate">候选队伍</span></div><small>(刘翀, 何隽哲, 李衍硕)</small></td><td class="rating" title="3 / 13 × (135 − 108 + 1) / 135 × 200">9.6</td><td title="">-</td><td title="">-</td><td title="">-</td><td title="">-</td><td class="accepted" title="">+
+0:21</td><td class="accepted" title="">+
+0:26</td><td title="">-</td><td title="">-</td><td title="">-</td><td class="accepted" title="">+2
+3:44</td><td title="">-</td><td title="">-</td><td title="">-</td><td class="rejected" title="">-18
+4:59</td><td title="">3</td><td title="">311</td><td title="">40%</td></tr><tr><td title="">109</td><td class="team" title=""><div class="team-top"><span>Meowfia</span><span class="team-status candidate">候选队伍</span></div><small>(陆珏行, 邵辰航, 谷旭涵)</small></td><td class="rating" title="3 / 13 × (135 − 109 + 1) / 135 × 200">9.2</td><td title="">-</td><td title="">-</td><td title="">-</td><td title="">-</td><td class="accepted" title="">+
+0:27</td><td class="accepted" title="">+
+0:16</td><td title="">-</td><td class="rejected" title="">-1
+4:45</td><td title="">-</td><td class="rejected" title="">-3
+4:56</td><td title="">-</td><td class="rejected" title="">-1
+3:28</td><td title="">-</td><td class="accepted" title="">+4
+3:47</td><td title="">3</td><td title="">350</td><td title="">57%</td></tr></tbody></table></div><p id="rating-info">Rating = y / x × (n − rk + 1) / n × 200；x 为原榜单第一名题数，y 为本队题数，n 为原榜单总队伍数，rk 为原始排名。乘以 200 后保留一位小数。 本次：x = 13，n = 135。</p><footer><a href="https://qoj.ac/results/QOJ4571" target="_blank" rel="noopener noreferrer">QOJ 原始榜单 ↗</a></footer></main></body></html>
