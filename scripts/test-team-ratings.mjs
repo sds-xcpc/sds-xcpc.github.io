@@ -18,9 +18,11 @@ const hongKongContest = JSON.parse(await readFile(new URL('../src/data/team-cont
 const pkuDay2Contest = JSON.parse(await readFile(new URL('../src/data/team-contests/pku-team-selection-day-2.json', import.meta.url), 'utf8'));
 const swercContest = JSON.parse(await readFile(new URL('../src/data/team-contests/swerc-2024.json', import.meta.url), 'utf8'));
 const hongoContest = JSON.parse(await readFile(new URL('../src/data/team-contests/ucup-4-stage-18-hongo.json', import.meta.url), 'utf8'));
+const nowcoderContest = JSON.parse(await readFile(new URL('../src/data/team-contests/nowcoder-training-zju.json', import.meta.url), 'utf8'));
 const historicalContests = [contest, ccpcContest, pkuContest, hongKongContest, pkuDay2Contest];
 const afterSwercContests = [...historicalContests, swercContest];
 const currentContests = [...afterSwercContests, hongoContest];
+const finalContests = [...currentContests, nowcoderContest];
 
 test('averages published results, excluding pending contests and missing entries', () => {
   const contests = [
@@ -110,10 +112,10 @@ test('PKU Selection Day 2 updates the five-contest average and team order', () =
   assert.ok(Math.abs(ranked[4].averageRating - (107.1 + 5.5 + 28.6) / 3) < 1e-9);
 });
 
-test('both independent contests retain all 19 teams without adding historical ZJU results', () => {
+test('all three independent contests retain all 19 teams without adding historical ZJU results', () => {
   assert.equal(schoolTeams.length, 10);
   assert.equal(zjuTeams.length, 9);
-  for (const item of [swercContest, hongoContest]) {
+  for (const item of [swercContest, hongoContest, nowcoderContest]) {
     assert.equal(item.ratingScope, 'tracked');
     assert.equal(item.totalTeams, 19);
     assert.equal(item.standings.length, 19);
@@ -122,11 +124,12 @@ test('both independent contests retain all 19 teams without adding historical ZJ
   }
   assert.equal(swercContest.topSolved, 12);
   assert.equal(hongoContest.topSolved, 8);
+  assert.equal(nowcoderContest.topSolved, 10);
 
   for (const team of zjuTeams) {
     assert.ok(historicalContests.every((pastContest) => !pastContest.standings.some((entry) => entry.teamId === team.id)));
     assert.equal(averageTeamRating(team.id, historicalContests), null);
-    assert.ok([swercContest, hongoContest].every((item) => item.standings.some((entry) => entry.teamId === team.id)));
+    assert.ok([swercContest, hongoContest, nowcoderContest].every((item) => item.standings.some((entry) => entry.teamId === team.id)));
   }
 });
 
@@ -166,6 +169,39 @@ test('independent October ratings update the ten school teams using audited exac
     ['meowfia', 90.2 / 6],
   ];
   const ranked = rankTeamRatings(schoolTeams, currentContests);
+  assert.deepEqual(ranked.map(({ team }) => team.id), expected.map(([id]) => id));
+  for (const [index, [id, average]] of expected.entries()) {
+    assert.ok(Math.abs(ranked[index].averageRating - average) < 1e-9, `${id} averages ${average}`);
+  }
+});
+
+test('the final contest gives Equation six eligible results and drops exactly one minimum', () => {
+  const eligibleRatings = finalContests.flatMap((item) => item.standings
+    .filter((entry) => entry.teamId === 'beyond-the-equation' && entry.countsForRating !== false)
+    .map((entry) => entry.rating));
+  assert.deepEqual(eligibleRatings, [107.1, 5.5, 28.6, 43.0, 15.8, 21.1]);
+  assert.equal(averageTeamRating('beyond-the-equation', currentContests), 40);
+  assert.ok(Math.abs(averageTeamRating('beyond-the-equation', finalContests) - 43.12) < 1e-9);
+  for (const team of schoolTeams.filter((item) => item.id !== 'beyond-the-equation')) {
+    assert.equal(finalContests.filter((item) => item.standings.some((entry) =>
+      entry.teamId === team.id && entry.countsForRating !== false)).length, 8);
+  }
+});
+
+test('the final independent contest updates all ten school averages without adding ZJU to the overall ranking', () => {
+  const expected = [
+    ['thoughts-everyone', 1254.9 / 7],
+    ['mynoghra', 789.7 / 7],
+    ['easons-milk-dragon', 560.4 / 7],
+    ['gather-and-scatter', 427.9 / 7],
+    ['slay-the-judge', 404.5 / 7],
+    ['human-verification', 310.0 / 7],
+    ['beyond-the-equation', 215.6 / 5],
+    ['pear-money-team', 228.6 / 7],
+    ['team-accept', 155.2 / 7],
+    ['meowfia', 94.4 / 7],
+  ];
+  const ranked = rankTeamRatings(schoolTeams, finalContests);
   assert.deepEqual(ranked.map(({ team }) => team.id), expected.map(([id]) => id));
   for (const [index, [id, average]] of expected.entries()) {
     assert.ok(Math.abs(ranked[index].averageRating - average) < 1e-9, `${id} averages ${average}`);

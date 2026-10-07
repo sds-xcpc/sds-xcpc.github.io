@@ -8,7 +8,7 @@
 
 `src/data/training-teams.json` is the shared source for the training-page roster and both scoreboard levels. Keep stable team IDs when editing names or members. Results join by team ID, not display order. The detailed page always shows the canonical team name and members, never temporary contest aliases or lineups.
 
-The October 5 SWERC 2024 and October 6 Universal Cup Hongō contest details include nine visiting Zhejiang University teams, labelled `ZJU`, in addition to the ten school teams, for 19 teams in each contest. The training roster on `/training` and the overall Rating scoreboard on `/training/scoreboard` contain only the six official and four candidate school teams. ZJU results remain in the contest data and detail pages but do not appear in the overall Rating ranking. ZJU teams have no entries in earlier contests; do not insert zero scores for those missing results.
+The October 5 SWERC 2024, October 6 Universal Cup Hongō and October 7 Nowcoder Training - ZJU Contest details include nine visiting Zhejiang University teams, labelled `ZJU`, in addition to the ten school teams, for 19 teams in each contest. The training roster on `/training` and the overall Rating scoreboard on `/training/scoreboard` contain only the six official and four candidate school teams. ZJU results remain in the contest data and detail pages but do not appear in the overall Rating ranking. ZJU teams have no entries in earlier contests; do not insert zero scores for those missing results.
 
 ## Import Results
 
@@ -56,13 +56,23 @@ python scripts/import-team-scoreboard.py resources/training-scoreboards/qoj4571-
 
 This snapshot was exported on October 7 but records the October 6 training specified by the user. It includes the same 19 teams and 14 problems. Its original QOJ ratings use `sourceTopSolved = 13`, `sourceTotalTeams = 135`. Within the independent scoreboard, `Thoughts_everyone` is first with eight solves, so `topSolved = 8`, `totalTeams = 19`. The `*+1` at `2:10` on problem K for `If-Chinese-130` denotes an accepted first-blood result despite the missing CSS class; preserve its text and count it as accepted. Its seven solves, penalty 880 and Dirt 50% independently reconcile.
 
+The final training result is imported with:
+
+```powershell
+python scripts/import-team-scoreboard.py resources/training-scoreboards/qoj4573-20261007.html --title "Nowcoder Training - ZJU Contest" --short-title "Nowcoder ZJU" --date 2026-10-07 --id nowcoder-training-zju --supplement resources/training-scoreboards/qoj4573-supplement.json --rating-scope tracked
+```
+
+The user identified this final contest as Nowcoder Training - ZJU Contest. October 7 is inferred from the final planned training date and the export just after midnight on October 8; the export timestamp itself is not a competition date. The snapshot includes 19 tracked teams and 11 problems. Its source metadata uses `sourceTopSolved = 10`, `sourceTotalTeams = 21`; the independent scoreboard uses `topSolved = 10`, `totalTeams = 19`. The tracked teams occupy original ranks 1–19, so their numerical ranks stay the same while Ratings are recalculated for 19 teams. The supplement records source metadata and the results URL without adding rows. Preserve the original 209 problem cells, penalties, Dirt and full-source problem-header statistics.
+
 ## Independent Rating Scope and Audit
 
-Only these two October contests opt into `--rating-scope tracked`; the default remains `source`, and September data is unchanged. Both modes use the existing formula `Rating = y / x × (n − rk + 1) / n × 200`, rounded to one decimal place using the same importer calculation. In tracked mode, `y` is the team's solved count, `x` is the leader's solved count among the imported teams, `n` is their count, and `rk` is the rank within that subset. Restricting the source order removes gaps from outside teams; source ties retain competition ranking (for example, 1, 2, 2, 4). Both supplied October snapshots have distinct ranks.
+Only these three October contests opt into `--rating-scope tracked`; the default remains `source`, and September data is unchanged. Both modes use the existing formula `Rating = y / x × (n − rk + 1) / n × 200`, rounded to one decimal place using the same importer calculation. In tracked mode, `y` is the team's solved count, `x` is the leader's solved count among the imported teams, `n` is their count, and `rk` is the rank within that subset. Restricting the source order removes gaps from outside teams; source ties retain competition ranking (for example, 1, 2, 2, 4). All three supplied October snapshots have distinct ranks.
 
 Original nonblank Rating values are validated against the original source population before recalculation. `sourceRank`, `sourceTopSolved` and `sourceTotalTeams` retain that provenance, while `rank`, `topSolved`, `totalTeams` and `ratingFormula` describe the independent scoreboard. Problem-header statistics still come from the full QOJ source and are explicitly labelled as such; they are not used in Rating. Raw HTML snapshots remain unchanged.
 
-For example, on October 5 `Mynoghra` is independent rank 7: `9 / 12 × (19 − 7 + 1) / 19 × 200 = 102.6`. On October 6 `Thoughts_everyone` moves from QOJ rank 13 to independent rank 1: `8 / 8 × (19 − 1 + 1) / 19 × 200 = 200.0`. The total-scoreboard averaging rule is unchanged: use the stored single-contest ratings; exclude absent and explicitly non-counting entries; remove exactly one lowest score only when a team has more than five valid results. This includes seven valid results for most school teams and five for `beyond-the-equation` after October 6.
+For example, on October 5 `Mynoghra` is independent rank 7: `9 / 12 × (19 − 7 + 1) / 19 × 200 = 102.6`. On October 6 `Thoughts_everyone` moves from QOJ rank 13 to independent rank 1: `8 / 8 × (19 − 1 + 1) / 19 × 200 = 200.0`. On October 7 its rank remains 3, but the independent population changes the Rating from the source's 162.9 to `9 / 10 × (19 − 3 + 1) / 19 × 200 = 161.1`.
+
+The total-scoreboard averaging rule is unchanged: use the stored single-contest ratings; exclude absent and explicitly non-counting entries; remove exactly one lowest score only when a team has more than five valid results. After October 6, most school teams have seven valid results and `beyond-the-equation` has five. After the final October 7 training, these become eight and six respectively, so every school team now drops exactly one minimum. `beyond-the-equation` still excludes Korea and PKU Day 1, and its six eligible ratings `[107.1, 5.5, 28.6, 43.0, 15.8, 21.1]` produce `(107.1 + 28.6 + 43.0 + 15.8 + 21.1) / 5 = 43.12` after removing 5.5.
 
 ## Pintia Results
 

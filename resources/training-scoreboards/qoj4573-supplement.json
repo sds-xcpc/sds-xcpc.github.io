@@ -1,0 +1,12 @@
+{
+  "topSolved": 10,
+  "sourceTotalTeams": 21,
+  "sourceUrl": "https://qoj.ac/results/QOJ4573",
+  "extraRows": [],
+  "evidence": {
+    "snapshot": "qoj4573-20261007.html",
+    "sourceRating": "The source Rating tooltips and rating-info paragraph report x = 10 and n = 21. Validate the original Ratings against these values before applying the tracked-team scope.",
+    "trackedRating": "The snapshot includes all ten school teams and nine ZJU teams, occupying source ranks 1 through 19. Brightest_Flame_Plus leads with 10 solves. Use x = 10, n = 19 and the independent ranks for Rating, retaining the source ranks and problem statistics.",
+    "event": "The user identified this final training as Nowcoder Training - ZJU Contest. The training date is inferred as the final scheduled date, 2026-10-07, following the October 5 and 6 results. The snapshot was exported on October 8 at 00:24:23."
+  }
+}

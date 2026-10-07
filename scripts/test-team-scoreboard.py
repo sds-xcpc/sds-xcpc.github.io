@@ -24,6 +24,8 @@ class TeamScoreboardTests(unittest.TestCase):
         cls.swerc_supplement = json.loads((PROJECT / 'resources/training-scoreboards/qoj4568-supplement.json').read_text(encoding='utf-8'))
         cls.hongo_html = (PROJECT / 'resources/training-scoreboards/qoj4571-20261006.html').read_text(encoding='utf-8')
         cls.hongo_supplement = json.loads((PROJECT / 'resources/training-scoreboards/qoj4571-supplement.json').read_text(encoding='utf-8'))
+        cls.nowcoder_html = (PROJECT / 'resources/training-scoreboards/qoj4573-20261007.html').read_text(encoding='utf-8')
+        cls.nowcoder_supplement = json.loads((PROJECT / 'resources/training-scoreboards/qoj4573-supplement.json').read_text(encoding='utf-8'))
 
     def parse(self, html=None, slug='xix-gp-of-korea', date='2026-09-13'):
         return importer.parse_scoreboard(
@@ -69,6 +71,13 @@ class TeamScoreboardTests(unittest.TestCase):
             'The 4th Universal Cup. Stage 18: Grand Prix of Hongō',
             '2026-10-06', 'ucup-4-stage-18-hongo', 'qoj4571-20261006.html',
             '4th UCup: Hongō', self.hongo_supplement, rating_scope=rating_scope,
+        )
+
+    def parse_nowcoder(self, rating_scope='tracked'):
+        return importer.parse_scoreboard(
+            self.nowcoder_html, self.roster, 'Nowcoder Training - ZJU Contest',
+            '2026-10-07', 'nowcoder-training-zju', 'qoj4573-20261007.html',
+            'Nowcoder ZJU', self.nowcoder_supplement, rating_scope=rating_scope,
         )
 
     def parse_small_tracked(self, results):
@@ -265,6 +274,35 @@ class TeamScoreboardTests(unittest.TestCase):
         chinese = next(row for row in contest['standings'] if row['username'] == 'If-Chinese-130')
         self.assertEqual(chinese['solved'], 7)
         self.assertEqual(chinese['problems'][10], {'status': 'accepted', 'result': '*+1', 'time': '2:10'})
+
+    def test_nowcoder_snapshot_and_independent_ratings_match_generated_file(self):
+        contest = self.parse_nowcoder()
+        saved = json.loads((PROJECT / 'src/data/team-contests/nowcoder-training-zju.json').read_text(encoding='utf-8'))
+        self.assertEqual(contest, saved)
+        self.assertEqual(contest['sourceUrl'], 'https://qoj.ac/results/QOJ4573')
+        self.assertEqual(contest['ratingScope'], 'tracked')
+        self.assertEqual((contest['topSolved'], contest['totalTeams'], len(contest['problems'])), (10, 19, 11))
+        self.assertEqual((contest['sourceTopSolved'], contest['sourceTotalTeams']), (10, 21))
+        self.assertEqual([row['rank'] for row in contest['standings']], list(range(1, 20)))
+        self.assertEqual([row['sourceRank'] for row in contest['standings']], list(range(1, 20)))
+        self.assertEqual([(row['username'], row['solved'], row['penalty'], row['rating'])
+                          for row in contest['standings']], [
+            ('Brightest_Flame_Plus', 10, 1314, 200.0), ('Yuyu-Yuyu-Yuyuko', 9, 854, 170.5),
+            ('Thoughts_everyone', 9, 860, 161.1), ('StarfruitSupernova', 9, 1052, 151.6),
+            ('Wait_What', 9, 1248, 142.1), ('catcannotpassturingtest', 7, 560, 103.2),
+            ('If-Chinese-130', 7, 653, 95.8), ('Mynoghra', 7, 721, 88.4),
+            ('Easons_MD_istheRealBOSS', 7, 725, 81.1), ('Slay_the_Judge', 7, 777, 73.7),
+            ('tengZF', 7, 867, 66.3), ('Gather_and_Scatter', 7, 1010, 58.9),
+            ('no_more_time_penalty', 7, 1055, 51.6), ('_IAKIOI', 6, 588, 37.9),
+            ('Verifying we are human.', 6, 629, 31.6), ('Equation32768', 5, 612, 21.1),
+            ('pear_money_team', 5, 613, 15.8), ('TeamAccept', 4, 490, 8.4),
+            ('Meowfia', 4, 555, 4.2),
+        ])
+        # Source ranks happen to be identical, but the independent population still changes ratings.
+        source = self.parse_nowcoder(rating_scope='source')
+        self.assertEqual((source['topSolved'], source['totalTeams']), (10, 21))
+        self.assertEqual(source['standings'][2]['rating'], 162.9)
+        self.assertEqual(source['standings'][-1]['rating'], 11.4)
 
     def test_tracked_mode_validates_source_rating_before_recomputing(self):
         source = self.parse_hongo()

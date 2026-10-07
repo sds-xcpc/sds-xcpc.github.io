@@ -1,0 +1,1459 @@
+{
+  "id": "nowcoder-training-zju",
+  "title": "Nowcoder Training - ZJU Contest",
+  "shortTitle": "Nowcoder ZJU",
+  "date": "2026-10-07",
+  "sourceSnapshot": "qoj4573-20261007.html",
+  "sourceUrl": "https://qoj.ac/results/QOJ4573",
+  "ratingScope": "tracked",
+  "sourceTopSolved": 10,
+  "sourceTotalTeams": 21,
+  "topSolved": 10,
+  "totalTeams": 19,
+  "problems": [
+    {
+      "label": "A",
+      "accepted": 18,
+      "submissions": 43
+    },
+    {
+      "label": "B",
+      "accepted": 19,
+      "submissions": 30
+    },
+    {
+      "label": "C",
+      "accepted": 5,
+      "submissions": 39
+    },
+    {
+      "label": "D",
+      "accepted": 18,
+      "submissions": 40
+    },
+    {
+      "label": "E",
+      "accepted": 2,
+      "submissions": 7
+    },
+    {
+      "label": "F",
+      "accepted": 18,
+      "submissions": 40
+    },
+    {
+      "label": "G",
+      "accepted": 3,
+      "submissions": 4
+    },
+    {
+      "label": "H",
+      "accepted": 19,
+      "submissions": 21
+    },
+    {
+      "label": "I",
+      "accepted": 16,
+      "submissions": 31
+    },
+    {
+      "label": "J",
+      "accepted": 9,
+      "submissions": 26
+    },
+    {
+      "label": "K",
+      "accepted": 5,
+      "submissions": 45
+    }
+  ],
+  "standings": [
+    {
+      "teamId": "zju-brightest-flame-plus",
+      "username": "Brightest_Flame_Plus",
+      "sourceMembers": [
+        "徐锐扬",
+        "朱天煜",
+        "陈铭凯"
+      ],
+      "rank": 1,
+      "rating": 200.0,
+      "sourceRank": 1,
+      "ratingFormula": "10 / 10 × (19 − 1 + 1) / 19 × 200 = 200.0",
+      "problems": [
+        {
+          "status": "accepted",
+          "result": "+1",
+          "time": "0:33"
+        },
+        {
+          "status": "accepted",
+          "result": "+1",
+          "time": "0:39"
+        },
+        {
+          "status": "accepted",
+          "result": "+1",
+          "time": "3:07"
+        },
+        {
+          "status": "accepted",
+          "result": "+",
+          "time": "0:58"
+        },
+        {
+          "status": "accepted",
+          "result": "+2",
+          "time": "3:29"
+        },
+        {
+          "status": "accepted",
+          "result": "+",
+          "time": "0:42"
+        },
+        {
+          "status": "accepted",
+          "result": "+1",
+          "time": "4:11"
+        },
+        {
+          "status": "accepted",
+          "result": "+",
+          "time": "0:35"
+        },
+        {
+          "status": "accepted",
+          "result": "+1",
+          "time": "0:25"
+        },
+        {
+          "status": "accepted",
+          "result": "+2",
+          "time": "4:15"
+        },
+        {
+          "status": "rejected",
+          "result": "-1",
+          "time": "4:27"
+        }
+      ],
+      "solved": 10,
+      "penalty": 1314,
+      "dirt": "47%"
+    },
+    {
+      "teamId": "zju-yuyu-yuyu-yuyuko",
+      "username": "Yuyu-Yuyu-Yuyuko",
+      "sourceMembers": [
+        "陈玉彬",
+        "姜宇辰",
+        "倪琛航"
+      ],
+      "rank": 2,
+      "rating": 170.5,
+      "sourceRank": 2,
+      "ratingFormula": "9 / 10 × (19 − 2 + 1) / 19 × 200 = 170.5",
+      "problems": [
+        {
+          "status": "accepted",
+          "result": "+2",
+          "time": "1:07"
+        },
+        {
+          "status": "accepted",
+          "result": "+1",
+          "time": "0:19"
+        },
+        {
+          "status": "accepted",
+          "result": "+",
+          "time": "1:53"
+        },
+        {
+          "status": "accepted",
+          "result": "+1",
+          "time": "0:55"
+        },
+        {
+          "status": "empty",
+          "result": "-",
+          "time": ""
+        },
+        {
+          "status": "accepted",
+          "result": "+",
+          "time": "0:22"
+        },
+        {
+          "status": "accepted",
+          "result": "+",
+          "time": "3:01"
+        },
+        {
+          "status": "accepted",
+          "result": "+",
+          "time": "0:26"
+        },
+        {
+          "status": "accepted",
+          "result": "+2",
+          "time": "1:32"
+        },
+        {
+          "status": "accepted",
+          "result": "+",
+          "time": "2:39"
+        },
+        {
+          "status": "rejected",
+          "result": "-5",
+          "time": "3:29"
+        }
+      ],
+      "solved": 9,
+      "penalty": 854,
+      "dirt": "40%"
+    },
+    {
+      "teamId": "thoughts-everyone",
+      "username": "Thoughts_everyone",
+      "sourceMembers": [
+        "林毅",
+        "吴彦儒",
+        "罗辰骏"
+      ],
+      "rank": 3,
+      "rating": 161.1,
+      "sourceRank": 3,
+      "ratingFormula": "9 / 10 × (19 − 3 + 1) / 19 × 200 = 161.1",
+      "problems": [
+        {
+          "status": "accepted",
+          "result": "+1",
+          "time": "1:15"
+        },
+        {
+          "status": "accepted",
+          "result": "+",
+          "time": "0:26"
+        },
+        {
+          "status": "rejected",
+          "result": "-2",
+          "time": "4:59"
+        },
+        {
+          "status": "accepted",
+          "result": "+",
+          "time": "0:39"
+        },
+        {
+          "status": "empty",
+          "result": "-",
+          "time": ""
+        },
+        {
+          "status": "accepted",
+          "result": "+",
+          "time": "1:26"
+        },
+        {
+          "status": "accepted",
+          "result": "+",
+          "time": "2:36"
+        },
+        {
+          "status": "accepted",
+          "result": "+",
+          "time": "0:08"
+        },
+        {
+          "status": "accepted",
+          "result": "+",
+          "time": "1:00"
+        },
+        {
+          "status": "accepted",
+          "result": "+",
+          "time": "3:23"
+        },
+        {
+          "status": "accepted",
+          "result": "+1",
+          "time": "2:47"
+        }
+      ],
+      "solved": 9,
+      "penalty": 860,
+      "dirt": "18%"
+    },
+    {
+      "teamId": "zju-starfruit-supernova",
+      "username": "StarfruitSupernova",
+      "sourceMembers": [
+        "应宸宇",
+        "王喆",
+        "周学诚"
+      ],
+      "rank": 4,
+      "rating": 151.6,
+      "sourceRank": 4,
+      "ratingFormula": "9 / 10 × (19 − 4 + 1) / 19 × 200 = 151.6",
+      "problems": [
+        {
+          "status": "accepted",
+          "result": "+",
+          "time": "1:39"
+        },
+        {
+          "status": "accepted",
+          "result": "+",
+          "time": "0:27"
+        },
+        {
+          "status": "accepted",
+          "result": "+1",
+          "time": "3:29"
+        },
+        {
+          "status": "accepted",
+          "result": "+",
+          "time": "1:20"
+        },
+        {
+          "status": "empty",
+          "result": "-",
+          "time": ""
+        },
+        {
+          "status": "accepted",
+          "result": "+2",
+          "time": "0:48"
+        },
+        {
+          "status": "empty",
+          "result": "-",
+          "time": ""
+        },
+        {
+          "status": "accepted",
+          "result": "+",
+          "time": "0:22"
+        },
+        {
+          "status": "accepted",
+          "result": "+2",
+          "time": "1:08"
+        },
+        {
+          "status": "accepted",
+          "result": "+",
+          "time": "3:54"
+        },
+        {
+          "status": "accepted",
+          "result": "+",
+          "time": "2:45"
+        }
+      ],
+      "solved": 9,
+      "penalty": 1052,
+      "dirt": "35%"
+    },
+    {
+      "teamId": "zju-wait-what",
+      "username": "Wait_What",
+      "sourceMembers": [
+        "柯怀俊",
+        "张厚华",
+        "李宸宇"
+      ],
+      "rank": 5,
+      "rating": 142.1,
+      "sourceRank": 5,
+      "ratingFormula": "9 / 10 × (19 − 5 + 1) / 19 × 200 = 142.1",
+      "problems": [
+        {
+          "status": "accepted",
+          "result": "+1",
+          "time": "1:06"
+        },
+        {
+          "status": "accepted",
+          "result": "+",
+          "time": "0:13"
+        },
+        {
+          "status": "accepted",
+          "result": "+",
+          "time": "4:49"
+        },
+        {
+          "status": "accepted",
+          "result": "+2",
+          "time": "1:26"
+        },
+        {
+          "status": "empty",
+          "result": "-",
+          "time": ""
+        },
+        {
+          "status": "accepted",
+          "result": "+2",
+          "time": "1:04"
+        },
+        {
+          "status": "empty",
+          "result": "-",
+          "time": ""
+        },
+        {
+          "status": "accepted",
+          "result": "+",
+          "time": "0:21"
+        },
+        {
+          "status": "accepted",
+          "result": "+",
+          "time": "0:50"
+        },
+        {
+          "status": "accepted",
+          "result": "+2",
+          "time": "4:14"
+        },
+        {
+          "status": "accepted",
+          "result": "+4",
+          "time": "3:05"
+        }
+      ],
+      "solved": 9,
+      "penalty": 1248,
+      "dirt": "55%"
+    },
+    {
+      "teamId": "zju-cat-cannot-pass-turing-test",
+      "username": "catcannotpassturingtest",
+      "sourceMembers": [
+        "李俊睿",
+        "陆安易",
+        "施翔天"
+      ],
+      "rank": 6,
+      "rating": 103.2,
+      "sourceRank": 6,
+      "ratingFormula": "7 / 10 × (19 − 6 + 1) / 19 × 200 = 103.2",
+      "problems": [
+        {
+          "status": "accepted",
+          "result": "+1",
+          "time": "0:24"
+        },
+        {
+          "status": "accepted",
+          "result": "+1",
+          "time": "0:28"
+        },
+        {
+          "status": "rejected",
+          "result": "-3",
+          "time": "2:00"
+        },
+        {
+          "status": "accepted",
+          "result": "+",
+          "time": "1:14"
+        },
+        {
+          "status": "empty",
+          "result": "-",
+          "time": ""
+        },
+        {
+          "status": "accepted",
+          "result": "+",
+          "time": "0:42"
+        },
+        {
+          "status": "empty",
+          "result": "-",
+          "time": ""
+        },
+        {
+          "status": "accepted",
+          "result": "+",
+          "time": "0:14"
+        },
+        {
+          "status": "accepted",
+          "result": "+",
+          "time": "0:56"
+        },
+        {
+          "status": "empty",
+          "result": "-",
+          "time": ""
+        },
+        {
+          "status": "accepted",
+          "result": "+3",
+          "time": "3:42"
+        }
+      ],
+      "solved": 7,
+      "penalty": 560,
+      "dirt": "41%"
+    },
+    {
+      "teamId": "zju-if-chinese-130",
+      "username": "If-Chinese-130",
+      "sourceMembers": [
+        "毛艺婷",
+        "张涵硕",
+        "姜圻圣"
+      ],
+      "rank": 7,
+      "rating": 95.8,
+      "sourceRank": 7,
+      "ratingFormula": "7 / 10 × (19 − 7 + 1) / 19 × 200 = 95.8",
+      "problems": [
+        {
+          "status": "accepted",
+          "result": "+",
+          "time": "1:23"
+        },
+        {
+          "status": "accepted",
+          "result": "+",
+          "time": "0:24"
+        },
+        {
+          "status": "empty",
+          "result": "-",
+          "time": ""
+        },
+        {
+          "status": "accepted",
+          "result": "+",
+          "time": "1:42"
+        },
+        {
+          "status": "empty",
+          "result": "-",
+          "time": ""
+        },
+        {
+          "status": "accepted",
+          "result": "+2",
+          "time": "1:14"
+        },
+        {
+          "status": "empty",
+          "result": "-",
+          "time": ""
+        },
+        {
+          "status": "accepted",
+          "result": "+",
+          "time": "0:28"
+        },
+        {
+          "status": "accepted",
+          "result": "+1",
+          "time": "1:16"
+        },
+        {
+          "status": "accepted",
+          "result": "+",
+          "time": "3:26"
+        },
+        {
+          "status": "rejected",
+          "result": "-4",
+          "time": "4:40"
+        }
+      ],
+      "solved": 7,
+      "penalty": 653,
+      "dirt": "30%"
+    },
+    {
+      "teamId": "mynoghra",
+      "username": "Mynoghra",
+      "sourceMembers": [
+        "周莫非",
+        "陈嘉年",
+        "王泽诚"
+      ],
+      "rank": 8,
+      "rating": 88.4,
+      "sourceRank": 8,
+      "ratingFormula": "7 / 10 × (19 − 8 + 1) / 19 × 200 = 88.4",
+      "problems": [
+        {
+          "status": "accepted",
+          "result": "+",
+          "time": "0:18"
+        },
+        {
+          "status": "accepted",
+          "result": "+",
+          "time": "0:40"
+        },
+        {
+          "status": "rejected",
+          "result": "-2",
+          "time": "3:35"
+        },
+        {
+          "status": "accepted",
+          "result": "+1",
+          "time": "1:41"
+        },
+        {
+          "status": "accepted",
+          "result": "+3",
+          "time": "4:36"
+        },
+        {
+          "status": "accepted",
+          "result": "+1",
+          "time": "1:46"
+        },
+        {
+          "status": "empty",
+          "result": "-",
+          "time": ""
+        },
+        {
+          "status": "accepted",
+          "result": "+1",
+          "time": "0:25"
+        },
+        {
+          "status": "accepted",
+          "result": "+",
+          "time": "0:35"
+        },
+        {
+          "status": "empty",
+          "result": "-",
+          "time": ""
+        },
+        {
+          "status": "empty",
+          "result": "-",
+          "time": ""
+        }
+      ],
+      "solved": 7,
+      "penalty": 721,
+      "dirt": "46%"
+    },
+    {
+      "teamId": "easons-milk-dragon",
+      "username": "Easons_MD_istheRealBOSS",
+      "sourceMembers": [
+        "孙海纳",
+        "梁书源",
+        "谭文礼"
+      ],
+      "rank": 9,
+      "rating": 81.1,
+      "sourceRank": 9,
+      "ratingFormula": "7 / 10 × (19 − 9 + 1) / 19 × 200 = 81.1",
+      "problems": [
+        {
+          "status": "accepted",
+          "result": "+",
+          "time": "1:00"
+        },
+        {
+          "status": "accepted",
+          "result": "+",
+          "time": "0:23"
+        },
+        {
+          "status": "accepted",
+          "result": "+",
+          "time": "4:16"
+        },
+        {
+          "status": "accepted",
+          "result": "+",
+          "time": "0:36"
+        },
+        {
+          "status": "empty",
+          "result": "-",
+          "time": ""
+        },
+        {
+          "status": "accepted",
+          "result": "+3",
+          "time": "2:18"
+        },
+        {
+          "status": "empty",
+          "result": "-",
+          "time": ""
+        },
+        {
+          "status": "accepted",
+          "result": "+",
+          "time": "0:15"
+        },
+        {
+          "status": "accepted",
+          "result": "+",
+          "time": "2:17"
+        },
+        {
+          "status": "empty",
+          "result": "-",
+          "time": ""
+        },
+        {
+          "status": "rejected",
+          "result": "-5",
+          "time": "4:55"
+        }
+      ],
+      "solved": 7,
+      "penalty": 725,
+      "dirt": "30%"
+    },
+    {
+      "teamId": "slay-the-judge",
+      "username": "Slay_the_Judge",
+      "sourceMembers": [
+        "刘梓涵",
+        "Adam",
+        "俞卓群"
+      ],
+      "rank": 10,
+      "rating": 73.7,
+      "sourceRank": 10,
+      "ratingFormula": "7 / 10 × (19 − 10 + 1) / 19 × 200 = 73.7",
+      "problems": [
+        {
+          "status": "accepted",
+          "result": "+",
+          "time": "1:07"
+        },
+        {
+          "status": "accepted",
+          "result": "+",
+          "time": "0:52"
+        },
+        {
+          "status": "rejected",
+          "result": "-1",
+          "time": "4:16"
+        },
+        {
+          "status": "accepted",
+          "result": "+",
+          "time": "0:41"
+        },
+        {
+          "status": "empty",
+          "result": "-",
+          "time": ""
+        },
+        {
+          "status": "accepted",
+          "result": "+1",
+          "time": "1:54"
+        },
+        {
+          "status": "empty",
+          "result": "-",
+          "time": ""
+        },
+        {
+          "status": "accepted",
+          "result": "+",
+          "time": "0:21"
+        },
+        {
+          "status": "accepted",
+          "result": "+1",
+          "time": "3:57"
+        },
+        {
+          "status": "accepted",
+          "result": "+",
+          "time": "3:25"
+        },
+        {
+          "status": "empty",
+          "result": "-",
+          "time": ""
+        }
+      ],
+      "solved": 7,
+      "penalty": 777,
+      "dirt": "22%"
+    },
+    {
+      "teamId": "zju-plantagenet",
+      "username": "tengZF",
+      "sourceMembers": [
+        "滕梓凡",
+        "王勋",
+        "李沐阳"
+      ],
+      "rank": 11,
+      "rating": 66.3,
+      "sourceRank": 11,
+      "ratingFormula": "7 / 10 × (19 − 11 + 1) / 19 × 200 = 66.3",
+      "problems": [
+        {
+          "status": "accepted",
+          "result": "+",
+          "time": "0:55"
+        },
+        {
+          "status": "accepted",
+          "result": "+4",
+          "time": "0:52"
+        },
+        {
+          "status": "rejected",
+          "result": "-1",
+          "time": "3:34"
+        },
+        {
+          "status": "accepted",
+          "result": "+2",
+          "time": "3:08"
+        },
+        {
+          "status": "empty",
+          "result": "-",
+          "time": ""
+        },
+        {
+          "status": "accepted",
+          "result": "+",
+          "time": "1:13"
+        },
+        {
+          "status": "empty",
+          "result": "-",
+          "time": ""
+        },
+        {
+          "status": "accepted",
+          "result": "+",
+          "time": "0:23"
+        },
+        {
+          "status": "accepted",
+          "result": "+",
+          "time": "1:29"
+        },
+        {
+          "status": "accepted",
+          "result": "+1",
+          "time": "4:07"
+        },
+        {
+          "status": "rejected",
+          "result": "-5",
+          "time": "4:37"
+        }
+      ],
+      "solved": 7,
+      "penalty": 867,
+      "dirt": "50%"
+    },
+    {
+      "teamId": "gather-and-scatter",
+      "username": "Gather_and_Scatter",
+      "sourceMembers": [
+        "欧奕阳",
+        "司梓翰",
+        "张佳艺"
+      ],
+      "rank": 12,
+      "rating": 58.9,
+      "sourceRank": 12,
+      "ratingFormula": "7 / 10 × (19 − 12 + 1) / 19 × 200 = 58.9",
+      "problems": [
+        {
+          "status": "accepted",
+          "result": "+2",
+          "time": "1:44"
+        },
+        {
+          "status": "accepted",
+          "result": "+2",
+          "time": "0:30"
+        },
+        {
+          "status": "empty",
+          "result": "-",
+          "time": ""
+        },
+        {
+          "status": "accepted",
+          "result": "+",
+          "time": "2:16"
+        },
+        {
+          "status": "empty",
+          "result": "-",
+          "time": ""
+        },
+        {
+          "status": "accepted",
+          "result": "+3",
+          "time": "1:51"
+        },
+        {
+          "status": "empty",
+          "result": "-",
+          "time": ""
+        },
+        {
+          "status": "accepted",
+          "result": "+",
+          "time": "0:20"
+        },
+        {
+          "status": "accepted",
+          "result": "+",
+          "time": "1:02"
+        },
+        {
+          "status": "accepted",
+          "result": "+6",
+          "time": "4:47"
+        },
+        {
+          "status": "empty",
+          "result": "-",
+          "time": ""
+        }
+      ],
+      "solved": 7,
+      "penalty": 1010,
+      "dirt": "65%"
+    },
+    {
+      "teamId": "zju-no-time-penalty",
+      "username": "no_more_time_penalty",
+      "sourceMembers": [
+        "黄翊轩",
+        "徐子萱",
+        "林子睿"
+      ],
+      "rank": 13,
+      "rating": 51.6,
+      "sourceRank": 13,
+      "ratingFormula": "7 / 10 × (19 − 13 + 1) / 19 × 200 = 51.6",
+      "problems": [
+        {
+          "status": "accepted",
+          "result": "+2",
+          "time": "1:56"
+        },
+        {
+          "status": "accepted",
+          "result": "+",
+          "time": "0:30"
+        },
+        {
+          "status": "rejected",
+          "result": "-13",
+          "time": "4:59"
+        },
+        {
+          "status": "accepted",
+          "result": "+1",
+          "time": "2:19"
+        },
+        {
+          "status": "empty",
+          "result": "-",
+          "time": ""
+        },
+        {
+          "status": "accepted",
+          "result": "+1",
+          "time": "1:55"
+        },
+        {
+          "status": "empty",
+          "result": "-",
+          "time": ""
+        },
+        {
+          "status": "accepted",
+          "result": "+",
+          "time": "0:16"
+        },
+        {
+          "status": "accepted",
+          "result": "+",
+          "time": "2:41"
+        },
+        {
+          "status": "empty",
+          "result": "-",
+          "time": ""
+        },
+        {
+          "status": "accepted",
+          "result": "+8",
+          "time": "3:58"
+        }
+      ],
+      "solved": 7,
+      "penalty": 1055,
+      "dirt": "63%"
+    },
+    {
+      "teamId": "zju-i-ak-ioi",
+      "username": "_IAKIOI",
+      "sourceMembers": [
+        "胡淞锦",
+        "陈子谦",
+        "房俊哲"
+      ],
+      "rank": 14,
+      "rating": 37.9,
+      "sourceRank": 14,
+      "ratingFormula": "6 / 10 × (19 − 14 + 1) / 19 × 200 = 37.9",
+      "problems": [
+        {
+          "status": "accepted",
+          "result": "+1",
+          "time": "1:15"
+        },
+        {
+          "status": "accepted",
+          "result": "+",
+          "time": "0:36"
+        },
+        {
+          "status": "rejected",
+          "result": "-4",
+          "time": "4:50"
+        },
+        {
+          "status": "accepted",
+          "result": "+3",
+          "time": "1:09"
+        },
+        {
+          "status": "empty",
+          "result": "-",
+          "time": ""
+        },
+        {
+          "status": "accepted",
+          "result": "+1",
+          "time": "2:15"
+        },
+        {
+          "status": "empty",
+          "result": "-",
+          "time": ""
+        },
+        {
+          "status": "accepted",
+          "result": "+",
+          "time": "0:15"
+        },
+        {
+          "status": "accepted",
+          "result": "+",
+          "time": "2:38"
+        },
+        {
+          "status": "empty",
+          "result": "-",
+          "time": ""
+        },
+        {
+          "status": "rejected",
+          "result": "-2",
+          "time": "4:58"
+        }
+      ],
+      "solved": 6,
+      "penalty": 588,
+      "dirt": "45%"
+    },
+    {
+      "teamId": "human-verification",
+      "username": "Verifying we are human.",
+      "sourceMembers": [
+        "张力文",
+        "孙超逸",
+        "邓沣庭"
+      ],
+      "rank": 15,
+      "rating": 31.6,
+      "sourceRank": 15,
+      "ratingFormula": "6 / 10 × (19 − 15 + 1) / 19 × 200 = 31.6",
+      "problems": [
+        {
+          "status": "accepted",
+          "result": "+",
+          "time": "2:12"
+        },
+        {
+          "status": "accepted",
+          "result": "+",
+          "time": "0:23"
+        },
+        {
+          "status": "rejected",
+          "result": "-6",
+          "time": "4:58"
+        },
+        {
+          "status": "accepted",
+          "result": "+3",
+          "time": "3:41"
+        },
+        {
+          "status": "empty",
+          "result": "-",
+          "time": ""
+        },
+        {
+          "status": "accepted",
+          "result": "+1",
+          "time": "1:26"
+        },
+        {
+          "status": "empty",
+          "result": "-",
+          "time": ""
+        },
+        {
+          "status": "accepted",
+          "result": "+",
+          "time": "0:20"
+        },
+        {
+          "status": "accepted",
+          "result": "+",
+          "time": "1:07"
+        },
+        {
+          "status": "empty",
+          "result": "-",
+          "time": ""
+        },
+        {
+          "status": "rejected",
+          "result": "-2",
+          "time": "4:59"
+        }
+      ],
+      "solved": 6,
+      "penalty": 629,
+      "dirt": "40%"
+    },
+    {
+      "teamId": "beyond-the-equation",
+      "username": "Equation32768",
+      "sourceMembers": [
+        "叶嘉弘",
+        "余哲伟",
+        "叶梓弘"
+      ],
+      "rank": 16,
+      "rating": 21.1,
+      "sourceRank": 16,
+      "ratingFormula": "5 / 10 × (19 − 16 + 1) / 19 × 200 = 21.1",
+      "problems": [
+        {
+          "status": "accepted",
+          "result": "+4",
+          "time": "1:39"
+        },
+        {
+          "status": "accepted",
+          "result": "+1",
+          "time": "0:45"
+        },
+        {
+          "status": "empty",
+          "result": "-",
+          "time": ""
+        },
+        {
+          "status": "rejected",
+          "result": "-7",
+          "time": "4:48"
+        },
+        {
+          "status": "empty",
+          "result": "-",
+          "time": ""
+        },
+        {
+          "status": "accepted",
+          "result": "+",
+          "time": "1:52"
+        },
+        {
+          "status": "empty",
+          "result": "-",
+          "time": ""
+        },
+        {
+          "status": "accepted",
+          "result": "+",
+          "time": "0:31"
+        },
+        {
+          "status": "accepted",
+          "result": "+2",
+          "time": "3:05"
+        },
+        {
+          "status": "empty",
+          "result": "-",
+          "time": ""
+        },
+        {
+          "status": "empty",
+          "result": "-",
+          "time": ""
+        }
+      ],
+      "solved": 5,
+      "penalty": 612,
+      "dirt": "58%"
+    },
+    {
+      "teamId": "pear-money-team",
+      "username": "pear_money_team",
+      "sourceMembers": [
+        "潘彦",
+        "史佳航",
+        "张宸略"
+      ],
+      "rank": 17,
+      "rating": 15.8,
+      "sourceRank": 17,
+      "ratingFormula": "5 / 10 × (19 − 17 + 1) / 19 × 200 = 15.8",
+      "problems": [
+        {
+          "status": "accepted",
+          "result": "+1",
+          "time": "2:14"
+        },
+        {
+          "status": "accepted",
+          "result": "+",
+          "time": "0:58"
+        },
+        {
+          "status": "empty",
+          "result": "-",
+          "time": ""
+        },
+        {
+          "status": "accepted",
+          "result": "+1",
+          "time": "3:15"
+        },
+        {
+          "status": "empty",
+          "result": "-",
+          "time": ""
+        },
+        {
+          "status": "accepted",
+          "result": "+",
+          "time": "2:50"
+        },
+        {
+          "status": "empty",
+          "result": "-",
+          "time": ""
+        },
+        {
+          "status": "accepted",
+          "result": "+",
+          "time": "0:16"
+        },
+        {
+          "status": "rejected",
+          "result": "-6",
+          "time": "4:56"
+        },
+        {
+          "status": "empty",
+          "result": "-",
+          "time": ""
+        },
+        {
+          "status": "empty",
+          "result": "-",
+          "time": ""
+        }
+      ],
+      "solved": 5,
+      "penalty": 613,
+      "dirt": "28%"
+    },
+    {
+      "teamId": "team-accept",
+      "username": "TeamAccept",
+      "sourceMembers": [
+        "刘翀",
+        "何隽哲",
+        "李衍硕"
+      ],
+      "rank": 18,
+      "rating": 8.4,
+      "sourceRank": 18,
+      "ratingFormula": "4 / 10 × (19 − 18 + 1) / 19 × 200 = 8.4",
+      "problems": [
+        {
+          "status": "accepted",
+          "result": "+3",
+          "time": "3:04"
+        },
+        {
+          "status": "accepted",
+          "result": "+1",
+          "time": "0:26"
+        },
+        {
+          "status": "empty",
+          "result": "-",
+          "time": ""
+        },
+        {
+          "status": "accepted",
+          "result": "+1",
+          "time": "2:49"
+        },
+        {
+          "status": "empty",
+          "result": "-",
+          "time": ""
+        },
+        {
+          "status": "rejected",
+          "result": "-3",
+          "time": "4:25"
+        },
+        {
+          "status": "empty",
+          "result": "-",
+          "time": ""
+        },
+        {
+          "status": "accepted",
+          "result": "+",
+          "time": "0:11"
+        },
+        {
+          "status": "empty",
+          "result": "-",
+          "time": ""
+        },
+        {
+          "status": "empty",
+          "result": "-",
+          "time": ""
+        },
+        {
+          "status": "empty",
+          "result": "-",
+          "time": ""
+        }
+      ],
+      "solved": 4,
+      "penalty": 490,
+      "dirt": "55%"
+    },
+    {
+      "teamId": "meowfia",
+      "username": "Meowfia",
+      "sourceMembers": [
+        "陆珏行",
+        "邵辰航",
+        "谷旭涵"
+      ],
+      "rank": 19,
+      "rating": 4.2,
+      "sourceRank": 19,
+      "ratingFormula": "4 / 10 × (19 − 19 + 1) / 19 × 200 = 4.2",
+      "problems": [
+        {
+          "status": "rejected",
+          "result": "-6",
+          "time": "4:59"
+        },
+        {
+          "status": "accepted",
+          "result": "+",
+          "time": "0:15"
+        },
+        {
+          "status": "empty",
+          "result": "-",
+          "time": ""
+        },
+        {
+          "status": "accepted",
+          "result": "+",
+          "time": "4:23"
+        },
+        {
+          "status": "empty",
+          "result": "-",
+          "time": ""
+        },
+        {
+          "status": "accepted",
+          "result": "+2",
+          "time": "3:11"
+        },
+        {
+          "status": "empty",
+          "result": "-",
+          "time": ""
+        },
+        {
+          "status": "accepted",
+          "result": "+1",
+          "time": "0:26"
+        },
+        {
+          "status": "empty",
+          "result": "-",
+          "time": ""
+        },
+        {
+          "status": "rejected",
+          "result": "-6",
+          "time": "4:21"
+        },
+        {
+          "status": "empty",
+          "result": "-",
+          "time": ""
+        }
+      ],
+      "solved": 4,
+      "penalty": 555,
+      "dirt": "42%"
+    }
+  ]
+}
