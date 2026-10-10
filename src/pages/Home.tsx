@@ -1,5 +1,5 @@
 import { Award, Play, X } from 'lucide-react';
-import { type CSSProperties, useEffect, useRef, useState } from 'react';
+import { type CSSProperties, useCallback, useEffect, useRef, useState } from 'react';
 import { CtaLink } from '../components/CtaLink';
 import { PersonCard } from '../components/Cards';
 import { Timeline } from '../components/Roadmap';
@@ -35,6 +35,7 @@ const heroImagePositions: Record<string, string> = {
   'images/home/web/gba-2026-advisors.jpg': 'center 28%',
   'images/home/web/icpc-2026-arena.jpg': 'center 70%',
 };
+const homeHeroImages = hero.images.length > 0 ? hero.images : [hero.image];
 
 type AnimatedCounterProps = {
   value: string;
@@ -93,9 +94,25 @@ function AnimatedCounter({ value, delay }: AnimatedCounterProps) {
 export function Home() {
   const [introOpen, setIntroOpen] = useState(false);
   const [heroImageIndex, setHeroImageIndex] = useState(0);
+  const [loadedHeroImageIndexes, setLoadedHeroImageIndexes] = useState(() => new Set([0]));
   const [videoActive, setVideoActive] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
-  const heroImages = hero.images.length > 0 ? hero.images : [hero.image];
+  const heroImages = homeHeroImages;
+
+  const activateHeroImage = useCallback((index: number) => {
+    if (loadedHeroImageIndexes.has(index)) {
+      setHeroImageIndex(index);
+      return;
+    }
+
+    const preloader = new Image();
+    preloader.decoding = 'async';
+    preloader.onload = () => {
+      setLoadedHeroImageIndexes((loadedIndexes) => new Set(loadedIndexes).add(index));
+      setHeroImageIndex(index);
+    };
+    preloader.src = `${import.meta.env.BASE_URL}${heroImages[index]}`;
+  }, [heroImages, loadedHeroImageIndexes]);
 
   useEffect(() => {
     if (videoActive) {
@@ -110,11 +127,11 @@ export function Home() {
 
     const nextImageIndex = (heroImageIndex + 1) % heroImages.length;
     const timeoutId = window.setTimeout(() => {
-      setHeroImageIndex(nextImageIndex);
+      activateHeroImage(nextImageIndex);
     }, 9000);
 
     return () => window.clearTimeout(timeoutId);
-  }, [heroImageIndex, heroImages.length]);
+  }, [activateHeroImage, heroImageIndex, heroImages.length]);
 
   useEffect(() => {
     if (!introOpen) {
@@ -144,21 +161,22 @@ export function Home() {
         <div className="wide-shell pb-6 pt-8 lg:pb-8 lg:pt-10">
           <div className={`${homeShell} grid gap-4 lg:grid-cols-4 lg:items-stretch`}>
           <div className="home-hero-stage relative min-h-[280px] overflow-hidden rounded border border-white/80 bg-purple/10 shadow-2xl shadow-purple/18 sm:min-h-[340px] lg:col-span-4 lg:aspect-[16/6] lg:min-h-0">
-            {heroImages.map((image, index) => (
-              <img
-                key={image}
-                src={`${import.meta.env.BASE_URL}${image}`}
-                alt=""
-                aria-hidden="true"
-                decoding="async"
-                loading="eager"
-                className="absolute inset-0 h-full w-full object-cover transition-opacity duration-[1200ms] ease-out"
-                style={{
-                  opacity: index === heroImageIndex ? 1 : 0,
-                  objectPosition: heroImagePositions[image] ?? 'center center',
-                }}
-              />
-            ))}
+            {heroImages.map((image, index) => loadedHeroImageIndexes.has(index) && (
+                <img
+                  key={image}
+                  src={`${import.meta.env.BASE_URL}${image}`}
+                  alt=""
+                  aria-hidden="true"
+                  decoding="async"
+                  loading={index === 0 ? 'eager' : 'lazy'}
+                  fetchPriority={index === 0 ? 'high' : 'low'}
+                  className="absolute inset-0 h-full w-full object-cover transition-opacity duration-[1200ms] ease-out"
+                  style={{
+                    opacity: index === heroImageIndex ? 1 : 0,
+                    objectPosition: heroImagePositions[image] ?? 'center center',
+                  }}
+                />
+              ))}
             <div className="absolute inset-0 bg-gradient-to-r from-white/18 via-transparent to-white/18" />
             <div className="absolute inset-0 bg-gradient-to-b from-white/18 via-transparent to-white/34" />
             <div className="absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-[#fbf9ff]/82 to-transparent" />
@@ -169,7 +187,7 @@ export function Home() {
                   type="button"
                   aria-label={`切换到第 ${index + 1} 张首页照片`}
                   aria-current={index === heroImageIndex ? 'true' : undefined}
-                  onClick={() => setHeroImageIndex(index)}
+                  onClick={() => activateHeroImage(index)}
                   className="grid h-6 place-items-center rounded-full px-1.5 transition focus:outline-none focus-visible:ring-2 focus-visible:ring-orange/70"
                 >
                   <span
